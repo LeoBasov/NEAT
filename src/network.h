@@ -6,6 +6,7 @@
 namespace NEAT {
 using namespace Eigen;
 class Network {
+   public:
     Network();
     ~Network() = default;
 

@@ -12,9 +12,12 @@ class NEAT {
     NEAT();
     ~NEAT() = default;
 
+    void Clear();
+    void Execute(const std::pair<VectorXd, VectorXd>& input_output);
+
    private:
     GenePool gene_pool_;
     std::vector<Phenotype> phenotypes_;
-    std::vector<std::shared_ptr<Network>> networks_;
+    std::vector<Network> networks_;
 };
 }  // namespace NEAT
