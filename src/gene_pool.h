@@ -8,6 +8,8 @@ class GenePool {
     using uint = unsigned int;
 
     struct Node {
+        Node(const uint& level = 0) : level(level) {}
+
         uint level = 0;
     };
 
@@ -16,16 +18,22 @@ class GenePool {
         uint out;
     };
 
-    GenePool();
-    ~GenePool() = default;
-
-   private:
     struct NodeGroup {
         uint ofset = 0;
         uint n_parts = 0;
+
+        void Clear() {
+            ofset = 0;
+            n_parts = 0;
+        }
     };
 
-   private:
+    GenePool();
+    ~GenePool() = default;
+
+    void Clear();
+    void Initialize(const uint& n_input, const uint& n_output);
+
     NodeGroup input_nodes_;
     NodeGroup output_nodes_;
     NodeGroup hidden_nodes_;
