@@ -17,8 +17,6 @@ class GenePool {
     struct Gene {
         uint in;
         uint out;
-        uint innov;
-        double weight;
     };
 
     GenePool();
