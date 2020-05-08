@@ -16,7 +16,7 @@ class Phenotype {
     Phenotype();
     ~Phenotype() = default;
 
-   private:
+    double fitness_ = 0.0;
     std::vector<Gene> genes;
 };
 }  // namespace NEAT
