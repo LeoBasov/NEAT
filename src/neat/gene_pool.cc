@@ -55,6 +55,12 @@ bool GenePool::AddNode(const uint& node_in, const uint& node_out) {
 
 bool GenePool::AddConnection(const uint& node_in, const uint& node_out) {
     if (nodes_.at(node_in).level < nodes_.at(node_out).level) {
+        for (auto gene : genes_) {
+            if (((gene.in == node_in) && (gene.out == node_out)) || ((gene.in == node_out) && (gene.out == node_in))) {
+                return false;
+            }
+        }
+
         genes_.push_back(Gene(node_in, node_out));
         return true;
     } else {

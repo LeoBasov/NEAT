@@ -39,4 +39,24 @@ TEST(GenePool, Initialize) {
     }
 }
 
+TEST(GenePool, AddNode) {
+    GenePool pool;
+
+    pool.Initialize(3, 2);
+
+    ASSERT_FALSE(pool.AddNode(0, 1));
+    ASSERT_FALSE(pool.AddNode(0, 2));
+    ASSERT_FALSE(pool.AddNode(2, 1));
+
+    ASSERT_FALSE(pool.AddNode(3, 4));
+
+    ASSERT_FALSE(pool.AddNode(3, 0));
+    ASSERT_FALSE(pool.AddNode(3, 1));
+    ASSERT_FALSE(pool.AddNode(3, 2));
+
+    ASSERT_FALSE(pool.AddNode(4, 0));
+    ASSERT_FALSE(pool.AddNode(4, 1));
+    ASSERT_FALSE(pool.AddNode(4, 2));
+}
+
 }  // namespace NEAT
