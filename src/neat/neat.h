@@ -28,6 +28,8 @@ class NEAT {
     double ExecuteNode(const uint& network_id, const uint& node_id, const VectorXd& input) const;
     void BuildNetworks();
     double Sigmoid(const double& value) const;
+    bool AddConnection(const uint& phenotype_id, const uint& in, const uint& out);
+    bool AddNode(const uint& phenotype_id, const uint& in, const uint& out);
 
     Config config_;
     Random random_;

@@ -5,11 +5,6 @@ namespace NEAT {
 Phenotype::Phenotype() {}
 
 void Phenotype::AddGene(const Gene& gene) {
-    for (auto gene_loc : genes_) {
-        if (gene_loc.id == gene.id) {
-            return;
-        }
-    }
     genes_.push_back(gene);
 }
 void Phenotype::AddGene(const uint& gene_id) {
@@ -17,6 +12,17 @@ void Phenotype::AddGene(const uint& gene_id) {
 
     gene.id = gene_id;
     AddGene(gene);
+}
+
+bool Phenotype::AddGeneWithCheck(const uint& gene_id) {
+    for (auto gene_loc : genes_) {
+        if (gene_loc.id == gene_id) {
+            return false;
+        }
+    }
+
+    AddGene(gene_id);
+    return true;
 }
 
 }  // namespace NEAT

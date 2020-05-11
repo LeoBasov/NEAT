@@ -109,4 +109,36 @@ void NEAT::BuildNetworks() {
 
 double NEAT::Sigmoid(const double& value) const { return 1.0 / (1.0 + std::exp(-value)); }
 
+bool NEAT::AddConnection(const uint& phenotype_id, const uint& in, const uint& out) {
+    auto ret_val = gene_pool_.AddConnection(in, out);
+
+    if (ret_val.first) {
+        return phenotypes_.at(phenotype_id).AddGeneWithCheck(ret_val.second);
+    } else {
+        return false;
+    }
+}
+
+bool NEAT::AddNode(const uint& phenotype_id, const uint& in, const uint& out) {
+    if (gene_pool_.AddNode(in, out)) {
+        double weight(0.0);
+
+        for (auto gene : phenotypes_.at(phenotype_id).genes_) {
+            GenePool::Gene gene_p(gene_pool_.genes_.at(gene.id));
+
+            if ((gene_p.in == in) && (gene_p.out == out)) {
+                weight = gene.weight;
+                gene.enabled = false;
+                break;
+            }
+        }
+
+        phenotypes_.at(phenotype_id).AddGene(gene_pool_.genes_.size() - 1);
+        phenotypes_.at(phenotype_id).AddGene(gene_pool_.genes_.size() - 2);
+        phenotypes_.at(phenotype_id).genes_.at(phenotypes_.at(phenotype_id).genes_.size() - 1).weight = weight;
+    } else {
+        return false;
+    }
+}
+
 }  // namespace NEAT
