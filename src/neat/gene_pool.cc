@@ -44,6 +44,7 @@ bool GenePool::AddNode(const uint& node_in, const uint& node_out) {
     if (nodes_.at(node_in).level < nodes_.at(node_out).level) {
         AdjustLevelsAbove(nodes_.at(node_in).level);
         nodes_.push_back(Node(nodes_.at(node_in).level + 1));
+        hidden_nodes_.n_parts++;
         genes_.push_back(Gene(node_in, nodes_.size() - 1));
         genes_.push_back(Gene(nodes_.size() - 1, node_out));
         return true;
