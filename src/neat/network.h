@@ -7,7 +7,7 @@ namespace NEAT {
 using namespace Eigen;
 class Network {
    public:
-    Network();
+    Network(const uint& depth = 0);
     ~Network() = default;
 
     void Execute(const VectorXd& input, VectorXd output) const {
@@ -25,7 +25,6 @@ class Network {
         }
     }
 
-   private:
     std::vector<MatrixXd> level_matrizes_;
 };
 }  // namespace NEAT

@@ -16,7 +16,10 @@ class Phenotype {
     Phenotype();
     ~Phenotype() = default;
 
+    bool HasNode(const uint& node_id) const;
+
     double fitness_ = 0.0;
-    std::vector<Gene> genes;
+    std::vector<Gene> genes_;
+    std::vector<uint> node_ids_;
 };
 }  // namespace NEAT
