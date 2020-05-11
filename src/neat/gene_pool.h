@@ -14,6 +14,8 @@ class GenePool {
     };
 
     struct Gene {
+        Gene(const uint& in = 0, const uint& out = 0) : in(in), out(out) {}
+
         uint in;
         uint out;
     };

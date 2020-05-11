@@ -33,6 +33,12 @@ void GenePool::Initialize(const uint& n_input, const uint& n_output) {
     for (uint i = 0; i < n_output; i++) {
         nodes_.push_back(Node(1));
     }
+
+    for (uint out = output_nodes_.ofset; out < output_nodes_.ofset + output_nodes_.n_parts; out++) {
+        for (uint in = input_nodes_.ofset; in < input_nodes_.ofset + input_nodes_.n_parts; in++) {
+            genes_.push_back(Gene(in, out));
+        }
+    }
 }
 
 }  // namespace NEAT
