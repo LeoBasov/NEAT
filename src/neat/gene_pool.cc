@@ -47,18 +47,27 @@ bool GenePool::AddNode(const uint& node_in, const uint& node_out) {
     }
 }
 
-bool GenePool::AddConnection(const uint& node_in, const uint& node_out) {
+std::pair<bool, unsigned int> GenePool::AddConnection(const uint& node_in, const uint& node_out) {
+    std::pair<bool, unsigned int> ret_pair{false, 0};
+
     if (nodes_.at(node_in).level < nodes_.at(node_out).level) {
-        for (auto gene : genes_) {
-            if (((gene.in == node_in) && (gene.out == node_out)) || ((gene.in == node_out) && (gene.out == node_in))) {
-                return false;
+        for (uint i = 0; i < genes_.size(); i++) {
+            if (((genes_.at(i).in == node_in) && (genes_.at(i).out == node_out)) ||
+                ((genes_.at(i).in == node_out) && (genes_.at(i).out == node_in))) {
+                ret_pair.first = true;
+                ret_pair.second = i;
+
+                return ret_pair;
             }
         }
 
         genes_.push_back(Gene(node_in, node_out));
-        return true;
+        ret_pair.first = true;
+        ret_pair.second = genes_.size() - 1;
+
+        return ret_pair;
     } else {
-        return false;
+        return ret_pair;
     }
 }
 

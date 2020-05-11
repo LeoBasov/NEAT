@@ -75,31 +75,23 @@ TEST(GenePool, AddConnection) {
 
     pool.Initialize(3, 2);
 
-    ASSERT_FALSE(pool.AddConnection(0, 1));
-    ASSERT_FALSE(pool.AddConnection(0, 2));
-    ASSERT_FALSE(pool.AddConnection(2, 1));
+    ASSERT_FALSE(pool.AddConnection(0, 1).first);
+    ASSERT_FALSE(pool.AddConnection(0, 2).first);
+    ASSERT_FALSE(pool.AddConnection(2, 1).first);
 
-    ASSERT_FALSE(pool.AddConnection(3, 4));
+    ASSERT_FALSE(pool.AddConnection(3, 4).first);
 
-    ASSERT_FALSE(pool.AddConnection(3, 0));
-    ASSERT_FALSE(pool.AddConnection(3, 1));
-    ASSERT_FALSE(pool.AddConnection(3, 2));
+    ASSERT_FALSE(pool.AddConnection(3, 0).first);
+    ASSERT_FALSE(pool.AddConnection(3, 1).first);
+    ASSERT_FALSE(pool.AddConnection(3, 2).first);
 
-    ASSERT_FALSE(pool.AddConnection(4, 0));
-    ASSERT_FALSE(pool.AddConnection(4, 1));
-    ASSERT_FALSE(pool.AddConnection(4, 2));
-
-    ASSERT_FALSE(pool.AddConnection(0, 3));
-    ASSERT_FALSE(pool.AddConnection(1, 3));
-    ASSERT_FALSE(pool.AddConnection(2, 3));
-
-    ASSERT_FALSE(pool.AddConnection(0, 4));
-    ASSERT_FALSE(pool.AddConnection(1, 4));
-    ASSERT_FALSE(pool.AddConnection(2, 4));
+    ASSERT_FALSE(pool.AddConnection(4, 0).first);
+    ASSERT_FALSE(pool.AddConnection(4, 1).first);
+    ASSERT_FALSE(pool.AddConnection(4, 2).first);
 
     pool.AddNode(0, 3);
 
-    ASSERT_TRUE(pool.AddConnection(1, 5));
+    ASSERT_TRUE(pool.AddConnection(1, 5).first);
 
     ASSERT_EQ(1, pool.genes_.at(8).in);
     ASSERT_EQ(5, pool.genes_.at(8).out);
