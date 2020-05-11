@@ -40,4 +40,35 @@ void GenePool::Initialize(const uint& n_input, const uint& n_output) {
     }
 }
 
+bool GenePool::AddNode(const uint& node_in, const uint& node_out) {
+    if (nodes_.at(node_in).level < nodes_.at(node_out).level) {
+        AdjustLevelsAbove(nodes_.at(node_in).level);
+        nodes_.push_back(Node(nodes_.at(node_in).level + 1));
+        genes_.push_back(Gene(node_in, nodes_.size() - 1));
+        genes_.push_back(Gene(nodes_.size() - 1, node_out));
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool GenePool::AddConnection(const uint& node_in, const uint& node_out) {
+    if (nodes_.at(node_in).level < nodes_.at(node_out).level) {
+        genes_.push_back(Gene(node_in, node_out));
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void GenePool::AdjustLevelsAbove(const uint level) {
+    for (uint i = 0; i < nodes_.size(); i++) {
+        if (nodes_.at(i).level > level) {
+            nodes_.at(i).level++;
+        }
+    }
+
+    depth_++;
+}
+
 }  // namespace NEAT

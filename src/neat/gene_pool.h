@@ -35,6 +35,9 @@ class GenePool {
 
     void Clear();
     void Initialize(const uint& n_input, const uint& n_output);
+    bool AddNode(const uint& node_in, const uint& node_out);
+    bool AddConnection(const uint& node_in, const uint& node_out);
+    void AdjustLevelsAbove(const uint level);
 
     NodeGroup input_nodes_;
     NodeGroup output_nodes_;
