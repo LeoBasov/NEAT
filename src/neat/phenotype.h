@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 
 namespace NEAT {
 class Phenotype {
@@ -17,6 +18,7 @@ class Phenotype {
     ~Phenotype() = default;
 
     bool HasNode(const uint& node_id) const;
+    void AddGene(const Gene& gene, const uint& node_in, const uint& node_out);
 
     double fitness_ = 0.0;
     std::vector<Gene> genes_;
