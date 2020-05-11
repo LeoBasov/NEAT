@@ -30,6 +30,8 @@ class NEAT {
     double Sigmoid(const double& value) const;
     bool AddConnection(const uint& phenotype_id, const uint& in, const uint& out);
     bool AddNode(const uint& phenotype_id, const uint& in, const uint& out);
+    bool SetWeight(const uint& phenotype_id, const uint& gene_id, const double& weight);
+    bool ChangeActivation(const uint& phenotype_id, const uint& gene_id);
 
     Config config_;
     Random random_;

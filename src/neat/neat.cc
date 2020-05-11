@@ -141,4 +141,26 @@ bool NEAT::AddNode(const uint& phenotype_id, const uint& in, const uint& out) {
     }
 }
 
+bool NEAT::SetWeight(const uint& phenotype_id, const uint& gene_id, const double& weight) {
+    for (auto& gene : phenotypes_.at(phenotype_id).genes_) {
+        if (gene.id == gene_id) {
+            gene.weight = weight;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool NEAT::ChangeActivation(const uint& phenotype_id, const uint& gene_id) {
+    for (auto& gene : phenotypes_.at(phenotype_id).genes_) {
+        if (gene.id == gene_id) {
+            gene.enabled = !gene.enabled;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 }  // namespace NEAT
