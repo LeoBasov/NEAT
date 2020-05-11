@@ -57,6 +57,53 @@ TEST(GenePool, AddNode) {
     ASSERT_FALSE(pool.AddNode(4, 0));
     ASSERT_FALSE(pool.AddNode(4, 1));
     ASSERT_FALSE(pool.AddNode(4, 2));
+
+    ASSERT_TRUE(pool.AddNode(0, 3));
+
+    ASSERT_EQ(3, pool.depth_);
+
+    ASSERT_EQ(0, pool.nodes_.at(0).level);
+    ASSERT_EQ(0, pool.nodes_.at(1).level);
+    ASSERT_EQ(0, pool.nodes_.at(2).level);
+
+    ASSERT_EQ(2, pool.nodes_.at(3).level);
+    ASSERT_EQ(2, pool.nodes_.at(4).level);
+
+    ASSERT_EQ(1, pool.nodes_.at(5).level);
+
+    ASSERT_EQ(0, pool.genes_.at(6).in);
+    ASSERT_EQ(5, pool.genes_.at(6).out);
+
+    ASSERT_EQ(5, pool.genes_.at(7).in);
+    ASSERT_EQ(3, pool.genes_.at(7).out);
+}
+
+TEST(GenePool, AddConnection) {
+    GenePool pool;
+
+    pool.Initialize(3, 2);
+
+    ASSERT_FALSE(pool.AddConnection(0, 1));
+    ASSERT_FALSE(pool.AddConnection(0, 2));
+    ASSERT_FALSE(pool.AddConnection(2, 1));
+
+    ASSERT_FALSE(pool.AddConnection(3, 4));
+
+    ASSERT_FALSE(pool.AddConnection(3, 0));
+    ASSERT_FALSE(pool.AddConnection(3, 1));
+    ASSERT_FALSE(pool.AddConnection(3, 2));
+
+    ASSERT_FALSE(pool.AddConnection(4, 0));
+    ASSERT_FALSE(pool.AddConnection(4, 1));
+    ASSERT_FALSE(pool.AddConnection(4, 2));
+
+    ASSERT_FALSE(pool.AddConnection(0, 3));
+    ASSERT_FALSE(pool.AddConnection(1, 3));
+    ASSERT_FALSE(pool.AddConnection(2, 3));
+
+    ASSERT_FALSE(pool.AddConnection(0, 4));
+    ASSERT_FALSE(pool.AddConnection(1, 4));
+    ASSERT_FALSE(pool.AddConnection(2, 4));
 }
 
 }  // namespace NEAT
