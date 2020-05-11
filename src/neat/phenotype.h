@@ -10,8 +10,8 @@ class Phenotype {
    public:
     struct Gene {
         uint id;
-        bool enabled;
-        double weight;
+        bool enabled = true;
+        double weight = 1.0;
     };
 
     Phenotype();
