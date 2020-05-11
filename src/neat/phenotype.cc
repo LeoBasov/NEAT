@@ -17,10 +17,10 @@ bool Phenotype::HasNode(const uint& node_id) const {
 void Phenotype::AddGene(const Gene& gene, const uint& node_in, const uint& node_out) {
     genes_.push_back(gene);
 
-    if(!HasNode(node_in)){
+    if (!HasNode(node_in)) {
         node_ids_.push_back(node_in);
     }
-    if(!HasNode(node_out)){
+    if (!HasNode(node_out)) {
         node_ids_.push_back(node_out);
     }
 

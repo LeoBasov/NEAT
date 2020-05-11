@@ -33,16 +33,20 @@ Phenotype NEAT::Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_p
     for (uint i = 0, fit = 0, less = 0; i < max; i++) {
         if (fitter_parent.genes_.at(fit).id == i && less_fit_parent.genes_.at(less).id == i) {
             if (random_.RandomNumber() > 0.5) {
-                child.AddGene(fitter_parent.genes_.at(fit), gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).in, gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).out);
+                child.AddGene(fitter_parent.genes_.at(fit), gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).in,
+                              gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).out);
                 fit++;
                 less++;
             } else {
-                child.AddGene(less_fit_parent.genes_.at(fit), gene_pool_.genes_.at(less_fit_parent.genes_.at(fit).id).in, gene_pool_.genes_.at(less_fit_parent.genes_.at(fit).id).out);
+                child.AddGene(less_fit_parent.genes_.at(fit),
+                              gene_pool_.genes_.at(less_fit_parent.genes_.at(fit).id).in,
+                              gene_pool_.genes_.at(less_fit_parent.genes_.at(fit).id).out);
                 fit++;
                 less++;
             }
         } else if (fitter_parent.genes_.at(fit).id == i) {
-            child.AddGene(fitter_parent.genes_.at(fit), gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).in, gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).out);
+            child.AddGene(fitter_parent.genes_.at(fit), gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).in,
+                          gene_pool_.genes_.at(fitter_parent.genes_.at(fit).id).out);
             fit++;
         }
     }
