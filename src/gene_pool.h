@@ -37,7 +37,7 @@ class GenePool {
     NodeGroup input_nodes_;
     NodeGroup output_nodes_;
     NodeGroup hidden_nodes_;
-    // All noes are sorted in a signle list.
+    // All nodes are sorted in a signle list.
     // First input, then output, then everything else.
     // No input or output node can be added later.
     std::vector<Node> nodes_;

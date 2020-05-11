@@ -13,7 +13,7 @@ class NEAT {
     ~NEAT() = default;
 
     void Clear();
-    void Execute(const std::pair<VectorXd, VectorXd>& input_output);
+    void Execute(const std::vector<std::pair<VectorXd, VectorXd>> &input_outputs);
 
    private:
     GenePool gene_pool_;
