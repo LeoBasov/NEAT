@@ -13,6 +13,8 @@ TEST(GenePool, Initialize) {
 
     ASSERT_EQ(2, pool.depth_);
 
+    ASSERT_EQ(5, pool.nodes_.size());
+
     ASSERT_EQ(0, pool.node_ofset_.at(0));
     ASSERT_EQ(3, pool.node_ofset_.at(1));
     ASSERT_EQ(5, pool.node_ofset_.at(2));
