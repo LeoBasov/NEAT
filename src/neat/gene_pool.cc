@@ -16,7 +16,6 @@ void GenePool::Clear() {
 
 void GenePool::Initialize(const uint& n_input, const uint& n_output) {
     Clear();
-    nodes_.resize(n_input + n_output);
     input_nodes_.n_parts = n_input;
     output_nodes_.ofset = n_input;
     output_nodes_.n_parts = n_output;

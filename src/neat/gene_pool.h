@@ -10,7 +10,7 @@ class GenePool {
     struct Node {
         Node(const uint& level = 0) : level(level) {}
 
-        uint level = 0;
+        uint level;
     };
 
     struct Gene {
