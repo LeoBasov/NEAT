@@ -113,4 +113,25 @@ TEST(GenePool, AddConnection) {
     ASSERT_EQ(5, pool.genes_.at(8).out);
 }
 
+TEST(GenePool, Clear) {
+    GenePool pool;
+
+    pool.Initialize(3, 2);
+    pool.AddNode(0, 3);
+    pool.AddConnection(1, 5);
+
+    pool.Clear();
+
+    ASSERT_EQ(0, pool.input_nodes_.ofset);
+    ASSERT_EQ(0, pool.input_nodes_.n_parts);
+    ASSERT_EQ(0, pool.output_nodes_.ofset);
+    ASSERT_EQ(0, pool.output_nodes_.n_parts);
+    ASSERT_EQ(0, pool.hidden_nodes_.ofset);
+    ASSERT_EQ(0, pool.hidden_nodes_.n_parts);
+    ASSERT_EQ(0, pool.nodes_.size());
+    ASSERT_EQ(0, pool.genes_.size());
+    ASSERT_EQ(0, pool.node_ofset_.size());
+    ASSERT_EQ(0,  pool.depth_);
+}
+
 }  // namespace NEAT
