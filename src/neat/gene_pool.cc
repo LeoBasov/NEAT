@@ -10,8 +10,6 @@ void GenePool::Clear() {
     hidden_nodes_.Clear();
     nodes_.clear();
     genes_.clear();
-    node_ofset_.clear();
-    depth_ = 0;
 }
 
 void GenePool::Initialize(const uint& n_input, const uint& n_output) {
@@ -20,10 +18,6 @@ void GenePool::Initialize(const uint& n_input, const uint& n_output) {
     output_nodes_.ofset = n_input;
     output_nodes_.n_parts = n_output;
     hidden_nodes_.ofset = output_nodes_.ofset + output_nodes_.n_parts;
-    node_ofset_.push_back(0);
-    node_ofset_.push_back(n_input);
-    node_ofset_.push_back(n_input + n_output);
-    depth_ = 2;
 
     for (uint i = 0; i < n_input; i++) {
         nodes_.push_back(Node(0));
@@ -74,8 +68,6 @@ void GenePool::AdjustLevelsAbove(const uint level) {
             nodes_.at(i).level++;
         }
     }
-
-    depth_++;
 }
 
 }  // namespace NEAT

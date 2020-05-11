@@ -47,7 +47,5 @@ class GenePool {
     // No input or output node can be added later.
     std::vector<Node> nodes_;
     std::vector<Gene> genes_;
-    std::vector<uint> node_ofset_;
-    uint depth_ = 0;
 };
 }  // namespace NEAT

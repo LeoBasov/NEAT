@@ -10,6 +10,19 @@ void NEAT::Clear() {
     networks_.clear();
 }
 
+void NEAT::Initialize(const Config& config) {
+    Clear();
+    config_ = config;
+    gene_pool_.Initialize(config_.n_input, config_.n_output);
+    phenotypes_.resize(config_.n_phenotypes);
+
+    for (uint i = 0; i < gene_pool_.genes_.size(); i++) {
+        for (uint j = 0; j < phenotypes_.size(); j++) {
+            phenotypes_.at(j).AddGene(i);
+        }
+    }
+}
+
 void NEAT::Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outputs) {
     std::vector<double> fitness_vec(phenotypes_.size());
     VectorXd output(gene_pool_.output_nodes_.n_parts);

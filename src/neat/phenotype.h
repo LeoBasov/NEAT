@@ -18,6 +18,7 @@ class Phenotype {
     ~Phenotype() = default;
 
     void AddGene(const Gene& gene);
+    void AddGene(const uint& gene_id);
 
     double fitness_ = 0.0;
     std::vector<Gene> genes_;
