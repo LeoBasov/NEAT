@@ -50,8 +50,8 @@ double NEAT::ExecuteNode(const uint& network_id, const uint& node_id, const Vect
     double ret_val(0.0);
 
     for (auto in_weight : networks_.at(network_id).nodes_.at(node_id).in_weights) {
-        if (node_id < gene_pool_.input_nodes_.n_parts) {
-            ret_val += input(node_id);
+        if (in_weight.second < gene_pool_.input_nodes_.n_parts) {
+            ret_val += input(in_weight.second);
         } else {
             ret_val += in_weight.second * ExecuteNode(network_id, in_weight.second, input);
         }
