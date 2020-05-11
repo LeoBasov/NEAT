@@ -104,6 +104,13 @@ TEST(GenePool, AddConnection) {
     ASSERT_FALSE(pool.AddConnection(0, 4));
     ASSERT_FALSE(pool.AddConnection(1, 4));
     ASSERT_FALSE(pool.AddConnection(2, 4));
+
+    pool.AddNode(0, 3);
+
+    ASSERT_TRUE(pool.AddConnection(1, 5));
+
+    ASSERT_EQ(1, pool.genes_.at(8).in);
+    ASSERT_EQ(5, pool.genes_.at(8).out);
 }
 
 }  // namespace NEAT
