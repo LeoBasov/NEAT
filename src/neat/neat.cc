@@ -26,7 +26,26 @@ void NEAT::Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outpu
     }
 }
 
-void NEAT::ExecuteNetwork(const uint& network_id, const VectorXd& input, VectorXd& output) const {}
+void NEAT::ExecuteNetwork(const uint& network_id, const VectorXd& input, VectorXd& output) const {
+    for (uint i = gene_pool_.output_nodes_.ofset, j = 0;
+         i < gene_pool_.output_nodes_.ofset + gene_pool_.output_nodes_.n_parts; i++, j++) {
+        output(j) = ExecuteNode(network_id, i, input);
+    }
+}
+
+double NEAT::ExecuteNode(const uint& network_id, const uint& node_id, const VectorXd& input) const {
+    double ret_val(0.0);
+
+    for (auto in_weight : networks_.at(network_id).nodes_.at(node_id).in_weights) {
+        if (node_id < gene_pool_.input_nodes_.n_parts) {
+            ret_val += input(node_id);
+        } else {
+            ret_val += in_weight.second * ExecuteNode(network_id, in_weight.second, input);
+        }
+    }
+
+    return Sigmoid(ret_val);
+}
 
 Phenotype NEAT::Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_parent) {
     Phenotype child;
@@ -72,5 +91,7 @@ void NEAT::BuildNetworks() {
         }
     }
 }
+
+double NEAT::Sigmoid(const double& value) const { return 1.0 / (1.0 + std::exp(-value)); }
 
 }  // namespace NEAT

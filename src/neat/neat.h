@@ -17,7 +17,9 @@ class NEAT {
     void Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outputs);
     Phenotype Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_parent);
     void ExecuteNetwork(const uint& network_id, const VectorXd& input, VectorXd& output) const;
+    double ExecuteNode(const uint& network_id, const uint& node_id, const VectorXd& input) const;
     void BuildNetworks();
+    double Sigmoid(const double& value) const;
 
    private:
     Random random_;
