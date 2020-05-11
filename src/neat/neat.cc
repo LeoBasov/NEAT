@@ -85,12 +85,12 @@ Phenotype NEAT::Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_p
 }
 
 void NEAT::BuildNetworks() {
-    networks_.cend();
+    networks_.resize(phenotypes_.size());
 
-    for (auto phenotype : phenotypes_) {
+    for (uint i = 0; i < phenotypes_.size(); i++) {
         Network network;
 
-        for (auto gene : phenotype.genes_) {
+        for (auto gene : phenotypes_.at(i).genes_) {
             if (gene.enabled) {
                 GenePool::Gene pool_gene(gene_pool_.genes_.at(gene.id));
 
@@ -102,6 +102,8 @@ void NEAT::BuildNetworks() {
                 }
             }
         }
+
+        networks_.at(i) = network;
     }
 }
 
