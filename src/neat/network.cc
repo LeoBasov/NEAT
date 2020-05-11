@@ -2,6 +2,6 @@
 
 namespace NEAT {
 
-Network::Network(const uint &depth) : level_matrizes_(depth) {}
+Network::Network() {}
 
 }  // namespace NEAT
