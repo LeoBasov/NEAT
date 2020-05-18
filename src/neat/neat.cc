@@ -64,8 +64,9 @@ Phenotype NEAT::Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_p
     Phenotype child;
     const uint max(std::max(fitter_parent.genes_.back().id, less_fit_parent.genes_.back().id));
 
-    for (uint i = 0, fit = 0, less = 0; i < max; i++) {
-        if (fitter_parent.genes_.at(fit).id == i && less_fit_parent.genes_.at(less).id == i) {
+    for (uint i = 0, fit = 0, less = 0; i <= max; i++) {
+        if (((fit < fitter_parent.genes_.size()) && (less < less_fit_parent.genes_.size())) &&
+            fitter_parent.genes_.at(fit).id == i && less_fit_parent.genes_.at(less).id == i) {
             if (random_.RandomNumber() > 0.5) {
                 child.AddGene(fitter_parent.genes_.at(fit));
                 fit++;
@@ -75,7 +76,7 @@ Phenotype NEAT::Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_p
                 fit++;
                 less++;
             }
-        } else if (fitter_parent.genes_.at(fit).id == i) {
+        } else if ((fit < fitter_parent.genes_.size()) && (fitter_parent.genes_.at(fit).id == i)) {
             child.AddGene(fitter_parent.genes_.at(fit));
             fit++;
         }
@@ -133,8 +134,8 @@ bool NEAT::AddNode(const uint& phenotype_id, const uint& in, const uint& out) {
             }
         }
 
-        phenotypes_.at(phenotype_id).AddGene(gene_pool_.genes_.size() - 1);
         phenotypes_.at(phenotype_id).AddGene(gene_pool_.genes_.size() - 2);
+        phenotypes_.at(phenotype_id).AddGene(gene_pool_.genes_.size() - 1);
         phenotypes_.at(phenotype_id).genes_.at(phenotypes_.at(phenotype_id).genes_.size() - 1).weight = weight;
     } else {
         return false;
@@ -167,16 +168,17 @@ double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std
     double exess(0.0), disjoint(0.0), weights(0.0), tot_weigh_n(1.0);
     const uint max_id(std::max(first.genes_.back().id, second.genes_.back().id));
     const double max_size(std::max(first.genes_.size(), second.genes_.size()));
-    const double small_max(std::min(first.genes_.back().id, second.genes_.back().id));
+    const uint small_max(std::min(first.genes_.back().id, second.genes_.back().id));
 
-    for (uint i = 0, f = 0, s = 0; i < max_id; i++) {
-        if (first.genes_.at(f).id == i && second.genes_.at(s).id == i) {
-            weights += first.genes_.at(f).weight + second.genes_.at(s).weight;
-            tot_weigh_n += 2.0;
+    for (uint i = 0, f = 0, s = 0; i <= max_id; i++) {
+        if (((f < first.genes_.size()) && (s < second.genes_.size())) && first.genes_.at(f).id == i &&
+            second.genes_.at(s).id == i) {
+            weights += std::abs(first.genes_.at(f).weight - second.genes_.at(s).weight);
+            tot_weigh_n += 1.0;
 
             f++;
             s++;
-        } else if (first.genes_.at(f).id == i) {
+        } else if ((f < first.genes_.size()) && (first.genes_.at(f).id == i)) {
             if (first.genes_.at(f).id > small_max) {
                 exess += 1.0;
             } else {
@@ -184,7 +186,7 @@ double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std
             }
 
             f++;
-        } else if (second.genes_.at(s).id == i) {
+        } else if ((s < second.genes_.size()) && (second.genes_.at(s).id == i)) {
             if (second.genes_.at(f).id > small_max) {
                 exess += 1.0;
             } else {

@@ -155,4 +155,26 @@ TEST(NEAT, AddNode) {
     neat.Execute(input_outputs);
 }
 
+TEST(NEAT, Distance) {
+    NEAT neat;
+    NEAT::Config config;
+    std::array<double, 3> paramets;
+
+    paramets.at(0) = 1.0;
+    paramets.at(1) = 1.0;
+    paramets.at(2) = 1.0;
+
+    config.n_input = 3;
+    config.n_output = 2;
+    config.n_phenotypes = 2;
+
+    neat.Initialize(config);
+
+    ASSERT_DOUBLE_EQ(0.0, neat.Distance(neat.phenotypes_.at(0), neat.phenotypes_.at(1), paramets));
+
+    neat.AddNode(0, 0, 3);
+
+    ASSERT_FALSE(0.0 == neat.Distance(neat.phenotypes_.at(0), neat.phenotypes_.at(1), paramets));
+}
+
 }  // namespace NEAT
