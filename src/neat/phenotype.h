@@ -12,6 +12,11 @@ class Phenotype {
         uint id;
         bool enabled = true;
         double weight = 1.0;
+
+        inline bool operator<(const Gene& rhs) { return this->id < rhs.id; }
+        inline bool operator>(const Gene& rhs) { return this->id > rhs.id; }
+        inline bool operator<=(const Gene& rhs) { return !(*this > rhs); }
+        inline bool operator>=(const Gene& rhs) { return !(*this < rhs); }
     };
 
     Phenotype();

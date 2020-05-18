@@ -6,6 +6,7 @@ Phenotype::Phenotype() {}
 
 void Phenotype::AddGene(const Gene& gene) {
     genes_.push_back(gene);
+    std::sort(genes_.begin(), genes_.end());
 }
 void Phenotype::AddGene(const uint& gene_id) {
     Gene gene;
