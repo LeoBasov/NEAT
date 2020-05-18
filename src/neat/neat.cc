@@ -270,11 +270,8 @@ void NEAT::Reproduce() {
                     offspring2 = phenotypes_.at(species.phenotype_ids.at(i));
                 }
 
-                // Mute the two offsprings
-
                 offspring1.fitness_ = 0.0;
                 offspring2.fitness_ = 0.0;
-
                 offsprings.push_back(offspring1);
                 offsprings.push_back(offspring2);
                 j = i;
@@ -287,15 +284,26 @@ void NEAT::Reproduce() {
 
                 Phenotype offspring = phenotypes_.at(species.phenotype_ids.at(j));
                 offspring.fitness_ = 0.0;
-
-                // Mutate offsprint
-
                 offsprings.push_back(offspring);
             }
         }
     }
 
     phenotypes_ = offsprings;
+}
+
+void NEAT::Mutate() {
+    for (uint i = 0; i < phenotypes_.size(); i++) {
+        const double ran1(random_.RandomNumber()), ran2(random_.RandomNumber()), ran3(random_.RandomNumber());
+        const uint in(std::floor(gene_pool_.nodes_.size()) * ran2), out(std::floor(gene_pool_.nodes_.size()) * ran3);
+
+        if (ran1 < config_.probabilities.new_node) {
+            AddNode(i, in, out);
+        } else if (ran1 < config_.probabilities.new_connection) {
+            AddConnection(i, in, out);
+        } else if (ran1 < config_.probabilities.new_weight) {
+        }
+    }
 }
 
 }  // namespace NEAT

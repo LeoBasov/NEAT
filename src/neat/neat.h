@@ -68,6 +68,7 @@ class NEAT {
     double Distance(const Phenotype& first, const Phenotype& second, const std::array<double, 3>& parameters) const;
     void Speciate();
     void Reproduce();
+    void Mutate();
 
     Config config_;
     Random random_;
