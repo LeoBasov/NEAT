@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.10)
 project (NEAT_tests)
 add_subdirectory (unit_tests)
+add_subdirectory (xor_test)
 enable_testing ()
 add_test (NAME MyTest COMMAND unit_tests)

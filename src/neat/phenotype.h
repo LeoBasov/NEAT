@@ -28,5 +28,10 @@ class Phenotype {
 
     double fitness_ = 0.0;
     std::vector<Gene> genes_;
+
+    inline bool operator<(const Phenotype& rhs) { return this->fitness_ < rhs.fitness_; }
+    inline bool operator>(const Phenotype& rhs) { return this->fitness_ > rhs.fitness_; }
+    inline bool operator<=(const Phenotype& rhs) { return !(*this > rhs); }
+    inline bool operator>=(const Phenotype& rhs) { return !(*this < rhs); }
 };
 }  // namespace NEAT
