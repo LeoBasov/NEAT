@@ -14,7 +14,7 @@ int main() {
 
     config.n_input = 3;
     config.n_output = 1;
-    config.n_phenotypes = 150;
+    config.n_phenotypes = 1;
 
     neat.Initialize(config);
     neat.BuildNetworks();
