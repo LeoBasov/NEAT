@@ -26,8 +26,8 @@ int main() {
     std::cout << "---------------------------------------------------------" << std::endl;
 
     for (uint i = 0; i < n_itarations; i++) {
-        // mutate
         neat.Speciate();
+        // Reproduce
         neat.BuildNetworks();
         neat.Execute(input_outputs);
 
