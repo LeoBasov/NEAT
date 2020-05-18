@@ -123,7 +123,7 @@ bool NEAT::AddNode(const uint& phenotype_id, const uint& in, const uint& out) {
     if (gene_pool_.AddNode(in, out)) {
         double weight(0.0);
 
-        for (auto gene : phenotypes_.at(phenotype_id).genes_) {
+        for (auto& gene : phenotypes_.at(phenotype_id).genes_) {
             GenePool::Gene gene_p(gene_pool_.genes_.at(gene.id));
 
             if ((gene_p.in == in) && (gene_p.out == out)) {
