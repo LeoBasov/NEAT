@@ -163,4 +163,40 @@ bool NEAT::ChangeActivation(const uint& phenotype_id, const uint& gene_id) {
     return false;
 }
 
+double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std::array<double, 3>& parameters) const {
+    double exess(0.0), disjoint(0.0), weights(0.0), tot_weigh_n(1.0);
+    const uint max_id(std::max(first.genes_.back().id, second.genes_.back().id));
+    const double max_size(std::max(first.genes_.size(), second.genes_.size()));
+    const double small_max(std::min(first.genes_.back().id, second.genes_.back().id));
+
+    for (uint i = 0, f = 0, s = 0; i < max_id; i++) {
+        if (first.genes_.at(f).id == i && second.genes_.at(s).id == i) {
+            weights += first.genes_.at(f).weight + second.genes_.at(s).weight;
+            tot_weigh_n += 2.0;
+
+            f++;
+            s++;
+        } else if (first.genes_.at(f).id == i) {
+            if (first.genes_.at(f).id > small_max) {
+                exess += 1.0;
+            } else {
+                disjoint += 1.0;
+            }
+
+            f++;
+        } else if (second.genes_.at(s).id == i) {
+            if (second.genes_.at(f).id > small_max) {
+                exess += 1.0;
+            } else {
+                disjoint += 1.0;
+            }
+
+            s++;
+        }
+    }
+
+    return (parameters.at(0) * exess / max_size) + (parameters.at(1) * disjoint / max_size) +
+           (parameters.at(2) * weights / tot_weigh_n);
+}
+
 }  // namespace NEAT

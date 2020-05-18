@@ -35,6 +35,7 @@ class NEAT {
     bool AddNode(const uint& phenotype_id, const uint& in, const uint& out);
     bool SetWeight(const uint& phenotype_id, const uint& gene_id, const double& weight);
     bool ChangeActivation(const uint& phenotype_id, const uint& gene_id);
+    double Distance(const Phenotype& first, const Phenotype& second, const std::array<double, 3>& parameters) const;
 
     Config config_;
     Random random_;
