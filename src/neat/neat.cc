@@ -294,11 +294,14 @@ void NEAT::Reproduce() {
 void NEAT::Mutate() {
     for (uint i = 0; i < phenotypes_.size(); i++) {
         const double ran1(random_.RandomNumber()), ran2(random_.RandomNumber()), ran3(random_.RandomNumber());
-        const uint in(std::floor(gene_pool_.nodes_.size()) * ran2), out(std::floor(gene_pool_.nodes_.size()) * ran3);
 
         if (ran1 < config_.probabilities.new_node) {
-            AddNode(i, in, out);
+            const uint gene_id(std::floor(phenotypes_.at(i).genes_.size() * ran2));
+            const GenePool::Gene gene_p(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene_id).id));
+            AddNode(i, gene_p.in, gene_p.out);
         } else if (ran1 < config_.probabilities.new_connection) {
+            const uint in(std::floor(gene_pool_.nodes_.size()) * ran2),
+                out(std::floor(gene_pool_.nodes_.size()) * ran3);
             AddConnection(i, in, out);
         } else if (ran1 < config_.probabilities.new_weight) {
         }
