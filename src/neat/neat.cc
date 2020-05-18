@@ -50,16 +50,12 @@ void NEAT::ExecuteNetwork(const uint& network_id, const VectorXd& input, VectorX
 double NEAT::ExecuteNode(const uint& network_id, const uint& node_id, const VectorXd& input) const {
     double ret_val(0.0);
 
-    try {
-        for (auto in_weight : networks_.at(network_id).nodes_.at(node_id).in_weights) {
-            if (in_weight.first < gene_pool_.input_nodes_.n_parts) {
-                ret_val += in_weight.second * input(in_weight.first);
-            } else {
-                ret_val += in_weight.second * ExecuteNode(network_id, in_weight.first, input);
-            }
+    for (auto in_weight : networks_.at(network_id).nodes_.at(node_id).in_weights) {
+        if (in_weight.first < gene_pool_.input_nodes_.n_parts) {
+            ret_val += in_weight.second * input(in_weight.first);
+        } else {
+            ret_val += in_weight.second * ExecuteNode(network_id, in_weight.first, input);
         }
-    } catch (...) {
-        throw std::range_error(std::to_string(network_id));
     }
 
     return Sigmoid(ret_val, config_.sigmoid_parameter);
