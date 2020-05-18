@@ -31,6 +31,7 @@ TEST(NEAT, Initialize) {
 
     ASSERT_EQ(n_input + n_output, neat.gene_pool_.nodes_.size());
     ASSERT_EQ(n_input * n_output, neat.gene_pool_.genes_.size());
+
 }
 
 TEST(NEAT, BuildNetworks) {
