@@ -12,9 +12,11 @@ namespace NEAT {
 class NEAT {
    public:
     struct Config {
+        // The number of input nodes must accound for an bias node
         uint n_input;
         uint n_output;
         uint n_phenotypes;
+        double sigmoid_parameter = 1.0;
     };
 
     NEAT();
@@ -22,6 +24,7 @@ class NEAT {
 
     void Clear();
     void Initialize(const Config& config);
+    // The input vector mus contain a "BIAS 1"
     void Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outputs);
     Phenotype Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_parent);
     void ExecuteNetwork(const uint& network_id, const VectorXd& input, VectorXd& output) const;

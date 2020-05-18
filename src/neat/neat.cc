@@ -57,7 +57,7 @@ double NEAT::ExecuteNode(const uint& network_id, const uint& node_id, const Vect
         }
     }
 
-    return Sigmoid(ret_val);
+    return Sigmoid(ret_val, config_.sigmoid_parameter);
 }
 
 Phenotype NEAT::Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_parent) {
