@@ -47,6 +47,16 @@ TEST(NEAT, BuildNetworks) {
     ASSERT_EQ(config.n_phenotypes, neat.networks_.size());
 }
 
+TEST(NEAT, Sigmoid) {
+    NEAT neat;
+    const double input_1(-1000.0), input_2(0.0), input_3(1000.0);
+    const double output_1(0.0), output_2(0.5), output_3(1.0);
+
+    ASSERT_DOUBLE_EQ(output_1, neat.Sigmoid(input_1));
+    ASSERT_DOUBLE_EQ(output_2, neat.Sigmoid(input_2));
+    ASSERT_DOUBLE_EQ(output_3, neat.Sigmoid(input_3));
+}
+
 TEST(NEAT, Execute) {
     NEAT neat;
     NEAT::Config config;
