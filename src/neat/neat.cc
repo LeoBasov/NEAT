@@ -203,8 +203,10 @@ double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std
 }
 
 void NEAT::Speciate() {
+    double total_adjuste_fitness(0.0);
+
     for (auto& spcies : species_) {
-        spcies.phenotype_ids.clear();
+        spcies.Clear();
     }
 
     for (uint i = 0; i < phenotypes_.size(); i++) {
@@ -227,6 +229,22 @@ void NEAT::Speciate() {
             species_.push_back(species);
         }
     }
+
+    for (auto& species : species_) {
+        species.ref_phenotype = phenotypes_.at(species.phenotype_ids.front());
+
+        for (const auto& id : species.phenotype_ids) {
+            phenotypes_.at(id).fitness_ /= species.phenotype_ids.size();
+            species.total_adjusted_fitness += phenotypes_.at(id).fitness_;
+            total_adjuste_fitness += phenotypes_.at(id).fitness_;
+        }
+    }
+
+    for (auto& species : species_) {
+        species.n_offspring = (species.total_adjusted_fitness / total_adjuste_fitness) * config_.n_phenotypes;
+    }
 }
+
+void NEAT::Reproduce() {}
 
 }  // namespace NEAT

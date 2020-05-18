@@ -39,6 +39,14 @@ class NEAT {
 
         Phenotype ref_phenotype;
         std::vector<uint> phenotype_ids;
+        uint n_offspring = 0;
+        double total_adjusted_fitness = 0.0;
+
+        void Clear() {
+            phenotype_ids.clear();
+            n_offspring = 0;
+            total_adjusted_fitness = 0.0;
+        }
     };
 
     NEAT();
@@ -59,6 +67,7 @@ class NEAT {
     bool ChangeActivation(const uint& phenotype_id, const uint& gene_id);
     double Distance(const Phenotype& first, const Phenotype& second, const std::array<double, 3>& parameters) const;
     void Speciate();
+    void Reproduce();
 
     Config config_;
     Random random_;

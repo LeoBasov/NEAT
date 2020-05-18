@@ -27,7 +27,7 @@ int main() {
 
     for (uint i = 0; i < n_itarations; i++) {
         neat.Speciate();
-        // Reproduce
+        neat.Reproduce();
         neat.BuildNetworks();
         neat.Execute(input_outputs);
 
