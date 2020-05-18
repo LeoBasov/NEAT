@@ -11,13 +11,26 @@ namespace NEAT {
 // class responsible for mutation and gene pool extension
 class NEAT {
    public:
+    struct Probabilities {
+        double change_connection_weight = 0.8;
+        double weight_pertubated = 0.9;
+        double new_weight = 0.1;
+        double new_node = 0.03;
+        double new_connection = 0.05;
+        double cross_over = 0.75;
+        double interspecies = 0.001;
+    };
+
     struct Config {
         // The number of input nodes must accound for an bias node
         uint n_input;
         uint n_output;
         uint n_phenotypes;
-        double sigmoid_parameter = 1.0;
-        std::array<double, 3> species_distance_parameters{1.0, 1.0, 1.0};
+        uint max_imporf_free_itter = 15;
+        double sigmoid_parameter = 4.9;
+        double species_distance_threshold = 3.0;
+        std::array<double, 3> species_distance_parameters{1.0, 1.0, 0.4};
+        Probabilities probabilities;
     };
 
     struct Species {
@@ -33,7 +46,7 @@ class NEAT {
 
     void Clear();
     void Initialize(const Config& config);
-    // The input vector mus contain a "BIAS 1"
+    // The input vector mus contain a "BIAS 1" => first in vection(0)
     void Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outputs);
     Phenotype Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_parent);
     void ExecuteNetwork(const uint& network_id, const VectorXd& input, VectorXd& output) const;
