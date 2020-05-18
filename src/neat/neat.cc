@@ -22,8 +22,6 @@ void NEAT::Initialize(const Config& config) {
             phenotypes_.at(j).AddGene(i);
         }
     }
-
-    species_.push_back(Species(phenotypes_.back()));
 }
 
 void NEAT::Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outputs) {
@@ -202,6 +200,27 @@ double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std
 
     return (parameters.at(0) * exess / max_size) + (parameters.at(1) * disjoint / max_size) +
            (parameters.at(2) * weights / tot_weigh_n);
+}
+
+void NEAT::Speciate() {
+    for (uint i = 0; i < phenotypes_.size(); i++) {
+        bool found(false);
+
+        for (auto& spcies : species_) {
+            if (Distance(phenotypes_.at(i), spcies.ref_phenotype, config_.species_distance_parameters) <
+                config_.species_distance_threshold) {
+                spcies.phenotype_ids.push_back(i);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            Species species(phenotypes_.at(i));
+            species.phenotype_ids.push_back(i);
+            species_.push_back(species);
+        }
+    }
 }
 
 }  // namespace NEAT
