@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <sstream>
 
 #include "../common/random.h"
 #include "gene_pool.h"
@@ -69,6 +70,7 @@ class NEAT {
     void Speciate();
     void Reproduce();
     void Mutate();
+    std::string Str(const uint& phenotype_id) const;
 
     Config config_;
     Random random_;

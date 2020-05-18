@@ -50,12 +50,16 @@ void NEAT::ExecuteNetwork(const uint& network_id, const VectorXd& input, VectorX
 double NEAT::ExecuteNode(const uint& network_id, const uint& node_id, const VectorXd& input) const {
     double ret_val(0.0);
 
-    for (auto in_weight : networks_.at(network_id).nodes_.at(node_id).in_weights) {
-        if (in_weight.first < gene_pool_.input_nodes_.n_parts) {
-            ret_val += in_weight.second * input(in_weight.first);
-        } else {
-            ret_val += in_weight.second * ExecuteNode(network_id, in_weight.first, input);
+    try {
+        for (auto in_weight : networks_.at(network_id).nodes_.at(node_id).in_weights) {
+            if (in_weight.first < gene_pool_.input_nodes_.n_parts) {
+                ret_val += in_weight.second * input(in_weight.first);
+            } else {
+                ret_val += in_weight.second * ExecuteNode(network_id, in_weight.first, input);
+            }
         }
+    } catch (...) {
+        throw std::range_error(std::to_string(network_id));
     }
 
     return Sigmoid(ret_val, config_.sigmoid_parameter);
@@ -111,7 +115,22 @@ double NEAT::Sigmoid(const double& value, const double& paramters) const {
 }
 
 bool NEAT::AddConnection(const uint& phenotype_id, const uint& in, const uint& out) {
-    auto ret_val = gene_pool_.AddConnection(in, out);
+    std::pair<bool, unsigned int> ret_val{false, 0};
+
+    for (auto& gene : phenotypes_.at(phenotype_id).genes_) {
+        GenePool::Gene gene_p(gene_pool_.genes_.at(gene.id));
+
+        if ((gene_p.in == in) && (gene_p.out == out)) {
+            ret_val.first = true;
+            break;
+        }
+    }
+
+    if (!ret_val.first) {
+        return false;
+    }
+
+    ret_val = gene_pool_.AddConnection(in, out);
 
     if (ret_val.first) {
         return phenotypes_.at(phenotype_id).AddGeneWithCheck(ret_val.second);
@@ -306,6 +325,19 @@ void NEAT::Mutate() {
         } else if (ran1 < config_.probabilities.new_weight) {
         }
     }
+}
+
+std::string NEAT::Str(const uint& phenotype_id) const {
+    std::stringstream stream;
+
+    for (auto gene : phenotypes_.at(phenotype_id).genes_) {
+        stream << "IN: " << gene_pool_.genes_.at(gene.id).in << " ";
+        stream << "OUT: " << gene_pool_.genes_.at(gene.id).out << " ";
+        stream << "ENABLED: " << gene.enabled << " ";
+        stream << "WEIGHT: " << gene.weight << std::endl;
+    }
+
+    return stream.str();
 }
 
 }  // namespace NEAT
