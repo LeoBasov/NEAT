@@ -30,7 +30,7 @@ void NEAT::Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outpu
     for (uint outer_id = 0; outer_id < input_outputs.size(); outer_id++) {
         for (uint inner_id = 0; inner_id < phenotypes_.size(); inner_id++) {
             ExecuteNetwork(inner_id, input_outputs.at(outer_id).first, output);
-            fitness_vec.at(inner_id) = (input_outputs.at(outer_id).second - output).norm();
+            fitness_vec.at(inner_id) += 1.0 - (input_outputs.at(outer_id).second - output).norm();
         }
     }
 
@@ -50,10 +50,10 @@ double NEAT::ExecuteNode(const uint& network_id, const uint& node_id, const Vect
     double ret_val(0.0);
 
     for (auto in_weight : networks_.at(network_id).nodes_.at(node_id).in_weights) {
-        if (in_weight.second < gene_pool_.input_nodes_.n_parts) {
-            ret_val += input(in_weight.second);
+        if (in_weight.first < gene_pool_.input_nodes_.n_parts) {
+            ret_val += in_weight.second * input(in_weight.first);
         } else {
-            ret_val += in_weight.first * ExecuteNode(network_id, in_weight.second, input);
+            ret_val += in_weight.second * ExecuteNode(network_id, in_weight.first, input);
         }
     }
 
