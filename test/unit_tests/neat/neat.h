@@ -10,12 +10,27 @@ using namespace Eigen;
 TEST(NEAT, Initialize) {
     NEAT neat;
     NEAT::Config config;
+    const uint n_input(3), n_output(2), n_phenotypes(100);
 
-    config.n_input = 3;
-    config.n_output = 2;
-    config.n_phenotypes = 100;
+    config.n_input = n_input;
+    config.n_output = n_output;
+    config.n_phenotypes = n_phenotypes;
 
     neat.Initialize(config);
+
+    ASSERT_EQ(n_phenotypes, neat.phenotypes_.size());
+
+    ASSERT_EQ(0, neat.gene_pool_.input_nodes_.ofset);
+    ASSERT_EQ(n_input, neat.gene_pool_.input_nodes_.n_parts);
+
+    ASSERT_EQ(n_input, neat.gene_pool_.output_nodes_.ofset);
+    ASSERT_EQ(n_output, neat.gene_pool_.output_nodes_.n_parts);
+
+    ASSERT_EQ(n_input + n_output, neat.gene_pool_.hidden_nodes_.ofset);
+    ASSERT_EQ(0, neat.gene_pool_.hidden_nodes_.n_parts);
+
+    ASSERT_EQ(n_input + n_output, neat.gene_pool_.nodes_.size());
+    ASSERT_EQ(n_input * n_output, neat.gene_pool_.genes_.size());
 }
 
 TEST(NEAT, BuildNetworks) {
