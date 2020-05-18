@@ -17,6 +17,15 @@ class NEAT {
         uint n_output;
         uint n_phenotypes;
         double sigmoid_parameter = 1.0;
+        std::array<double, 3> species_distance_parameters{1.0, 1.0, 1.0};
+    };
+
+    struct Species {
+        Species() {}
+        Species(const Phenotype& phenotype) : ref_phenotype(phenotype) {}
+
+        Phenotype ref_phenotype;
+        std::vector<uint> phenotype_ids;
     };
 
     NEAT();
@@ -42,5 +51,6 @@ class NEAT {
     GenePool gene_pool_;
     std::vector<Phenotype> phenotypes_;
     std::vector<Network> networks_;
+    std::vector<Species> species_;
 };
 }  // namespace NEAT

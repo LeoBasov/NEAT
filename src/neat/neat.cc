@@ -8,6 +8,7 @@ void NEAT::Clear() {
     gene_pool_.Clear();
     phenotypes_.clear();
     networks_.clear();
+    species_.clear();
 }
 
 void NEAT::Initialize(const Config& config) {
@@ -21,6 +22,8 @@ void NEAT::Initialize(const Config& config) {
             phenotypes_.at(j).AddGene(i);
         }
     }
+
+    species_.push_back(Species(phenotypes_.back()));
 }
 
 void NEAT::Execute(const std::vector<std::pair<VectorXd, VectorXd>>& input_outputs) {
