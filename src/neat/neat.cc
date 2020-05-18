@@ -206,7 +206,7 @@ double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std
 
             f++;
         } else if ((s < second.genes_.size()) && (second.genes_.at(s).id == i)) {
-            if (second.genes_.at(f).id > small_max) {
+            if (second.genes_.at(s).id > small_max) {
                 exess += 1.0;
             } else {
                 disjoint += 1.0;
