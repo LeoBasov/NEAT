@@ -88,22 +88,20 @@ void NEAT::BuildNetworks() {
     networks_.resize(phenotypes_.size());
 
     for (uint i = 0; i < phenotypes_.size(); i++) {
-        Network network;
+        networks_.at(i).nodes_.clear();
 
         for (auto gene : phenotypes_.at(i).genes_) {
             if (gene.enabled) {
                 GenePool::Gene pool_gene(gene_pool_.genes_.at(gene.id));
 
-                if (network.nodes_.count(pool_gene.out)) {
-                    network.nodes_[pool_gene.out].in_weights.push_back({pool_gene.in, gene.weight});
+                if (networks_.at(i).nodes_.count(pool_gene.out)) {
+                    networks_.at(i).nodes_[pool_gene.out].in_weights.push_back({pool_gene.in, gene.weight});
                 } else {
-                    network.nodes_[pool_gene.out] = Network::Node();
-                    network.nodes_[pool_gene.out].in_weights.push_back({pool_gene.in, gene.weight});
+                    networks_.at(i).nodes_[pool_gene.out] = Network::Node();
+                    networks_.at(i).nodes_[pool_gene.out].in_weights.push_back({pool_gene.in, gene.weight});
                 }
             }
         }
-
-        networks_.at(i) = network;
     }
 }
 
