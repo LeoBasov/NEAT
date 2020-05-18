@@ -72,7 +72,7 @@ Phenotype NEAT::Mate(const Phenotype& fitter_parent, const Phenotype& less_fit_p
                 fit++;
                 less++;
             } else {
-                child.AddGene(less_fit_parent.genes_.at(fit));
+                child.AddGene(less_fit_parent.genes_.at(less));
                 fit++;
                 less++;
             }

@@ -57,6 +57,28 @@ TEST(NEAT, Sigmoid) {
     ASSERT_DOUBLE_EQ(output_3, neat.Sigmoid(input_3));
 }
 
+TEST(NEAT, Mate) {
+    NEAT neat;
+    NEAT::Config config;
+
+    config.n_input = 3;
+    config.n_output = 1;
+    config.n_phenotypes = 2;
+
+    neat.Initialize(config);
+
+    neat.AddNode(0, 0, 3);
+
+    Phenotype new_phen = neat.Mate(neat.phenotypes_.at(0), neat.phenotypes_.at(1));
+
+    ASSERT_EQ(new_phen.genes_.size(), neat.phenotypes_.at(0).genes_.size());
+
+    for (uint i = 0; i < neat.phenotypes_.at(0).genes_.size(); i++) {
+        ASSERT_EQ(new_phen.genes_.at(i).id, neat.phenotypes_.at(0).genes_.at(i).id);
+        ASSERT_EQ(new_phen.genes_.at(i).weight, neat.phenotypes_.at(0).genes_.at(i).weight);
+    }
+}
+
 TEST(NEAT, Execute) {
     // XOR test
     NEAT neat;
