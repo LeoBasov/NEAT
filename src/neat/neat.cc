@@ -245,6 +245,57 @@ void NEAT::Speciate() {
     }
 }
 
-void NEAT::Reproduce() {}
+void NEAT::Reproduce() {
+    std::vector<Phenotype> offsprings;
+
+    for (auto& species : species_) {
+        const uint considered(0.5 * species.phenotype_ids.size());
+
+        while (offsprings.size() < species.n_offspring) {
+            uint j;
+            for (uint i = 1; i < considered; i += 2) {
+                if (offsprings.size() >= species.n_offspring) {
+                    break;
+                }
+
+                Phenotype offspring1, offspring2;
+
+                if (random_.RandomNumber() < config_.probabilities.cross_over) {
+                    offspring1 = Mate(phenotypes_.at(species.phenotype_ids.at(i - 1)),
+                                      phenotypes_.at(species.phenotype_ids.at(i)));
+                    offspring2 = Mate(phenotypes_.at(species.phenotype_ids.at(i - 1)),
+                                      phenotypes_.at(species.phenotype_ids.at(i)));
+                } else {
+                    offspring1 = phenotypes_.at(species.phenotype_ids.at(i - 1));
+                    offspring2 = phenotypes_.at(species.phenotype_ids.at(i));
+                }
+
+                // Mute the two offsprings
+
+                offspring1.fitness_ = 0.0;
+                offspring2.fitness_ = 0.0;
+
+                offsprings.push_back(offspring1);
+                offsprings.push_back(offspring2);
+                j = i;
+            }
+
+            for (; j < considered; j++) {
+                if (offsprings.size() >= species.n_offspring) {
+                    break;
+                }
+
+                Phenotype offspring = phenotypes_.at(species.phenotype_ids.at(j));
+                offspring.fitness_ = 0.0;
+
+                // Mutate offsprint
+
+                offsprings.push_back(offspring);
+            }
+        }
+    }
+
+    phenotypes_ = offsprings;
+}
 
 }  // namespace NEAT

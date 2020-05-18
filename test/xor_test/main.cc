@@ -17,6 +17,10 @@ int main() {
     config.n_phenotypes = 150;
 
     neat.Initialize(config);
+    neat.BuildNetworks();
+    neat.Execute(input_outputs);
+
+    std::sort(neat.phenotypes_.rbegin(), neat.phenotypes_.rend());
 
     std::cout << "=========================================================" << std::endl;
     std::cout << "XOR TEST" << std::endl;
