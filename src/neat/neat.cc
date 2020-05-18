@@ -53,7 +53,7 @@ double NEAT::ExecuteNode(const uint& network_id, const uint& node_id, const Vect
         if (in_weight.second < gene_pool_.input_nodes_.n_parts) {
             ret_val += input(in_weight.second);
         } else {
-            ret_val += in_weight.second * ExecuteNode(network_id, in_weight.second, input);
+            ret_val += in_weight.first * ExecuteNode(network_id, in_weight.second, input);
         }
     }
 
