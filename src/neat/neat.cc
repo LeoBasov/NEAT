@@ -166,7 +166,7 @@ bool NEAT::ChangeActivation(const uint& phenotype_id, const uint& gene_id) {
 }
 
 double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std::array<double, 3>& parameters) const {
-    double exess(0.0), disjoint(0.0), weights(0.0), tot_weigh_n(1.0);
+    double exess(0.0), disjoint(0.0), weights(0.0), tot_weigh_n(0.0);
     const uint max_id(std::max(first.genes_.back().id, second.genes_.back().id));
     const double max_size(std::max(first.genes_.size(), second.genes_.size()));
     const uint small_max(std::min(first.genes_.back().id, second.genes_.back().id));
@@ -203,12 +203,18 @@ double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std
 }
 
 void NEAT::Speciate() {
+    for (auto& spcies : species_) {
+        spcies.phenotype_ids.clear();
+    }
+
     for (uint i = 0; i < phenotypes_.size(); i++) {
         bool found(false);
 
         for (auto& spcies : species_) {
-            if (Distance(phenotypes_.at(i), spcies.ref_phenotype, config_.species_distance_parameters) <
-                config_.species_distance_threshold) {
+            const double distance(
+                Distance(phenotypes_.at(i), spcies.ref_phenotype, config_.species_distance_parameters));
+
+            if (distance < config_.species_distance_threshold) {
                 spcies.phenotype_ids.push_back(i);
                 found = true;
                 break;

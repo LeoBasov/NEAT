@@ -199,4 +199,31 @@ TEST(NEAT, Distance) {
     ASSERT_FALSE(0.0 == neat.Distance(neat.phenotypes_.at(0), neat.phenotypes_.at(1), paramets));
 }
 
+TEST(NEAT, Speciate) {
+    NEAT neat;
+    NEAT::Config config;
+
+    config.n_input = 3;
+    config.n_output = 2;
+    config.n_phenotypes = 3;
+
+    neat.Initialize(config);
+    neat.Speciate();
+
+    ASSERT_EQ(1, neat.species_.size());
+    ASSERT_EQ(3, neat.species_.at(0).phenotype_ids.size());
+
+    neat.SetWeight(0, 0, 50.0);
+    neat.Speciate();
+
+    ASSERT_EQ(2, neat.species_.size());
+    ASSERT_EQ(2, neat.species_.at(0).phenotype_ids.size());
+    ASSERT_EQ(1, neat.species_.at(1).phenotype_ids.size());
+
+    ASSERT_EQ(0, neat.species_.at(1).phenotype_ids.front());
+
+    ASSERT_EQ(1, neat.species_.at(0).phenotype_ids.front());
+    ASSERT_EQ(2, neat.species_.at(0).phenotype_ids.back());
+}
+
 }  // namespace NEAT
