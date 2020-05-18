@@ -105,7 +105,9 @@ void NEAT::BuildNetworks() {
     }
 }
 
-double NEAT::Sigmoid(const double& value) const { return 1.0 / (1.0 + std::exp(-value)); }
+double NEAT::Sigmoid(const double& value, const double& paramters) const {
+    return 1.0 / (1.0 + std::exp(-paramters * value));
+}
 
 bool NEAT::AddConnection(const uint& phenotype_id, const uint& in, const uint& out) {
     auto ret_val = gene_pool_.AddConnection(in, out);
