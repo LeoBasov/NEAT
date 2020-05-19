@@ -47,6 +47,8 @@ int main() {
     }
 
     std::cout << neat.Str(0);
+    std::cout << "---------------------------------------------------------" << std::endl;
+    std::cout << neat.Str(neat.phenotypes_.size() - 1);
     std::cout << "FINISHED" << std::endl;
     std::cout << "=========================================================" << std::endl;
 
