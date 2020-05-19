@@ -351,9 +351,12 @@ void NEAT::Mutate() {
                 gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(2) =
                     gene_pool_.genes_.size() - 3;
             } else if (gene_p.conected) {
-                phenotypes_.at(i).AddGene(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(0));
-                phenotypes_.at(i).AddGene(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(1));
-                phenotypes_.at(i).AddGene(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(2));
+                phenotypes_.at(i).AddGeneWithCheck(
+                    gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(0));
+                phenotypes_.at(i).AddGeneWithCheck(
+                    gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(1));
+                phenotypes_.at(i).AddGeneWithCheck(
+                    gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(2));
                 phenotypes_.at(i).genes_.at(gene).enabled = false;
             }
         } else if (ran1 < config_.probabilities.new_connection) {
@@ -370,8 +373,8 @@ void NEAT::Mutate() {
                 SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
             } else {
                 const uint gene(std::round((phenotypes_.at(i).genes_.size() - 1) * ran3));
-                const double weight(1.5 * phenotypes_.at(i).genes_.at(gene).weight -
-                                    phenotypes_.at(i).genes_.at(gene).weight * ran4);
+                const double weight(1.1 * phenotypes_.at(i).genes_.at(gene).weight -
+                                    0.2 * phenotypes_.at(i).genes_.at(gene).weight * ran4);
                 SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
             }
         } else if (ran1 < config_.probabilities.connection_activation) {
