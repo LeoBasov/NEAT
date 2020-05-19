@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "../../src/neat/neat.h"
 
@@ -10,7 +11,7 @@ int main() {
     const std::vector<std::pair<VectorXd, VectorXd>> input_outputs(SetUpInputOutput());
     NEAT::NEAT neat;
     NEAT::NEAT::Config config;
-    const uint n_itarations(5000);
+    const uint n_itarations(1000);
 
     config.n_input = 3;
     config.n_output = 1;
@@ -53,6 +54,14 @@ int main() {
     std::cout << neat.Str(neat.phenotypes_.size() - 1);
     std::cout << "FINISHED" << std::endl;
     std::cout << "=========================================================" << std::endl;
+
+    std::ofstream stream("genes.csv");
+
+    for(auto gene : neat.gene_pool_.genes_){
+        stream << gene.in << "," << gene.out << std::endl;
+    }
+
+    stream.close();
 
     return 0;
 }
