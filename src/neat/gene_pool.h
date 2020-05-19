@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <vector>
 
 namespace NEAT {
@@ -19,6 +20,7 @@ class GenePool {
         uint in;
         uint out;
         bool conected = false;
+        std::array<uint, 3> gene_ids;
     };
 
     struct NodeGroup {

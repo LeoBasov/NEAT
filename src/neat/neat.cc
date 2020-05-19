@@ -344,6 +344,17 @@ void NEAT::Mutate() {
                 AddNode(i, gene_p.in, gene_p.out);
                 AddConnection(i, 0, gene_pool_.genes_.back().in);
                 gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).conected = true;
+                gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(0) =
+                    gene_pool_.genes_.size() - 1;
+                gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(1) =
+                    gene_pool_.genes_.size() - 2;
+                gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(2) =
+                    gene_pool_.genes_.size() - 3;
+            } else if (gene_p.conected) {
+                phenotypes_.at(i).AddGene(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(0));
+                phenotypes_.at(i).AddGene(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(1));
+                phenotypes_.at(i).AddGene(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).gene_ids.at(2));
+                phenotypes_.at(i).genes_.at(gene).enabled = false;
             }
         } else if (ran1 < config_.probabilities.new_connection) {
             const uint in(std::round((gene_pool_.nodes_.size() - 1) * ran2)),
