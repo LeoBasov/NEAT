@@ -340,8 +340,8 @@ void NEAT::Mutate() {
                 SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
             }
         } else if (ran1 < config_.probabilities.connection_activation) {
-            // const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran2);
-            // ChangeActivation(i, phenotypes_.at(i).genes_.at(gene).id);
+            const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran2);
+            ChangeActivation(i, phenotypes_.at(i).genes_.at(gene).id);
         }
     }
 }

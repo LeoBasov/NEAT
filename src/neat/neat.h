@@ -20,7 +20,7 @@ class NEAT {
         double new_connection = 0.05;
         double cross_over = 0.75;
         double interspecies = 0.001;
-        double connection_activation = 0.001;
+        double connection_activation = 0.01;
     };
 
     struct Config {
