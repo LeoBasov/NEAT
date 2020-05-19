@@ -67,6 +67,14 @@ int main() {
 
     stream.close();
 
+    stream.open("best.csv");
+
+    for (auto gene : neat.phenotypes_.front().genes_) {
+        stream << neat.gene_pool_.genes_.at(gene.id).in << "," << neat.gene_pool_.genes_.at(gene.id).out << std::endl;
+    }
+
+    stream.close();
+
     return 0;
 }
 
