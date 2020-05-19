@@ -321,20 +321,28 @@ void NEAT::Mutate() {
             ran4(random_.RandomNumber());
 
         if (ran1 < config_.probabilities.new_node) {
-            const uint gene(std::floor(phenotypes_.at(i).genes_.size() * ran2));
+            const uint gene(std::round((phenotypes_.at(i).genes_.size() - 1) * ran2));
             const GenePool::Gene gene_p(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id));
-            AddNode(i, gene_p.in, gene_p.out);
+
+            if ((gene_p.in != 0) && (!gene_p.conected)) {
+                AddNode(i, gene_p.in, gene_p.out);
+                AddConnection(i, 0, gene_pool_.genes_.back().in);
+                gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id).conected = true;
+            }
         } else if (ran1 < config_.probabilities.new_connection) {
-            const uint in(std::floor(gene_pool_.nodes_.size()) * ran2),
-                out(std::floor(gene_pool_.nodes_.size() * ran3));
-            AddConnection(i, in, out);
+            const uint in(std::round((gene_pool_.nodes_.size() - 1) * ran2)),
+                out(std::round((gene_pool_.nodes_.size() - 1) * ran3));
+
+            if (in != 0) {
+                AddConnection(i, in, out);
+            }
         } else if (ran1 < config_.probabilities.new_weight) {
             if (ran2 < config_.probabilities.new_weight) {
-                const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran3);
+                const uint gene(std::round((phenotypes_.at(i).genes_.size() - 1) * ran3));
                 const double weight(10.0 - 20.0 * ran4);
                 SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
             } else {
-                const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran3);
+                const uint gene(std::round((phenotypes_.at(i).genes_.size() - 1) * ran3));
                 const double weight(1.5 * phenotypes_.at(i).genes_.at(gene).weight -
                                     phenotypes_.at(i).genes_.at(gene).weight * ran4);
                 SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);

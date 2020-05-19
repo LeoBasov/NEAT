@@ -18,6 +18,7 @@ class GenePool {
 
         uint in;
         uint out;
+        bool conected = false;
     };
 
     struct NodeGroup {
