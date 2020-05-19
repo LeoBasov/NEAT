@@ -15,7 +15,7 @@ int main() {
 
     config.n_input = 3;
     config.n_output = 1;
-    config.n_phenotypes = 150;
+    config.n_phenotypes = 1500;
 
     neat.Initialize(config);
     neat.BuildNetworks();
@@ -45,10 +45,10 @@ int main() {
         std::cout << "NUMBER GENOMES: " << neat.phenotypes_.size() << std::endl;
         std::cout << "NUMBER GENES: " << neat.gene_pool_.genes_.size() << std::endl;
         std::cout << "NUMBER NODES: " << neat.gene_pool_.nodes_.size() << std::endl;
-        std::cout << "ITERATION COMPLETE: " << i + 1 << "/" << n_itarations << std::endl;
+        std::cout << "ITERATION COMPLETE: " << i + 1 << std::endl;
         std::cout << "---------------------------------------------------------" << std::endl;
 
-        if (neat.phenotypes_.front().fitness_ > 0.98) {
+        if (neat.phenotypes_.front().fitness_ > 0.99) {
             break;
         }
     }
@@ -58,6 +58,13 @@ int main() {
     std::cout << neat.Str(neat.phenotypes_.size() - 1);
     std::cout << "FINISHED" << std::endl;
     std::cout << "=========================================================" << std::endl;
+
+    VectorXd output(1);
+
+    neat.ExecuteNetwork(0, input_outputs.front().first, output);
+
+    std::cout << input_outputs.front().first(1) << ", " << input_outputs.front().first(2) << ", " << output(0)
+              << std::endl;
 
     std::ofstream stream("genes.csv");
 
@@ -82,13 +89,20 @@ std::vector<std::pair<VectorXd, VectorXd>> SetUpInputOutput() {
     const uint N(100);
     std::vector<std::pair<VectorXd, VectorXd>> input_outputs;
     NEAT::Random random;
-    VectorXd input(2);
+    VectorXd input(3);
     VectorXd output(1);
 
     for (uint i = 0; i < N; i++) {
-        input(0) = random.RandomNumber();
+        input(0) = 1.0;
         input(1) = random.RandomNumber();
-        output(0) = 0.5 * (input(0) + input(1));
+        input(2) = random.RandomNumber();
+
+        while (input(2) < input(1)) {
+            input(1) = random.RandomNumber();
+            input(2) = random.RandomNumber();
+        }
+
+        output(0) = 0.5 * (input(1) + input(2));
 
         input_outputs.push_back({input, output});
     }
