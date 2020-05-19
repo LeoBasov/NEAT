@@ -225,6 +225,7 @@ double NEAT::Distance(const Phenotype& first, const Phenotype& second, const std
 
 void NEAT::Speciate() {
     double total_adjuste_fitness(0.0);
+    std::vector<uint> deleted;
 
     for (auto& spcies : species_) {
         spcies.Clear();
@@ -251,17 +252,28 @@ void NEAT::Speciate() {
         }
     }
 
-    for (auto& species : species_) {
-        if (species.phenotype_ids.size()) {
-            species.ref_phenotype = phenotypes_.at(species.phenotype_ids.front());
+    for (uint i = 0; i < species_.size(); i++) {
+        if (species_.at(i).phenotype_ids.size()) {
+            double id = std::round(random_.RandomNumber() * (species_.at(i).phenotype_ids.size() - 1));
+            species_.at(i).ref_phenotype = phenotypes_.at(static_cast<uint>(id));
 
-            for (const auto& id : species.phenotype_ids) {
-                phenotypes_.at(id).fitness_ /= species.phenotype_ids.size();
-                species.total_adjusted_fitness += phenotypes_.at(id).fitness_;
+            for (const auto& id : species_.at(i).phenotype_ids) {
+                phenotypes_.at(id).fitness_ /= species_.at(i).phenotype_ids.size();
+                species_.at(i).total_adjusted_fitness += phenotypes_.at(id).fitness_;
                 total_adjuste_fitness += phenotypes_.at(id).fitness_;
             }
+        } else {
+            deleted.push_back(i);
         }
     }
+
+    std::sort(deleted.rbegin(), deleted.rend());
+
+    for (uint i = 0; i < deleted.size(); i++) {
+        std::swap(species_.at(species_.size() - 1 - i), species_.at(deleted.at(i)));
+    }
+
+    species_.resize(species_.size() - deleted.size());
 
     for (auto& species : species_) {
         species.n_offspring = (species.total_adjusted_fitness / total_adjuste_fitness) * config_.n_phenotypes;
@@ -269,12 +281,13 @@ void NEAT::Speciate() {
 }
 
 void NEAT::Reproduce() {
-    std::vector<Phenotype> offsprings;
+    std::vector<Phenotype> offsprings_tot;
 
     for (auto& species : species_) {
+        std::vector<Phenotype> offsprings;
         const uint considered(std::round(0.5 * species.phenotype_ids.size()));
 
-        while (offsprings.size() < species.n_offspring) {
+        while (species.n_offspring && offsprings.size() < species.n_offspring) {
             uint j(0);
             for (uint i = 1; i < considered; i += 2) {
                 if (offsprings.size() >= species.n_offspring) {
@@ -310,9 +323,12 @@ void NEAT::Reproduce() {
                 offsprings.push_back(offspring);
             }
         }
+
+        offsprings_tot.reserve(offsprings_tot.size() + offsprings.size());
+        offsprings_tot.insert(offsprings_tot.end(), offsprings.begin(), offsprings.end());
     }
 
-    phenotypes_ = offsprings;
+    phenotypes_ = offsprings_tot;
 }
 
 void NEAT::Mutate() {

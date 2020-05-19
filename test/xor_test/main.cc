@@ -41,6 +41,7 @@ int main() {
         std::cout << "BEST: " << neat.phenotypes_.front().fitness_ << std::endl;
         std::cout << "WORST: " << neat.phenotypes_.back().fitness_ << std::endl;
         std::cout << "NUMBER SPECIES: " << neat.species_.size() << std::endl;
+        std::cout << "NUMBER GENOMES: " << neat.phenotypes_.size() << std::endl;
         std::cout << "ITERATION COMPLETE: " << i + 1 << "/" << n_itarations << std::endl;
         std::cout << "---------------------------------------------------------" << std::endl;
     }
