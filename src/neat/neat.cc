@@ -315,17 +315,31 @@ void NEAT::Reproduce() {
 
 void NEAT::Mutate() {
     for (uint i = 0; i < phenotypes_.size(); i++) {
-        const double ran1(random_.RandomNumber()), ran2(random_.RandomNumber()), ran3(random_.RandomNumber());
+        const double ran1(random_.RandomNumber()), ran2(random_.RandomNumber()), ran3(random_.RandomNumber()),
+            ran4(random_.RandomNumber());
 
         if (ran1 < config_.probabilities.new_node) {
-            const uint gene_id(std::floor(phenotypes_.at(i).genes_.size() * ran2));
-            const GenePool::Gene gene_p(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene_id).id));
+            const uint gene(std::floor(phenotypes_.at(i).genes_.size() * ran2));
+            const GenePool::Gene gene_p(gene_pool_.genes_.at(phenotypes_.at(i).genes_.at(gene).id));
             AddNode(i, gene_p.in, gene_p.out);
         } else if (ran1 < config_.probabilities.new_connection) {
             const uint in(std::floor(gene_pool_.nodes_.size()) * ran2),
-                out(std::floor(gene_pool_.nodes_.size()) * ran3);
+                out(std::floor(gene_pool_.nodes_.size() * ran3));
             AddConnection(i, in, out);
         } else if (ran1 < config_.probabilities.new_weight) {
+            if (ran2 < config_.probabilities.new_weight) {
+                const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran3);
+                const double weight(10.0 - 20.0 * ran4);
+                SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
+            } else {
+                const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran3);
+                const double weight(phenotypes_.at(i).genes_.at(gene).weight -
+                                    2.0 * phenotypes_.at(i).genes_.at(gene).weight * ran4);
+                SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
+            }
+        } else if (ran1 < config_.probabilities.connection_activation) {
+            // const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran2);
+            // ChangeActivation(i, phenotypes_.at(i).genes_.at(gene).id);
         }
     }
 }
