@@ -112,11 +112,18 @@ double NEAT::Sigmoid(const double& value, const double& paramters) const {
 
 bool NEAT::AddConnection(const uint& phenotype_id, const uint& in, const uint& out) {
     std::pair<bool, unsigned int> ret_val{false, 0};
+    bool in_found(false), out_found(false);
 
     for (auto& gene : phenotypes_.at(phenotype_id).genes_) {
         GenePool::Gene gene_p(gene_pool_.genes_.at(gene.id));
 
-        if ((gene_p.in == in) && (gene_p.out == out)) {
+        if ((gene_p.in == in) || (gene_p.out == in)) {
+            in_found = true;
+        }
+        if ((gene_p.in == out) || (gene_p.out == out)) {
+            out_found = true;
+        }
+        if (in_found && out_found) {
             ret_val.first = true;
             break;
         }
