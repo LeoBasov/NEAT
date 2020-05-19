@@ -252,12 +252,14 @@ void NEAT::Speciate() {
     }
 
     for (auto& species : species_) {
-        species.ref_phenotype = phenotypes_.at(species.phenotype_ids.front());
+        if (species.phenotype_ids.size()) {
+            species.ref_phenotype = phenotypes_.at(species.phenotype_ids.front());
 
-        for (const auto& id : species.phenotype_ids) {
-            phenotypes_.at(id).fitness_ /= species.phenotype_ids.size();
-            species.total_adjusted_fitness += phenotypes_.at(id).fitness_;
-            total_adjuste_fitness += phenotypes_.at(id).fitness_;
+            for (const auto& id : species.phenotype_ids) {
+                phenotypes_.at(id).fitness_ /= species.phenotype_ids.size();
+                species.total_adjusted_fitness += phenotypes_.at(id).fitness_;
+                total_adjuste_fitness += phenotypes_.at(id).fitness_;
+            }
         }
     }
 
@@ -333,8 +335,8 @@ void NEAT::Mutate() {
                 SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
             } else {
                 const uint gene((phenotypes_.at(i).genes_.size() - 1) * ran3);
-                const double weight(phenotypes_.at(i).genes_.at(gene).weight -
-                                    2.0 * phenotypes_.at(i).genes_.at(gene).weight * ran4);
+                const double weight(1.5 * phenotypes_.at(i).genes_.at(gene).weight -
+                                    phenotypes_.at(i).genes_.at(gene).weight * ran4);
                 SetWeight(i, phenotypes_.at(i).genes_.at(gene).id, weight);
             }
         } else if (ran1 < config_.probabilities.connection_activation) {
