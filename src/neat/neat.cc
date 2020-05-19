@@ -285,7 +285,7 @@ void NEAT::Reproduce() {
 
     for (auto& species : species_) {
         std::vector<Phenotype> offsprings;
-        const uint considered(std::round(0.5 * species.phenotype_ids.size()));
+        const uint considered(std::max(std::round(0.5 * species.phenotype_ids.size()), 1.0));
 
         while (species.n_offspring && offsprings.size() < species.n_offspring) {
             uint j(0);

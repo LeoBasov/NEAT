@@ -14,9 +14,9 @@ class NEAT {
    public:
     struct Probabilities {
         double change_connection_weight = 0.8;
-        double weight_pertubated = 0.9;
-        double new_weight = 0.1;
-        double new_node = 0.03;
+        double weight_pertubated = 0.1;
+        double new_weight = 0.9;
+        double new_node = 0.003;
         double new_connection = 0.05;
         double cross_over = 0.75;
         double interspecies = 0.001;

@@ -47,6 +47,10 @@ int main() {
         std::cout << "NUMBER NODES: " << neat.gene_pool_.nodes_.size() << std::endl;
         std::cout << "ITERATION COMPLETE: " << i + 1 << "/" << n_itarations << std::endl;
         std::cout << "---------------------------------------------------------" << std::endl;
+
+        if (neat.phenotypes_.front().fitness_ > 0.99) {
+            break;
+        }
     }
 
     std::cout << neat.Str(0);
