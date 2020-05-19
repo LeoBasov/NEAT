@@ -10,7 +10,7 @@ int main() {
     const std::vector<std::pair<VectorXd, VectorXd>> input_outputs(SetUpInputOutput());
     NEAT::NEAT neat;
     NEAT::NEAT::Config config;
-    const uint n_itarations(1000);
+    const uint n_itarations(5000);
 
     config.n_input = 3;
     config.n_output = 1;
@@ -42,6 +42,8 @@ int main() {
         std::cout << "WORST: " << neat.phenotypes_.back().fitness_ << std::endl;
         std::cout << "NUMBER SPECIES: " << neat.species_.size() << std::endl;
         std::cout << "NUMBER GENOMES: " << neat.phenotypes_.size() << std::endl;
+        std::cout << "NUMBER GENES: " << neat.gene_pool_.genes_.size() << std::endl;
+        std::cout << "NUMBER NODES: " << neat.gene_pool_.nodes_.size() << std::endl;
         std::cout << "ITERATION COMPLETE: " << i + 1 << "/" << n_itarations << std::endl;
         std::cout << "---------------------------------------------------------" << std::endl;
     }
