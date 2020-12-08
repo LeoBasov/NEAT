@@ -11,6 +11,9 @@ struct Gene {
     unsigned int id;  // id of gene in GenePool
     double weight = 1.0;
     bool enabled = true;
+
+    inline bool operator==(const Gene& other) { return id == other.id; }
+    inline bool operator!=(const Gene& other) { return !(*this == other); }
 };
 
 struct Genotype {
