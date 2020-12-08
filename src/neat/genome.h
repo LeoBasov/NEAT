@@ -14,6 +14,7 @@ struct Gene {
 };
 
 struct Genotype {
+    std::vector<unsigned int > nodes;
     std::vector<Gene> genes;
 };
 

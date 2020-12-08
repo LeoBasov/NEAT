@@ -33,6 +33,7 @@ TEST(NEAT, Initialize) {
 
     ASSERT_EQ(n_genotypes, genotypes.size());
     ASSERT_EQ(gene_pool.GetGenes().size(), genotypes.front().genes.size());
+    ASSERT_EQ(gene_pool.GetNTotalNodes(), genotypes.front().nodes.size());
 
     for (uint i = 0; i < genotypes.front().genes.size(); i++) {
         ASSERT_EQ(i, genotypes.front().genes.at(i).id);

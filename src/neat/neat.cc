@@ -22,6 +22,10 @@ void NEAT::Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_
             genotypes_.at(i).genes.push_back(
                 genome::Gene(j, random_.RandomNumber(config_.weight_range.first, config_.weight_range.second)));
         }
+
+        for(size_t j= 0; j < gene_pool_.GetNTotalNodes(); j++){
+            genotypes_.at(i).nodes.push_back(j);
+        }
     }
 }
 
