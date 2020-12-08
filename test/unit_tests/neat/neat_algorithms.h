@@ -248,5 +248,32 @@ TEST(neat_algorithms, XOR) {
     ExecuteXOR(matrix, gene_pool, 0.0, 1.0, 1.0);
 }
 
+TEST(neat_algorithms, SortInSpecies) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    GenePool gene_pool;
+    NEAT neat;
+    std::vector<genome::Species> species;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 5;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool = neat.GetGenePool();
+    genotypes = neat.GetGenotypes();
+
+    for (auto& genotype : genotypes) {
+        for (auto& gene : genotype.genes) {
+            gene.weight = 1.0;
+        }
+    }
+
+    genotypes.at(0).genes.at(0).weight = -100.0;
+    genotypes.at(1).genes.at(0).weight = 100.0;
+
+    neat_algorithms::SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
+
+    ASSERT_EQ(3, species.size());
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

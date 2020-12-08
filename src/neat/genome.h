@@ -19,6 +19,13 @@ struct Gene {
 struct Genotype {
     std::vector<unsigned int > nodes;
     std::vector<Gene> genes;
+    unsigned int species_id = 0;
+};
+
+struct Species {
+    Genotype ref_genotype;
+    unsigned int n_memeber = 0;
+    double total_fitness = 0.0;
 };
 
 }  // namespace genome

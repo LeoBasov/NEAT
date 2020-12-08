@@ -7,6 +7,7 @@ NEAT::NEAT() {}
 void NEAT::Clear() {
     config_.Clear();
     gene_pool_.Clear();
+    species_.clear();
     genotypes_.clear();
 }
 
@@ -27,10 +28,15 @@ void NEAT::Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_
             genotypes_.at(i).nodes.push_back(j);
         }
     }
+
+    neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
+                                   config_.coeff3);
 }
 
 GenePool NEAT::GetGenePool() const { return gene_pool_; }
 
 std::vector<genome::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
+
+std::vector<genome::Species> NEAT::GetSpecies() const { return species_; }
 
 }  // namespace neat
