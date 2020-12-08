@@ -103,4 +103,44 @@ TEST(NEAT, ExecuteNetwork) {
     ASSERT_DOUBLE_EQ(utility::Sigmoid(1.0 + input.at(0) + input.at(1), config.sigmoid_parameter), output.front());
 }
 
+TEST(NEAT, ExecuteNetworks) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 10;
+    const std::vector<double> input{3.0, 5.0};
+    std::vector<std::vector<double>> output;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotypes = neat.GetGenotypes();
+
+    genotypes.at(0).genes.at(0).weight = 0.0;
+    genotypes.at(0).genes.at(1).weight = 0.0;
+    genotypes.at(0).genes.at(2).weight = 1.0;
+
+    neat.SetGenoTypes(genotypes);
+
+    output = neat.ExecuteNetworks(input);
+
+    ASSERT_EQ(10, output.size());
+    ASSERT_EQ(1, output.front().size());
+
+    ASSERT_DOUBLE_EQ(utility::Sigmoid(input.at(1), config.sigmoid_parameter), output.front().front());
+
+    genotypes.at(0).genes.at(0).weight = 1.0;
+    genotypes.at(0).genes.at(1).weight = 1.0;
+    genotypes.at(0).genes.at(2).weight = 1.0;
+
+    neat.SetGenoTypes(genotypes);
+
+    output = neat.ExecuteNetworks(input);
+
+    ASSERT_EQ(10, output.size());
+    ASSERT_EQ(1, output.front().size());
+
+    ASSERT_DOUBLE_EQ(utility::Sigmoid(1.0 + input.at(0) + input.at(1), config.sigmoid_parameter),
+                     output.front().front());
+}
+
 }  // namespace neat
