@@ -1,6 +1,7 @@
 #include "random.h"
 
-namespace NEAT {
+namespace neat {
+
 Random::Random() {}
 
 double Random::RandomNumber(const double& min, const double& max) {
@@ -22,4 +23,4 @@ Vector3d Random::NormalRandomVector(const double& mean, const double& stddev) {
                     NormalRandomNumber(mean, stddev));
 }
 
-}  // namespace NEAT
+}  // namespace neat
