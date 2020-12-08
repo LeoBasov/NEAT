@@ -88,5 +88,26 @@ TEST(neat_algorithms, Mate) {
     ASSERT_EQ(genotype1.genes.size(), child.genes.size());
 }
 
+TEST(neat_algorithms, CalcDistance) {
+    genome::Genotype genotype1, genotype2;
+
+    genotype1.genes.push_back(genome::Gene(0, 1.0));
+    genotype1.genes.push_back(genome::Gene(1, 2.0));
+    genotype1.genes.push_back(genome::Gene(2, 3.0));
+    genotype1.genes.push_back(genome::Gene(3, 6.0));
+
+    genotype2.genes.push_back(genome::Gene(0, 4.0));
+    genotype2.genes.push_back(genome::Gene(1, 5.0));
+    genotype2.genes.push_back(genome::Gene(3, 6.0));
+    genotype2.genes.push_back(genome::Gene(5, 7.0));
+    genotype2.genes.push_back(genome::Gene(6, 7.0));
+
+    ASSERT_EQ(0.0, CalcDistance(genotype1.genes, genotype1.genes, 1.0, 1.0, 1.0));
+    ASSERT_EQ(0.0, CalcDistance(genotype2.genes, genotype2.genes, 1.0, 1.0, 1.0));
+
+    ASSERT_EQ(2.6, CalcDistance(genotype1.genes, genotype2.genes, 1.0, 1.0, 1.0));
+    ASSERT_EQ(2.6, CalcDistance(genotype2.genes, genotype1.genes, 1.0, 1.0, 1.0));
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

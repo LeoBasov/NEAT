@@ -63,5 +63,43 @@ genome::Genotype Mate(const genome::Genotype& fitter_parent, const genome::Genot
     return child;
 }
 
+double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<genome::Gene>& genome2,
+                    const double& ceff1, const double& ceff2, const double& ceff3) {
+    const uint size(std::max(genome1.size(), genome2.size()));
+    double average_weight(0.0);
+    uint n_disjoint(0), n_excess(0), n_common(0);
+    uint i = 0, j = 0;
+
+    for (; (i < genome1.size()) && (j < genome2.size());) {
+        if (genome1.at(i).id < genome2.at(j).id) {
+            n_disjoint++;
+            i++;
+        } else if (genome1.at(i).id > genome2.at(j).id) {
+            n_disjoint++;
+            j++;
+        } else {
+            average_weight += std::abs(genome1.at(i).weight - genome2.at(j).weight);
+            n_common++;
+            i++;
+            j++;
+        }
+    }
+
+    if ((genome1.size() - 1) > i) {
+        n_excess = genome1.size() - i;
+    } else if ((genome2.size() - 1) > j) {
+        n_excess = genome2.size() - j;
+    }
+
+    if (n_common) {
+        average_weight /= static_cast<double>(n_common);
+    } else {
+        average_weight = 0.0;
+    }
+
+    return ceff1 * (static_cast<double>(n_excess) / size) + ceff2 * (static_cast<double>(n_disjoint) / size) +
+           ceff3 * average_weight;
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat
