@@ -139,5 +139,42 @@ void ExecuteNetwork(const MatrixXd& matrix, VectorXd& nodes, const uint& n_const
     }
 }
 
+void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome::Species>& species,
+                   const double& max_distance, const double& ceff1, const double& ceff2, const double& ceff3) {
+    for (auto& genotype : genotypes) {
+        if (species.size()) {
+            bool found(false);
+
+            for (uint spec_id = 0; spec_id < species.size(); spec_id++) {
+                if (CalcDistance(genotype.genes, species.at(spec_id).ref_genotype.genes, ceff1, ceff2, ceff3) <
+                    max_distance) {
+                    species.at(spec_id).n_memeber++;
+                    genotype.species_id = spec_id;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                genome::Species spec;
+
+                spec.ref_genotype = genotype;
+                spec.n_memeber = 1;
+                genotype.species_id = species.size();
+
+                species.push_back(spec);
+            }
+        } else {
+            genome::Species spec;
+
+            spec.ref_genotype = genotype;
+            spec.n_memeber = 1;
+            genotype.species_id = species.size();
+
+            species.push_back(spec);
+        }
+    }
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

@@ -22,6 +22,8 @@ VectorXd SetUpNodes(const std::vector<double>& input_vaules, const GenePool& poo
 
 // Const nodes must include bias node
 void ExecuteNetwork(const MatrixXd& matrix, VectorXd& nodes, const uint& n_const_nodes, const double& parameter = 1.0);
+void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome::Species>& species,
+                   const double& max_distance, const double& ceff1, const double& ceff2, const double& ceff3);
 
 }  // namespace neat_algorithms
 }  // namespace neat
