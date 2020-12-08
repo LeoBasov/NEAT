@@ -119,5 +119,25 @@ MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& po
     return matrix;
 }
 
+VectorXd SetUpNodes(const std::vector<double>& input_vaules, const GenePool& pool) {
+    VectorXd vec = VectorXd::Zero(pool.GetNTotalNodes());
+
+    vec(0) = 1.0;
+
+    for (size_t i = 0; i < input_vaules.size(); i++) {
+        vec(i + 1) = input_vaules.at(i);
+    }
+
+    return vec;
+}
+
+void ExecuteNetwork(const MatrixXd& matrix, VectorXd& nodes, const uint& n_const_nodes, const double& parameter) {
+    nodes = matrix * nodes;
+
+    for (Eigen::Index i = n_const_nodes; i < nodes.rows(); i++) {
+        nodes(i) = utility::Sigmoid(nodes(i), parameter);
+    }
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

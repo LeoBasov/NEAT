@@ -142,5 +142,54 @@ TEST(neat_algorithms, Genotype2Phenotype) {
     ASSERT_DOUBLE_EQ(0.0, network(2, 2));
 }
 
+TEST(neat_algorithms, SetUpNodes) {
+    NEAT::Config config;
+    genome::Genotype genotype;
+    GenePool gene_pool;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 1;
+    std::vector<double> input_values{3.0, 5.0};
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+    gene_pool = neat.GetGenePool();
+    genotype = neat.GetGenotypes().front();
+
+    VectorXd input_vector = SetUpNodes(input_values, gene_pool);
+
+    ASSERT_EQ(4, input_vector.rows());
+
+    ASSERT_DOUBLE_EQ(1.0, input_vector(0));
+    ASSERT_DOUBLE_EQ(input_values.at(0), input_vector(1));
+    ASSERT_DOUBLE_EQ(input_values.at(1), input_vector(2));
+    ASSERT_DOUBLE_EQ(0.0, input_vector(3));
+}
+
+TEST(neat_algorithms, ExecuteNetwork) {
+    NEAT::Config config;
+    genome::Genotype genotype;
+    GenePool gene_pool;
+    NEAT neat;
+    const uint n_sensors = 1, n_output = 1, n_genotypes = 1;
+    std::vector<double> input_values{0.0};
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+    gene_pool = neat.GetGenePool();
+    genotype = neat.GetGenotypes().front();
+
+    genotype.genes.at(0).weight = 0.0;
+    genotype.genes.at(1).weight = 1.0;
+
+    MatrixXd network = Genotype2Phenotype(genotype, gene_pool);
+    VectorXd nodes = SetUpNodes(input_values, gene_pool);
+
+    ExecuteNetwork(network, nodes, 2);
+
+    ASSERT_EQ(3, nodes.rows());
+
+    ASSERT_DOUBLE_EQ(1.0, nodes(0));
+    ASSERT_DOUBLE_EQ(input_values.at(0), nodes(1));
+    ASSERT_DOUBLE_EQ(0.5, nodes(2));
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat
