@@ -33,6 +33,12 @@ std::pair<unsigned int, unsigned int> GenePool::AddNode(const unsigned int& gene
 }
 
 std::pair<bool, unsigned int> GenePool::AddConnection(unsigned int in_node, unsigned int out_node) {
+    if(out_node >= GetNTotalNodes()){
+        throw std::domain_error("out_node out of bounds");
+    }else if(in_node >= GetNTotalNodes()){
+        throw std::domain_error("in_node out of bounds");
+    }
+
     // sensor nodes can not be out nodes of new connection
     if (out_node <= n_sensor_nodes_ || out_node >= GetNTotalNodes() || in_node >= GetNTotalNodes()) {
         return {false, 0};

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <iostream>
 
 #include "../../../src/neat/gene_pool.h"
 
@@ -89,9 +88,7 @@ TEST(GenePool, AddConnection) {
         ASSERT_TRUE(!retval2.first);
     }
 
-    retval2 = gene_pool.AddConnection(0, 5);
-
-    ASSERT_TRUE(!retval2.first);
+    ASSERT_THROW(gene_pool.AddConnection(0, 5), std::domain_error);
 
     retval2 = gene_pool.AddConnection(0, 3);
 
