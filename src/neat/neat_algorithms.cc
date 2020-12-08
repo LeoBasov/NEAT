@@ -101,5 +101,23 @@ double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<
            ceff3 * average_weight;
 }
 
+MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& pool) {
+    MatrixXd matrix = MatrixXd::Zero(pool.GetNTotalNodes(), pool.GetNTotalNodes());
+
+    for (const auto& gene : genotype.genes) {
+        if (gene.enabled) {
+            GenePool::Gene pool_gene = pool.GetGene(gene.id);
+
+            matrix(pool_gene.out_node, pool_gene.in_node) += gene.weight;
+        }
+    }
+
+    for (uint i = 0; i < 1 + pool.GetNSensorNodes(); i++) {
+        matrix(i, i) = 1.0;
+    }
+
+    return matrix;
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

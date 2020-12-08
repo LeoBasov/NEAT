@@ -109,5 +109,38 @@ TEST(neat_algorithms, CalcDistance) {
     ASSERT_EQ(2.6, CalcDistance(genotype2.genes, genotype1.genes, 1.0, 1.0, 1.0));
 }
 
+TEST(neat_algorithms, Genotype2Phenotype) {
+    NEAT::Config config;
+    genome::Genotype genotype;
+    GenePool gene_pool;
+    NEAT neat;
+    const uint n_sensors = 1, n_output = 1, n_genotypes = 1;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+    gene_pool = neat.GetGenePool();
+    genotype = neat.GetGenotypes().front();
+
+    for (auto& gene : genotype.genes) {
+        gene.weight = 1.0;
+    }
+
+    MatrixXd network = Genotype2Phenotype(genotype, gene_pool);
+
+    ASSERT_EQ(3, network.cols());
+    ASSERT_EQ(3, network.rows());
+
+    ASSERT_DOUBLE_EQ(1.0, network(0, 0));
+    ASSERT_DOUBLE_EQ(0.0, network(0, 1));
+    ASSERT_DOUBLE_EQ(0.0, network(0, 2));
+
+    ASSERT_DOUBLE_EQ(0.0, network(1, 0));
+    ASSERT_DOUBLE_EQ(1.0, network(1, 1));
+    ASSERT_DOUBLE_EQ(0.0, network(1, 2));
+
+    ASSERT_DOUBLE_EQ(1.0, network(2, 0));
+    ASSERT_DOUBLE_EQ(1.0, network(2, 1));
+    ASSERT_DOUBLE_EQ(0.0, network(2, 2));
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

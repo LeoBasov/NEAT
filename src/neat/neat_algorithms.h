@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Eigen/Dense>
 #include <algorithm>
 
 #include "../common/random.h"
@@ -15,6 +16,7 @@ bool AddConnection(genome::Genotype& genotype, GenePool& pool, const uint& in_no
 genome::Genotype Mate(const genome::Genotype& fitter_parent, const genome::Genotype& parent, Random& random);
 double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<genome::Gene>& genome2,
                     const double& ceff1, const double& ceff2, const double& ceff3);
+MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& pool);
 
 }  // namespace neat_algorithms
 }  // namespace neat
