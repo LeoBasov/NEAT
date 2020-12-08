@@ -44,6 +44,7 @@ std::pair<bool, unsigned int> GenePool::AddConnection(unsigned int in_node, unsi
         return {false, 0};
     }
 
+    // The authors make this check only for innovations happening in the same generation
     for (size_t i = 0; i < genes_.size(); i++) {
         if (genes_.at(i).in_node == in_node && genes_.at(i).out_node == out_node) {
             return {true, i};
