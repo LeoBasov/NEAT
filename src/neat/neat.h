@@ -46,7 +46,7 @@ class NEAT {
     std::vector<genome::Genotype> GetGenotypes() const;
     std::vector<genome::Species> GetSpecies() const;
 
-    void SetGenoTypes(const std::vector<genome::Genotype>& genotypes);
+    void SetGenotypes(const std::vector<genome::Genotype>& genotypes);
 
    private:
     Config config_;

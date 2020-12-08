@@ -82,7 +82,7 @@ TEST(NEAT, ExecuteNetwork) {
     genotypes.at(0).genes.at(1).weight = 0.0;
     genotypes.at(0).genes.at(2).weight = 1.0;
 
-    neat.SetGenoTypes(genotypes);
+    neat.SetGenotypes(genotypes);
 
     output = neat.ExecuteNetwork(input, 0);
 
@@ -94,7 +94,7 @@ TEST(NEAT, ExecuteNetwork) {
     genotypes.at(0).genes.at(1).weight = 1.0;
     genotypes.at(0).genes.at(2).weight = 1.0;
 
-    neat.SetGenoTypes(genotypes);
+    neat.SetGenotypes(genotypes);
 
     output = neat.ExecuteNetwork(input, 0);
 
@@ -119,7 +119,7 @@ TEST(NEAT, ExecuteNetworks) {
     genotypes.at(0).genes.at(1).weight = 0.0;
     genotypes.at(0).genes.at(2).weight = 1.0;
 
-    neat.SetGenoTypes(genotypes);
+    neat.SetGenotypes(genotypes);
 
     output = neat.ExecuteNetworks(input);
 
@@ -132,7 +132,7 @@ TEST(NEAT, ExecuteNetworks) {
     genotypes.at(0).genes.at(1).weight = 1.0;
     genotypes.at(0).genes.at(2).weight = 1.0;
 
-    neat.SetGenoTypes(genotypes);
+    neat.SetGenotypes(genotypes);
 
     output = neat.ExecuteNetworks(input);
 

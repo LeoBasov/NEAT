@@ -70,6 +70,6 @@ std::vector<genome::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
 
 std::vector<genome::Species> NEAT::GetSpecies() const { return species_; }
 
-void NEAT::SetGenoTypes(const std::vector<genome::Genotype>& genotypes) { genotypes_ = genotypes; }
+void NEAT::SetGenotypes(const std::vector<genome::Genotype>& genotypes) { genotypes_ = genotypes; }
 
 }  // namespace neat
