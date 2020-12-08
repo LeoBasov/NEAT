@@ -36,5 +36,32 @@ bool AddConnection(genome::Genotype& genotype, GenePool& pool, const uint& in_no
     return retval.first;
 }
 
+genome::Genotype Mate(const genome::Genotype& fitter_parent, const genome::Genotype& parent, Random& random) {
+    genome::Genotype child;
+
+    // Get nodes
+    child.nodes = fitter_parent.nodes;
+    child.genes = fitter_parent.genes;
+
+    // Get Genes
+    for (uint i = 0, p = 0; i < child.genes.size(); i++) {
+        if (child.genes.at(i).id > parent.genes.back().id) {
+            break;
+        } else if (parent.genes.at(p).id > child.genes.at(i).id) {
+            continue;
+        }
+
+        while ((parent.genes.at(p).id < child.genes.at(i).id) && (p < (child.genes.size() - 1))) {
+            p++;
+        }
+
+        if ((parent.genes.at(p).id == child.genes.at(i).id) && (random.RandomNumber() < 0.5)) {
+            child.genes.at(i) = parent.genes.at(p);
+        }
+    }
+
+    return child;
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

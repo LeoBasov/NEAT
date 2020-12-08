@@ -64,5 +64,29 @@ TEST(neat_algorithms, AddConnection) {
     ASSERT_FALSE(AddConnection(genotype, gene_pool, in_node, 0, new_weight));
 }
 
+TEST(neat_algorithms, Mate) {
+    NEAT::Config config;
+    genome::Genotype genotype1, genotype2;
+    GenePool gene_pool;
+    NEAT neat;
+    Random random;
+    const uint in_node = 3, out_node = 3, gene_id = 0;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 2;
+    const double new_weight(15.0);
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+    gene_pool = neat.GetGenePool();
+    genotype1 = neat.GetGenotypes().at(0);
+    genotype2 = neat.GetGenotypes().at(1);
+
+    AddNode(genotype1, gene_pool, gene_id, new_weight);
+    AddConnection(genotype2, gene_pool, in_node, out_node, new_weight);
+
+    genome::Genotype child = Mate(genotype1, genotype2, random);
+
+    ASSERT_EQ(genotype1.nodes, child.nodes);
+    ASSERT_EQ(genotype1.genes.size(), child.genes.size());
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat
