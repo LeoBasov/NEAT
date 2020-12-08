@@ -1,0 +1,55 @@
+version: 2.1
+
+commands:
+  set_up_unit_test_environment:
+    steps:
+      - checkout
+      - run:
+          name: Installing SUDO
+          command: 'apt-get update && apt install -y sudo && rm -rf /var/lib/apt/lists/*'
+      - run:
+          name: Run SETUP
+          command: ./setup.sh -gtest
+      - run:
+          name: Install LCOV
+          command: apt update && sudo apt install -y lcov
+
+  build_tests:
+    steps:
+      - run:
+          name: Build NEAT-TESTS
+          command: 'mkdir build-NEAT-tests && cd build-NEAT-tests && cmake -DCMAKE_BUILD_TYPE=Release ../test/ && make'
+
+  run_unit_tests:
+    steps:
+      - run:
+          name: Run unit tests
+          command: mkdir test-results && mkdir test-results/gtest && ./build-NEAT-tests/unit_tests/unit_tests --gtest_output="xml:./test-results/gtest/results.xml"
+      - store_test_results:
+          path: test-results
+      - run:
+          name: Run LCOV
+          command: |
+            lcov --capture --directory ./build-NEAT-tests/unit_tests/ --output-file ./build-NEAT-tests/unit_tests/coverage.info
+            lcov -r "./build-NEAT-tests/unit_tests/coverage.info" "*.moc" "*moc_*.cpp" "*/test/*" "*/unit_tests/*" "*/gtest/*" "*/c++/*" "*/Core/*" "*/Eigen/*" "*/gcc/*" -o "./build-NEAT-tests/unit_tests/coverage-filtered.info"
+            genhtml ./build-NEAT-tests/unit_tests/coverage-filtered.info --output-directory coverage
+      - store_artifacts:
+          path: coverage
+
+executors:
+  docker-bionic:
+    docker:
+      - image: "ubuntu:bionic"
+
+jobs:
+  unit_tests:
+    executor: docker-bionic
+    steps:
+      - set_up_unit_test_environment
+      - build_tests
+      - run_unit_tests
+
+workflows:
+  build-and-run-tests:
+    jobs:
+      - unit_tests
