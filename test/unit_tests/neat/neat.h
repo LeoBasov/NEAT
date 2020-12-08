@@ -8,7 +8,7 @@ namespace neat {
 
 TEST(NEAT, Initialize) {
     NEAT::Config config;
-    std::vector<NEAT::Genotype> genotypes;
+    std::vector<genome::Genotype> genotypes;
     GenePool gene_pool;
     NEAT neat;
     const uint n_sensors = 3, n_output = 2, n_genotypes = 10;
@@ -42,7 +42,7 @@ TEST(NEAT, Initialize) {
 
 TEST(NEAT, Clear) {
     NEAT::Config config;
-    std::vector<NEAT::Genotype> genotypes;
+    std::vector<genome::Genotype> genotypes;
     GenePool gene_pool;
     NEAT neat;
     const uint n_sensors = 3, n_output = 2, n_genotypes = 10;

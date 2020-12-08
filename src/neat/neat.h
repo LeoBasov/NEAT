@@ -5,22 +5,11 @@
 
 #include "../common/random.h"
 #include "gene_pool.h"
+#include "genome.h"
 
 namespace neat {
 class NEAT {
    public:
-    struct Gene {
-        Gene(unsigned int id, double weight = 1.0) : id(id), weight(weight) {}
-
-        unsigned int id;
-        double weight = 1.0;
-        bool enabled = true;
-    };
-
-    struct Genotype {
-        std::vector<Gene> genes;
-    };
-
     struct Config {
         std::pair<double, double> weight_range = {-10.0, 10.0};
 
@@ -35,12 +24,12 @@ class NEAT {
                     const unsigned int& n_genotypes, const Config config);
 
     GenePool GetGenePool() const;
-    std::vector<Genotype> GetGenotypes() const;
+    std::vector<genome::Genotype> GetGenotypes() const;
 
    private:
     Config config_;
     GenePool gene_pool_;
-    std::vector<Genotype> genotypes_;
+    std::vector<genome::Genotype> genotypes_;
     Random random_;
 };
 }  // namespace neat

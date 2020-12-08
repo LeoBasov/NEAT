@@ -20,13 +20,13 @@ void NEAT::Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_
     for (size_t i = 0; i < genotypes_.size(); i++) {
         for (size_t j = 0; j < gene_pool_.GetGenes().size(); j++) {
             genotypes_.at(i).genes.push_back(
-                Gene(j, random_.RandomNumber(config_.weight_range.first, config_.weight_range.second)));
+                genome::Gene(j, random_.RandomNumber(config_.weight_range.first, config_.weight_range.second)));
         }
     }
 }
 
 GenePool NEAT::GetGenePool() const { return gene_pool_; }
 
-std::vector<NEAT::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
+std::vector<genome::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
 
 }  // namespace neat
