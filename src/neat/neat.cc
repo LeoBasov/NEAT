@@ -33,10 +33,43 @@ void NEAT::Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_
                                    config_.coeff3);
 }
 
+std::vector<std::vector<double>> NEAT::ExecuteNetworks(const std::vector<double>& input_values) const {
+    std::vector<std::vector<double>> results(genotypes_.size());
+
+    if (input_values.size() != gene_pool_.GetNSensorNodes()) {
+        throw std::domain_error("number input values != sensor nodes");
+    }
+
+    for (uint i = 0; i < genotypes_.size(); i++) {
+        results.at(i) = ExecuteNetwork(input_values, i);
+    }
+
+    return results;
+}
+
+std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values, const uint& genotype_id) const {
+    std::vector<double> retvals(gene_pool_.GetNOutputNodes(), 0.0);
+    VectorXd nodes(neat_algorithms::SetUpNodes(input_values, gene_pool_));
+    const MatrixXd matrix(neat_algorithms::Genotype2Phenotype(genotypes_.at(genotype_id), gene_pool_));
+    const uint n_const_nodes(gene_pool_.GetNSensorNodes() + 1);
+
+    for (uint i = 0; i < genotypes_.at(genotype_id).nodes.size(); i++) {
+        neat_algorithms::ExecuteNetwork(matrix, nodes, n_const_nodes, config_.sigmoid_parameter);
+    }
+
+    for (uint i = n_const_nodes, j = 0; i < n_const_nodes + gene_pool_.GetNOutputNodes(); i++, j++) {
+        retvals.at(j) = nodes(i);
+    }
+
+    return retvals;
+}
+
 GenePool NEAT::GetGenePool() const { return gene_pool_; }
 
 std::vector<genome::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
 
 std::vector<genome::Species> NEAT::GetSpecies() const { return species_; }
+
+void NEAT::SetGenoTypes(const std::vector<genome::Genotype>& genotypes) { genotypes_ = genotypes; }
 
 }  // namespace neat

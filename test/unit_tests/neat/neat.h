@@ -66,4 +66,41 @@ TEST(NEAT, Clear) {
     ASSERT_EQ(0, genotypes.size());
 }
 
+TEST(NEAT, ExecuteNetwork) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 10;
+    const std::vector<double> input{3.0, 5.0};
+    std::vector<double> output;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotypes = neat.GetGenotypes();
+
+    genotypes.at(0).genes.at(0).weight = 0.0;
+    genotypes.at(0).genes.at(1).weight = 0.0;
+    genotypes.at(0).genes.at(2).weight = 1.0;
+
+    neat.SetGenoTypes(genotypes);
+
+    output = neat.ExecuteNetwork(input, 0);
+
+    ASSERT_EQ(1, output.size());
+
+    ASSERT_DOUBLE_EQ(utility::Sigmoid(input.at(1), config.sigmoid_parameter), output.front());
+
+    genotypes.at(0).genes.at(0).weight = 1.0;
+    genotypes.at(0).genes.at(1).weight = 1.0;
+    genotypes.at(0).genes.at(2).weight = 1.0;
+
+    neat.SetGenoTypes(genotypes);
+
+    output = neat.ExecuteNetwork(input, 0);
+
+    ASSERT_EQ(1, output.size());
+
+    ASSERT_DOUBLE_EQ(utility::Sigmoid(1.0 + input.at(0) + input.at(1), config.sigmoid_parameter), output.front());
+}
+
 }  // namespace neat
