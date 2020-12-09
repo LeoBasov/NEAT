@@ -436,7 +436,38 @@ TEST(neat_algorithms, ReproduceSpecies) {
     ASSERT_EQ(3, genotypes_new.size());
 };
 
-TEST(neat_algorithms, Reproduce) { ASSERT_TRUE(false); };
+TEST(neat_algorithms, Reproduce) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    GenePool gene_pool;
+    NEAT neat;
+    std::vector<genome::Species> species;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    std::vector<double> fitnesses;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool = neat.GetGenePool();
+    genotypes = neat.GetGenotypes();
+
+    for (auto& genotype : genotypes) {
+        for (auto& gene : genotype.genes) {
+            gene.weight = 1.0;
+        }
+    }
+
+    fitnesses = {1.0, 6.0, 13.0, 12.0, 12.0, 12.0};
+
+    SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
+
+    AdjustedFitnesses(fitnesses, species, genotypes);
+    SortByFitness(fitnesses, genotypes);
+    SortBySpecies(genotypes);
+
+    Reproduce(fitnesses, species, genotypes, 3);
+
+    ASSERT_EQ(3, genotypes.size());
+};
 
 }  // namespace neat_algorithms
 }  // namespace neat

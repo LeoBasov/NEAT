@@ -32,7 +32,7 @@ void ReproduceSpecies(const genome::Species& species, const std::vector<genome::
                       std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes,
                       const uint& species_id);
 void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
-               std::vector<genome::Genotype>& genotypes, const double& n_genotypes);
+               std::vector<genome::Genotype>& genotypes, const uint& n_genotypes);
 
 }  // namespace neat_algorithms
 }  // namespace neat

@@ -54,5 +54,6 @@ class NEAT {
     std::vector<genome::Genotype> genotypes_;
     std::vector<genome::Species> species_;
     Random random_;
+    uint n_genotypes_init_ = 0;
 };
 }  // namespace neat

@@ -15,6 +15,7 @@ void NEAT::Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_
                       const unsigned int& n_genotypes, const Config config) {
     Clear();
     config_ = config;
+    n_genotypes_init_ = n_genotypes;
     gene_pool_.Initialize(n_sensor_nodes, n_output_nodes);
     genotypes_.resize(n_genotypes);
 
@@ -66,7 +67,7 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
 
 void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
     neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
-    // reproduce
+    neat_algorithms::Reproduce(fitnesses, species_, genotypes_, n_genotypes_init_);
     // mutate
     neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
                                    config_.coeff3);

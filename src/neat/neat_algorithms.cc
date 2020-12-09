@@ -235,7 +235,7 @@ void ReproduceSpecies(const genome::Species& species, const std::vector<genome::
 }
 
 void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
-               std::vector<genome::Genotype>& genotypes, const double& n_genotypes) {
+               std::vector<genome::Genotype>& genotypes, const uint& n_genotypes) {
     double total_fitness(0.0);
     std::vector<genome::Genotype> new_genotypes;
 
@@ -251,6 +251,8 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
 
         ReproduceSpecies(species.at(i), genotypes, new_genotypes, n_genotypes_loc, i);
     }
+
+    genotypes = new_genotypes;
 }
 
 }  // namespace neat_algorithms
