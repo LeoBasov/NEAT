@@ -68,7 +68,8 @@ void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
     neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
     // prolifirate
     // mutate
-    // sort in species
+    neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
+                                   config_.coeff3);
 }
 
 GenePool NEAT::GetGenePool() const { return gene_pool_; }
