@@ -180,5 +180,21 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
     }
 }
 
+void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Species>& species,
+                       const std::vector<genome::Genotype>& genotypes) {
+    if (fitnesses.size() != genotypes.size()) {
+        throw std::domain_error("fitness size != genotype size");
+    }
+
+    for (auto& spec : species) {
+        spec.total_fitness = 0.0;
+    }
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        fitnesses.at(i) /= static_cast<double>(species.at(genotypes.at(i).species_id).n_memeber);
+        species.at(genotypes.at(i).species_id).total_fitness += fitnesses.at(i);
+    }
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

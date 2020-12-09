@@ -24,6 +24,8 @@ VectorXd SetUpNodes(const std::vector<double>& input_vaules, const GenePool& poo
 void ExecuteNetwork(const MatrixXd& matrix, VectorXd& nodes, const uint& n_const_nodes, const double& parameter = 1.0);
 void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome::Species>& species,
                    const double& max_distance, const double& ceff1, const double& ceff2, const double& ceff3);
+void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Species>& species,
+                       const std::vector<genome::Genotype>& genotypes);
 
 }  // namespace neat_algorithms
 }  // namespace neat

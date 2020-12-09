@@ -275,5 +275,52 @@ TEST(neat_algorithms, SortInSpecies) {
     ASSERT_EQ(3, species.size());
 }
 
+TEST(neat_algorithms, AdjustedFitnesses) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    GenePool gene_pool;
+    NEAT neat;
+    std::vector<genome::Species> species;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    std::vector<double> fitnesses;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool = neat.GetGenePool();
+    genotypes = neat.GetGenotypes();
+
+    for (auto& genotype : genotypes) {
+        for (auto& gene : genotype.genes) {
+            gene.weight = 1.0;
+        }
+    }
+
+    genotypes.at(0).genes.at(0).weight = -100.0;
+    genotypes.at(1).genes.at(0).weight = -100.0;
+    genotypes.at(2).genes.at(0).weight = 100.0;
+
+    neat_algorithms::SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
+
+    ASSERT_EQ(3, species.size());
+
+    ASSERT_THROW(neat_algorithms::AdjustedFitnesses(fitnesses, species, genotypes), std::domain_error);
+
+    fitnesses = {1.0, 6.0, 13.0, 12.0, 12.0, 12.0};
+
+    neat_algorithms::AdjustedFitnesses(fitnesses, species, genotypes);
+
+    ASSERT_DOUBLE_EQ(0.5, fitnesses.at(0));
+    ASSERT_DOUBLE_EQ(3.0, fitnesses.at(1));
+    ASSERT_DOUBLE_EQ(13.0, fitnesses.at(2));
+    ASSERT_DOUBLE_EQ(4.0, fitnesses.at(3));
+    ASSERT_DOUBLE_EQ(4.0, fitnesses.at(4));
+    ASSERT_DOUBLE_EQ(4.0, fitnesses.at(5));
+
+    // species
+    ASSERT_DOUBLE_EQ(3.5, species.at(0).total_fitness);
+    ASSERT_DOUBLE_EQ(13.0, species.at(1).total_fitness);
+    ASSERT_DOUBLE_EQ(12.0, species.at(2).total_fitness);
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat
