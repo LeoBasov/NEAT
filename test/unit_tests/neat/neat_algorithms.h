@@ -476,7 +476,7 @@ TEST(neat_algorithms, Reproduce) {
     ASSERT_EQ(3, genotypes.size());
 };
 
-TEST(neat_algorithms, Mutate) {
+TEST(neat_algorithms, Mutate_NULL) {
     NEAT::Config config;
     std::vector<genome::Genotype> genotypes_new, genotypes_old;
     GenePool gene_pool_new, gene_pool_old;
@@ -504,6 +504,37 @@ TEST(neat_algorithms, Mutate) {
         ASSERT_EQ(genotypes_old.at(i).species_id, genotypes_new.at(i).species_id);
         ASSERT_EQ(genotypes_old.at(i).genes.size(), genotypes_new.at(i).genes.size());
         ASSERT_EQ(genotypes_old.at(i).nodes.size(), genotypes_new.at(i).nodes.size());
+    }
+}
+
+TEST(neat_algorithms, Mutate_AddNode) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes_new, genotypes_old;
+    GenePool gene_pool_new, gene_pool_old;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool_new = neat.GetGenePool();
+    gene_pool_old = neat.GetGenePool();
+    genotypes_old = neat.GetGenotypes();
+    genotypes_new = neat.GetGenotypes();
+
+    Mutate(genotypes_new, gene_pool_new, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+
+    ASSERT_EQ(gene_pool_old.GetNSensorNodes(), gene_pool_new.GetNSensorNodes());
+    ASSERT_EQ(gene_pool_old.GetNOutputNodes(), gene_pool_new.GetNOutputNodes());
+    ASSERT_EQ(gene_pool_old.GetNHiddenNodes() + n_genotypes, gene_pool_new.GetNHiddenNodes());
+    ASSERT_EQ(gene_pool_old.GetNTotalNodes() + n_genotypes, gene_pool_new.GetNTotalNodes());
+    ASSERT_EQ(gene_pool_old.GetGenes().size() + 2 * n_genotypes, gene_pool_new.GetGenes().size());
+
+    ASSERT_EQ(genotypes_old.size(), genotypes_new.size());
+
+    for (uint i = 0; i < genotypes_old.size(); i++) {
+        ASSERT_EQ(genotypes_old.at(i).species_id, genotypes_new.at(i).species_id);
+        ASSERT_EQ(genotypes_old.at(i).genes.size() + 2, genotypes_new.at(i).genes.size());
+        ASSERT_EQ(genotypes_old.at(i).nodes.size() + 1, genotypes_new.at(i).nodes.size());
     }
 }
 
