@@ -31,7 +31,7 @@ struct Genotype {
 
 struct Species {
     Genotype ref_genotype;
-    unsigned int n_memeber = 0;
+    unsigned int n_member = 0;
     double total_fitness = 0.0;
 };
 

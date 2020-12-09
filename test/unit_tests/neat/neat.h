@@ -172,7 +172,7 @@ TEST(NEAT, UpdateNetworks) {
     }
 
     species.pop_back();
-    species.front().n_memeber = n_genotypes;
+    species.front().n_member = n_genotypes;
     species.front().total_fitness = 0.0;
     species.front().ref_genotype = genotypes.front();
 
@@ -188,7 +188,7 @@ TEST(NEAT, UpdateNetworks) {
     ASSERT_EQ(1, species.size());
 
     for (auto spec : neat.GetSpecies()) {
-        ASSERT_EQ(n_genotypes, spec.n_memeber);
+        ASSERT_EQ(n_genotypes, spec.n_member);
     }
 }
 

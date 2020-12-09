@@ -148,7 +148,7 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
     std::vector<bool> sorted(species.size(), false);
 
     for (auto& spec : species) {
-        spec.n_memeber = 0;
+        spec.n_member = 0;
     }
 
     for (auto& genotype : genotypes) {
@@ -158,7 +158,7 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
             for (uint spec_id = 0; spec_id < species.size(); spec_id++) {
                 if (CalcDistance(genotype.genes, species.at(spec_id).ref_genotype.genes, ceff1, ceff2, ceff3) <
                     max_distance) {
-                    species.at(spec_id).n_memeber++;
+                    species.at(spec_id).n_member++;
                     genotype.species_id = spec_id;
                     found = true;
 
@@ -175,7 +175,7 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
                 genome::Species spec;
 
                 spec.ref_genotype = genotype;
-                spec.n_memeber = 1;
+                spec.n_member = 1;
                 genotype.species_id = species.size();
 
                 species.push_back(spec);
@@ -184,7 +184,7 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
             genome::Species spec;
 
             spec.ref_genotype = genotype;
-            spec.n_memeber = 1;
+            spec.n_member = 1;
             genotype.species_id = species.size();
 
             species.push_back(spec);
@@ -203,7 +203,7 @@ void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Speci
     }
 
     for (uint i = 0; i < fitnesses.size(); i++) {
-        fitnesses.at(i) /= static_cast<double>(species.at(genotypes.at(i).species_id).n_memeber);
+        fitnesses.at(i) /= static_cast<double>(species.at(genotypes.at(i).species_id).n_member);
         species.at(genotypes.at(i).species_id).total_fitness += fitnesses.at(i);
     }
 }
@@ -280,10 +280,10 @@ void ReproduceSpecies(const genome::Species& species, const std::vector<genome::
     for (uint i = 0; i < genotypes.size(); i++) {
         if (genotypes.at(i).species_id == species_id) {
             while (n_genotypes < n_new_genotypes) {
-                for (uint j = i; j < i + species.n_memeber; j++) {
+                for (uint j = i; j < i + species.n_member; j++) {
                     if (n_genotypes >= n_new_genotypes) {
                         return;
-                    } else if ((random.RandomNumber() < prob_mate) && (j < i + species.n_memeber - 1)) {
+                    } else if ((random.RandomNumber() < prob_mate) && (j < i + species.n_member - 1)) {
                         new_genotypes.push_back(Mate(genotypes.at(j), genotypes.at(j + 1), random));
                         n_genotypes++;
                     } else {
