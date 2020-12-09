@@ -14,6 +14,11 @@ struct Gene {
 
     inline bool operator==(const Gene& other) { return id == other.id; }
     inline bool operator!=(const Gene& other) { return !(*this == other); }
+
+    inline bool operator<(const Gene& other) { return (*this).id < other.id; }
+    inline bool operator>(const Gene& other) { return (*this).id > other.id; }
+    inline bool operator<=(const Gene& other) { return !(*this > other); }
+    inline bool operator>=(const Gene& other) { return !(*this < other); }
 };
 
 struct Genotype {

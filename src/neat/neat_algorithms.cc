@@ -14,6 +14,9 @@ bool AddNode(genome::Genotype& genotype, GenePool& pool, const uint& gene_id, co
             genotype.genes.push_back(genome::Gene(retval.first, 1.0));
             genotype.genes.push_back(genome::Gene(retval.second, weight));
 
+            std::sort(genotype.nodes.begin(), genotype.nodes.end());
+            std::sort(genotype.genes.begin(), genotype.genes.end());
+
             return true;
         }
     }
@@ -30,6 +33,7 @@ bool AddConnection(genome::Genotype& genotype, GenePool& pool, const uint& in_no
             return false;
         } else {
             genotype.genes.push_back(genome::Gene(retval.second, weight));
+            std::sort(genotype.genes.begin(), genotype.genes.end());
         }
     }
 
