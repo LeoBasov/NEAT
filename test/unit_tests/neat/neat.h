@@ -171,7 +171,7 @@ TEST(NEAT, UpdateNetworks) {
         }
     }
 
-    species.pop_back();
+    species.resize(1);
     species.front().n_member = n_genotypes;
     species.front().total_fitness = 0.0;
     species.front().ref_genotype = genotypes.front();
