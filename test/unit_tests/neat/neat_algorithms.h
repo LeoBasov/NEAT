@@ -117,6 +117,24 @@ TEST(neat_algorithms, CalcDistance) {
 
     ASSERT_EQ(2.6, CalcDistance(genotype1.genes, genotype2.genes, 1.0, 1.0, 1.0));
     ASSERT_EQ(2.6, CalcDistance(genotype2.genes, genotype1.genes, 1.0, 1.0, 1.0));
+
+    genotype1.genes.clear();
+    genotype2.genes.clear();
+
+    genotype1.genes.push_back(genome::Gene(0, 1.0));
+    genotype1.genes.push_back(genome::Gene(1, 1.0));
+    genotype1.genes.push_back(genome::Gene(2, 1.0));
+
+    genotype2.genes.push_back(genome::Gene(0, 1.0));
+    genotype2.genes.push_back(genome::Gene(1, 1.0));
+    genotype2.genes.push_back(genome::Gene(2, 1.0));
+    genotype2.genes.push_back(genome::Gene(3, 10.0));
+
+    ASSERT_EQ(0.0, CalcDistance(genotype1.genes, genotype1.genes, 1.0, 1.0, 1.0));
+    ASSERT_EQ(0.0, CalcDistance(genotype2.genes, genotype2.genes, 1.0, 1.0, 1.0));
+
+    ASSERT_EQ(2.0, CalcDistance(genotype1.genes, genotype2.genes, 8.0, 1.0, 1.0));
+    ASSERT_EQ(2.0, CalcDistance(genotype2.genes, genotype1.genes, 8.0, 1.0, 1.0));
 }
 
 TEST(neat_algorithms, Genotype2Phenotype) {

@@ -89,9 +89,9 @@ double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<
         }
     }
 
-    if ((genome1.size() - 1) > i) {
+    if (genome1.size() > i) {
         n_excess = genome1.size() - i;
-    } else if ((genome2.size() - 1) > j) {
+    } else if (genome2.size() > j) {
         n_excess = genome2.size() - j;
     }
 

@@ -143,7 +143,7 @@ TEST(NEAT, ExecuteNetworks) {
                      output.front().front());
 }
 
-TEST(NEAT, UpdateNetworks) {
+TEST(NEAT, UpdateNetworks_NULL) {
     NEAT::Config config;
     std::vector<genome::Genotype> genotypes;
     std::vector<genome::Species> species;
@@ -176,6 +176,132 @@ TEST(NEAT, UpdateNetworks) {
     species.front().total_fitness = 0.0;
     species.front().ref_genotype = genotypes.front();
 
+    neat.SetGenotypes(genotypes);
+    neat.SetSpecies(species);
+
+    neat.UpdateNetworks(fitnesses);
+
+    genotypes = neat.GetGenotypes();
+    species = neat.GetSpecies();
+
+    ASSERT_EQ(n_genotypes, genotypes.size());
+    ASSERT_EQ(1, species.size());
+
+    for (auto spec : species) {
+        ASSERT_EQ(n_genotypes, spec.n_member);
+    }
+
+    for (auto genotype : genotypes) {
+        ASSERT_EQ(0, genotype.species_id);
+        ASSERT_EQ(3, genotype.genes.size());
+        ASSERT_EQ(4, genotype.nodes.size());
+
+        for (auto gene : genotype.genes) {
+            ASSERT_DOUBLE_EQ(1.0, gene.weight);
+            ASSERT_TRUE(gene.enabled);
+        }
+    }
+}
+
+TEST(NEAT, UpdateNetworks_Mate_1) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    std::vector<genome::Species> species;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 10;
+    const std::vector<double> input{3.0, 5.0};
+    std::vector<double> fitnesses(n_genotypes, 1.0);
+
+    config.prob_mate = 1.0;
+
+    config.prob_new_connection = 0.0;
+    config.prob_new_node = 0.0;
+    config.prob_new_weight = 0.0;
+    config.prob_weight_change = 0.0;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotypes = neat.GetGenotypes();
+    species = neat.GetSpecies();
+
+    for (uint i = 0; i < genotypes.size(); i++) {
+        for (uint j = 0; j < genotypes.at(i).genes.size(); j++) {
+            genotypes.at(i).genes.at(j).weight = 1.0;
+            genotypes.at(i).species_id = 0;
+        }
+    }
+
+    species.resize(1);
+    species.front().n_member = n_genotypes;
+    species.front().total_fitness = 0.0;
+    species.front().ref_genotype = genotypes.front();
+
+    neat.SetGenotypes(genotypes);
+    neat.SetSpecies(species);
+
+    neat.UpdateNetworks(fitnesses);
+
+    genotypes = neat.GetGenotypes();
+    species = neat.GetSpecies();
+
+    ASSERT_EQ(n_genotypes, genotypes.size());
+    ASSERT_EQ(1, species.size());
+
+    for (auto spec : species) {
+        ASSERT_EQ(n_genotypes, spec.n_member);
+    }
+
+    for (auto genotype : genotypes) {
+        ASSERT_EQ(0, genotype.species_id);
+        ASSERT_EQ(3, genotype.genes.size());
+        ASSERT_EQ(4, genotype.nodes.size());
+
+        for (auto gene : genotype.genes) {
+            ASSERT_DOUBLE_EQ(1.0, gene.weight);
+            ASSERT_TRUE(gene.enabled);
+        }
+    }
+}
+
+TEST(NEAT, UpdateNetworks_Mate_2) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    std::vector<genome::Species> species;
+    GenePool gene_pool;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 10;
+    const std::vector<double> input{3.0, 5.0};
+    std::vector<double> fitnesses(n_genotypes, 1.0);
+
+    config.prob_mate = 1.0;
+
+    config.prob_new_connection = 0.0;
+    config.prob_new_node = 0.0;
+    config.prob_new_weight = 0.0;
+    config.prob_weight_change = 0.0;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotypes = neat.GetGenotypes();
+    species = neat.GetSpecies();
+
+    for (uint i = 0; i < genotypes.size(); i++) {
+        for (uint j = 0; j < genotypes.at(i).genes.size(); j++) {
+            genotypes.at(i).genes.at(j).weight = 1.0;
+            genotypes.at(i).species_id = 0;
+        }
+    }
+
+    species.resize(1);
+    species.front().n_member = n_genotypes;
+    species.front().total_fitness = 0.0;
+    species.front().ref_genotype = genotypes.front();
+
+    gene_pool = neat.GetGenePool();
+    neat_algorithms::AddConnection(genotypes.front(), gene_pool, 3, 3, 10.0);
+    fitnesses.front() = 10;
+
+    neat.SetGenePool(gene_pool);
     neat.SetGenotypes(genotypes);
     neat.SetSpecies(species);
 
