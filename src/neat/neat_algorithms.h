@@ -29,10 +29,10 @@ void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Speci
 void SortByFitness(const std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes);
 void SortBySpecies(std::vector<genome::Genotype>& genotypes);
 void ReproduceSpecies(const genome::Species& species, const std::vector<genome::Genotype>& genotypes,
-                      std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes,
-                      const uint& species_id);
+                      std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes, const uint& species_id,
+                      const double& prob_mate);
 void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
-               std::vector<genome::Genotype>& genotypes, const uint& n_genotypes);
+               std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate);
 void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
             const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
             const double& weight_min, const double& weight_max);

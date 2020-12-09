@@ -20,6 +20,7 @@ class NEAT {
         double prob_new_weight = 0.1;
         double prob_new_node = 0.03;
         double prob_new_connection = 0.05;
+        double prob_mate = 0.75;
 
         void Clear() {
             weight_range = {-10.0, 10.0};
@@ -30,6 +31,7 @@ class NEAT {
             prob_new_weight = 0.1;
             prob_new_node = 0.03;
             prob_new_connection = 0.05;
+            prob_mate = 0.75;
         };
     };
 

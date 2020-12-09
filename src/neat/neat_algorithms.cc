@@ -221,8 +221,8 @@ void SortBySpecies(std::vector<genome::Genotype>& genotypes) {
 }
 
 void ReproduceSpecies(const genome::Species& species, const std::vector<genome::Genotype>& genotypes,
-                      std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes,
-                      const uint& species_id) {
+                      std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes, const uint& species_id,
+                      const double& prob_mate) {
     uint n_genotypes(0);
     Random random;
 
@@ -232,7 +232,7 @@ void ReproduceSpecies(const genome::Species& species, const std::vector<genome::
                 for (uint j = i; j < i + species.n_memeber; j++) {
                     if (n_genotypes >= n_new_genotypes) {
                         return;
-                    } else if ((random.RandomNumber() < 0.75) && (j < i + species.n_memeber - 1)) {
+                    } else if ((random.RandomNumber() < prob_mate) && (j < i + species.n_memeber - 1)) {
                         new_genotypes.push_back(Mate(genotypes.at(j), genotypes.at(j + 1), random));
                         n_genotypes++;
                     } else {
@@ -247,7 +247,7 @@ void ReproduceSpecies(const genome::Species& species, const std::vector<genome::
 }
 
 void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
-               std::vector<genome::Genotype>& genotypes, const uint& n_genotypes) {
+               std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate) {
     double total_fitness(0.0);
     std::vector<genome::Genotype> new_genotypes;
 
@@ -261,7 +261,7 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
     for (uint i = 0; i < species.size(); i++) {
         uint n_genotypes_loc(n_genotypes * (species.at(i).total_fitness / total_fitness));
 
-        ReproduceSpecies(species.at(i), genotypes, new_genotypes, n_genotypes_loc, i);
+        ReproduceSpecies(species.at(i), genotypes, new_genotypes, n_genotypes_loc, i, prob_mate);
     }
 
     genotypes = new_genotypes;

@@ -407,6 +407,7 @@ TEST(neat_algorithms, ReproduceSpecies) {
     std::vector<genome::Species> species;
     const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
     std::vector<double> fitnesses;
+    const double prob_mate(0.75);
 
     neat.Initialize(n_sensors, n_output, n_genotypes, config);
 
@@ -431,7 +432,7 @@ TEST(neat_algorithms, ReproduceSpecies) {
     SortByFitness(fitnesses, genotypes);
     SortBySpecies(genotypes);
 
-    ReproduceSpecies(species.at(2), genotypes, genotypes_new, 3, 2);
+    ReproduceSpecies(species.at(2), genotypes, genotypes_new, 3, 2, prob_mate);
 
     ASSERT_EQ(3, genotypes_new.size());
 };
@@ -444,6 +445,7 @@ TEST(neat_algorithms, Reproduce) {
     std::vector<genome::Species> species;
     const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
     std::vector<double> fitnesses;
+    const double prob_mate(0.75);
 
     neat.Initialize(n_sensors, n_output, n_genotypes, config);
 
@@ -464,7 +466,7 @@ TEST(neat_algorithms, Reproduce) {
     SortByFitness(fitnesses, genotypes);
     SortBySpecies(genotypes);
 
-    Reproduce(fitnesses, species, genotypes, 3);
+    Reproduce(fitnesses, species, genotypes, 3, prob_mate);
 
     ASSERT_EQ(3, genotypes.size());
 };
