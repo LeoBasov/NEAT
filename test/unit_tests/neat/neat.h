@@ -275,6 +275,8 @@ TEST(NEAT, UpdateNetworks_Mate_2) {
 
     config.prob_mate = 1.0;
 
+    config.coeff1 = 12.0;
+
     config.prob_new_connection = 0.0;
     config.prob_new_node = 0.0;
     config.prob_new_weight = 0.0;
@@ -298,7 +300,8 @@ TEST(NEAT, UpdateNetworks_Mate_2) {
     species.front().ref_genotype = genotypes.front();
 
     gene_pool = neat.GetGenePool();
-    neat_algorithms::AddConnection(genotypes.front(), gene_pool, 3, 3, 10.0);
+    neat_algorithms::AddConnection(genotypes.front(), gene_pool, 3, 3, 1.0);
+    genotypes.front().genes.front().weight = 10.0;
     fitnesses.front() = 10;
 
     neat.SetGenePool(gene_pool);
@@ -311,22 +314,25 @@ TEST(NEAT, UpdateNetworks_Mate_2) {
     species = neat.GetSpecies();
 
     ASSERT_EQ(n_genotypes, genotypes.size());
-    ASSERT_EQ(1, species.size());
+    ASSERT_EQ(2, species.size());
 
-    for (auto spec : species) {
-        ASSERT_EQ(n_genotypes, spec.n_member);
-    }
+    ASSERT_EQ(n_genotypes - 1, species.at(0).n_member);
+    ASSERT_EQ(1, species.at(1).n_member);
 
-    for (auto genotype : genotypes) {
-        ASSERT_EQ(0, genotype.species_id);
-        ASSERT_EQ(3, genotype.genes.size());
-        ASSERT_EQ(4, genotype.nodes.size());
+    for (uint i = 1; i < genotypes.size(); i++) {
+        ASSERT_EQ(0, genotypes.at(i).species_id);
+        ASSERT_EQ(3, genotypes.at(i).genes.size());
+        ASSERT_EQ(4, genotypes.at(i).nodes.size());
 
-        for (auto gene : genotype.genes) {
+        for (auto gene : genotypes.at(i).genes) {
             ASSERT_DOUBLE_EQ(1.0, gene.weight);
             ASSERT_TRUE(gene.enabled);
         }
     }
+
+    ASSERT_EQ(1, genotypes.at(0).species_id);
+    ASSERT_EQ(4, genotypes.at(0).genes.size());
+    ASSERT_EQ(4, genotypes.at(0).nodes.size());
 }
 
 }  // namespace neat
