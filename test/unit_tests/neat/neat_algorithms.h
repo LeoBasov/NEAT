@@ -322,5 +322,86 @@ TEST(neat_algorithms, AdjustedFitnesses) {
     ASSERT_DOUBLE_EQ(12.0, species.at(2).total_fitness);
 }
 
+TEST(neat_algorithms, SortByFitness) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    GenePool gene_pool;
+    NEAT neat;
+    std::vector<genome::Species> species;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 3;
+    std::vector<double> fitnesses;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool = neat.GetGenePool();
+    genotypes = neat.GetGenotypes();
+
+    for (auto& genotype : genotypes) {
+        for (auto& gene : genotype.genes) {
+            gene.weight = 1.0;
+        }
+    }
+
+    genotypes.at(0).genes.at(0).weight = 1.0;
+    genotypes.at(1).genes.at(0).weight = -100.0;
+    genotypes.at(2).genes.at(0).weight = 100.0;
+
+    SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
+
+    fitnesses = {13.0, 1.0, 7.0};
+
+    AdjustedFitnesses(fitnesses, species, genotypes);
+    SortByFitness(fitnesses, genotypes);
+
+    ASSERT_EQ(0, genotypes.at(0).species_id);
+    ASSERT_EQ(2, genotypes.at(1).species_id);
+    ASSERT_EQ(1, genotypes.at(2).species_id);
+};
+
+TEST(neat_algorithms, SortBySpecies) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    GenePool gene_pool;
+    NEAT neat;
+    std::vector<genome::Species> species;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    std::vector<double> fitnesses;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool = neat.GetGenePool();
+    genotypes = neat.GetGenotypes();
+
+    for (auto& genotype : genotypes) {
+        for (auto& gene : genotype.genes) {
+            gene.weight = 1.0;
+        }
+    }
+
+    genotypes.at(5).genes.at(0).weight = -100.0;
+    genotypes.at(0).genes.at(0).weight = -100.0;
+    genotypes.at(2).genes.at(0).weight = 100.0;
+
+    SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
+
+    fitnesses = {1.0, 6.0, 13.0, 12.0, 12.0, 12.0};
+
+    AdjustedFitnesses(fitnesses, species, genotypes);
+    SortBySpecies(genotypes);
+
+    ASSERT_EQ(0, genotypes.at(0).species_id);
+    ASSERT_EQ(0, genotypes.at(1).species_id);
+
+    ASSERT_EQ(1, genotypes.at(2).species_id);
+    ASSERT_EQ(1, genotypes.at(3).species_id);
+    ASSERT_EQ(1, genotypes.at(4).species_id);
+
+    ASSERT_EQ(2, genotypes.at(5).species_id);
+};
+
+TEST(neat_algorithms, ReproduceSpecies) { ASSERT_TRUE(false); };
+
+TEST(neat_algorithms, Reproduce) { ASSERT_TRUE(false); };
+
 }  // namespace neat_algorithms
 }  // namespace neat

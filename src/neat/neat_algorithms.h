@@ -26,6 +26,12 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
                    const double& max_distance, const double& ceff1, const double& ceff2, const double& ceff3);
 void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Species>& species,
                        const std::vector<genome::Genotype>& genotypes);
+void SortByFitness(const std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes);
+void SortBySpecies(std::vector<genome::Genotype>& genotypes);
+void ReproduceSpecies(const genome::Species& species, const std::vector<genome::Genotype>& genotypes,
+                      std::vector<genome::Genotype>& new_genotypes, const double& n_new_genotypes);
+void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
+               std::vector<genome::Genotype>& genotypes, const double& n_genotypes);
 
 }  // namespace neat_algorithms
 }  // namespace neat

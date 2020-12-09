@@ -66,7 +66,7 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
 
 void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
     neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
-    // prolifirate
+    // reproduce
     // mutate
     neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
                                    config_.coeff3);

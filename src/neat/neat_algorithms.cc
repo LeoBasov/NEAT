@@ -196,5 +196,39 @@ void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Speci
     }
 }
 
+void SortByFitness(const std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes) {
+    auto permutation_vector =
+        utility::SortPermutation(fitnesses, [](double const& a, double const& b) { return a > b; });
+    utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+}
+
+void SortBySpecies(std::vector<genome::Genotype>& genotypes) {
+    auto permutation_vector = utility::SortPermutation(
+        genotypes, [](genome::Genotype const& a, genome::Genotype const& b) { return a.species_id < b.species_id; });
+    utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+}
+
+void ReproduceSpecies(const genome::Species& species, const std::vector<genome::Genotype>& genotypes,
+                      std::vector<genome::Genotype>& new_genotypes, const double& n_new_genotypes) {}
+
+void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
+               std::vector<genome::Genotype>& genotypes, const double& n_genotypes) {
+    double total_fitness(0.0);
+    std::vector<genome::Genotype> new_genotypes;
+
+    SortByFitness(fitnesses, genotypes);
+    SortBySpecies(genotypes);
+
+    for (auto spec : species) {
+        total_fitness += spec.total_fitness;
+    }
+
+    for (const auto& spec : species) {
+        uint n_genotypes_loc(n_genotypes * (spec.total_fitness / total_fitness));
+
+        ReproduceSpecies(spec, genotypes, new_genotypes, n_genotypes_loc);
+    }
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat
