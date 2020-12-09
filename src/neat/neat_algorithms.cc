@@ -255,5 +255,34 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
     genotypes = new_genotypes;
 }
 
+void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
+            const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
+            const double& weight_min, const double& weight_max) {
+    Random random;
+
+    for (auto& genotype : genotypes) {
+        const double rand(random.RandomNumber());
+        const uint gene_genome_id = static_cast<uint>(std::round(random.RandomNumber(0.0, genotype.genes.size() - 1)));
+        const uint gene_id(genotype.genes.at(gene_genome_id).id);
+        const uint node_genome_id1 = static_cast<uint>(std::round(random.RandomNumber(0.0, genotype.nodes.size() - 1)));
+        const uint node_genome_id2 = static_cast<uint>(std::round(random.RandomNumber(0.0, genotype.nodes.size() - 1)));
+        const uint node_id1(genotype.nodes.at(node_genome_id1));
+        const uint node_id2(genotype.nodes.at(node_genome_id2));
+
+        if (rand < prob_new_node) {
+            AddNode(genotype, pool, gene_id, genotype.genes.at(gene_genome_id).weight);
+        } else if (rand < prob_new_connection) {
+            AddConnection(genotype, pool, node_id1, node_id2, random.RandomNumber(weight_min, weight_max));
+        } else if (rand < prob_weight_change) {
+            if (random.RandomNumber() < prob_new_weight) {
+                genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
+            } else {
+                genotype.genes.at(gene_genome_id).weight =
+                    random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
+            }
+        }
+    }
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

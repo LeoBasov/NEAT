@@ -16,12 +16,20 @@ class NEAT {
         double species_distance = 3.0;
         double coeff1 = 1.0, coeff2 = 1.0, coeff3 = 0.4;
         double sigmoid_parameter = 4.9;
+        double prob_weight_change = 0.9;
+        double prob_new_weight = 0.1;
+        double prob_new_node = 0.03;
+        double prob_new_connection = 0.05;
 
         void Clear() {
             weight_range = {-10.0, 10.0};
             species_distance = 3.0;
             coeff1 = 1.0, coeff2 = 1.0, coeff3 = 0.4;
             sigmoid_parameter = 4.9;
+            prob_weight_change = 0.9;
+            prob_new_weight = 0.1;
+            prob_new_node = 0.03;
+            prob_new_connection = 0.05;
         };
     };
 
