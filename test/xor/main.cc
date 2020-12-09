@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "../../src/common/timer.h"
 #include "../../src/neat/neat.h"
 #include "../../src/neat/neat_algorithms.h"
 
@@ -8,6 +9,7 @@ using namespace neat;
 std::vector<double> Execute(const NEAT &neat);
 
 int main(int, char**) {
+    Timer exex, update, total;
     NEAT::Config config;
     genome::Genotype genotype;
     GenePool gene_pool;
@@ -18,12 +20,16 @@ int main(int, char**) {
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
 
+    total.Start();
     for (uint i = 0; i < 100; i++) {
         std::cout << "------------------------------------------------------" << std::endl;
         std::cout << "ITTERATION: " << i << std::endl;
         std::cout << "------------------------------------------------------" << std::endl;
         std::cout << "EXECUTING" << std::endl;
+        exex.Start();
         fitnesses = Execute(neat);
+        exex.Stop();
+        std::cout << "EXECUTION TIME " << exex.GetCurrentDuration() << std::endl;
 
         if (fitnesses.front() > 1.75) {
             std::cout << "------------------------------------------------------" << std::endl;
@@ -54,7 +60,10 @@ int main(int, char**) {
         }
 
         std::cout << "UPDATING" << std::endl;
+        update.Start();
         neat.UpdateNetworks(fitnesses);
+        update.Stop();
+        std::cout << "UPDATE TIME " << update.GetCurrentDuration() << std::endl;
 
         std::cout << "N SPECIES   " << neat.GetSpecies().size() << std::endl;
         std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
@@ -62,7 +71,12 @@ int main(int, char**) {
         std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
         std::cout << "FITNESS     " << fitnesses.front() << std::endl;
     }
+    total.Stop();
 
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "TOTAL EXECUTION TIME " << exex.GetTotalDuration() << std::endl;
+    std::cout << "TOTAL UPDATE TIME " << update.GetTotalDuration() << std::endl;
+    std::cout << "TOTAL TIME " << total.GetTotalDuration() << std::endl;
     std::cout << "==========================================================" << std::endl;
 
     return 0;
