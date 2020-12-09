@@ -187,8 +187,19 @@ TEST(NEAT, UpdateNetworks) {
     ASSERT_EQ(n_genotypes, genotypes.size());
     ASSERT_EQ(1, species.size());
 
-    for (auto spec : neat.GetSpecies()) {
+    for (auto spec : species) {
         ASSERT_EQ(n_genotypes, spec.n_member);
+    }
+
+    for (auto genotype : genotypes) {
+        ASSERT_EQ(0, genotype.species_id);
+        ASSERT_EQ(3, genotype.genes.size());
+        ASSERT_EQ(4, genotype.nodes.size());
+
+        for (auto gene : genotype.genes) {
+            ASSERT_DOUBLE_EQ(1.0, gene.weight);
+            ASSERT_TRUE(gene.enabled);
+        }
     }
 }
 
