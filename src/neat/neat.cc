@@ -85,4 +85,6 @@ void NEAT::SetGenotypes(const std::vector<genome::Genotype>& genotypes) { genoty
 
 void NEAT::SetSpecies(const std::vector<genome::Species>& species) { species_ = species; }
 
+void NEAT::SetGenePool(const GenePool& gene_pool) { gene_pool_ = gene_pool; }
+
 }  // namespace neat

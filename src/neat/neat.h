@@ -58,6 +58,7 @@ class NEAT {
 
     void SetGenotypes(const std::vector<genome::Genotype>& genotypes);
     void SetSpecies(const std::vector<genome::Species>& species);
+    void SetGenePool(const GenePool& gene_pool);
 
    private:
     Config config_;
