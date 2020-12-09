@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 #include <algorithm>
+#include <functional>
 
 #include "../common/random.h"
 #include "../common/utility.h"

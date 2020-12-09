@@ -37,5 +37,12 @@ void ApplyPermutationInPlace(std::vector<T>& vec, const std::vector<std::size_t>
     }
 }
 
+struct greater {
+    template <class T>
+    bool operator()(T const& a, T const& b) const {
+        return a > b;
+    }
+};
+
 }  // namespace utility
 }  // namespace neat

@@ -25,6 +25,8 @@ struct Genotype {
     std::vector<unsigned int > nodes;
     std::vector<Gene> genes;
     unsigned int species_id = 0;
+
+    inline bool operator<(const Genotype& other) { return (*this).species_id < other.species_id; }
 };
 
 struct Species {

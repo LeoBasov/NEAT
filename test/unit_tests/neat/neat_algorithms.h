@@ -342,20 +342,25 @@ TEST(neat_algorithms, SortByFitness) {
         }
     }
 
-    genotypes.at(0).genes.at(0).weight = 1.0;
-    genotypes.at(1).genes.at(0).weight = -100.0;
-    genotypes.at(2).genes.at(0).weight = 100.0;
-
     SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
 
     fitnesses = {13.0, 1.0, 7.0};
 
     AdjustedFitnesses(fitnesses, species, genotypes);
+
+    genotypes.at(0).genes.pop_back();
+    genotypes.at(1).nodes.pop_back();
+
     SortByFitness(fitnesses, genotypes);
 
-    ASSERT_EQ(0, genotypes.at(0).species_id);
-    ASSERT_EQ(2, genotypes.at(1).species_id);
-    ASSERT_EQ(1, genotypes.at(2).species_id);
+    ASSERT_EQ(2, genotypes.at(0).genes.size());
+    ASSERT_EQ(4, genotypes.at(0).nodes.size());
+
+    ASSERT_EQ(3, genotypes.at(1).genes.size());
+    ASSERT_EQ(4, genotypes.at(1).nodes.size());
+
+    ASSERT_EQ(3, genotypes.at(2).genes.size());
+    ASSERT_EQ(3, genotypes.at(2).nodes.size());
 };
 
 TEST(neat_algorithms, SortBySpecies) {

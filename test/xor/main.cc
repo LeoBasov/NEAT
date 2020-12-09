@@ -17,13 +17,13 @@ int main(int, char**) {
     const uint n_sensor_nodes(2), n_output_nodes(1), n_genotypes(150);
     std::vector<double> fitnesses;
 
-    config.prob_new_node = 0.01;
+    config.prob_new_node = 0.001;
 
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
 
     total.Start();
-    for (uint i = 0; i < 100; i++) {
+    for (uint i = 0; i < 5000; i++) {
         std::cout << "------------------------------------------------------" << std::endl;
         std::cout << "ITTERATION: " << i << std::endl;
         std::cout << "------------------------------------------------------" << std::endl;
@@ -33,7 +33,7 @@ int main(int, char**) {
         exex.Stop();
         std::cout << "EXECUTION TIME " << exex.GetCurrentDuration() << std::endl;
 
-        if (fitnesses.front() > 1.75) {
+        if (fitnesses.front() > 9) {
             std::cout << "------------------------------------------------------" << std::endl;
             std::cout << "FITNESS     " << fitnesses.front() << std::endl;
             Execute(neat);
@@ -87,7 +87,7 @@ int main(int, char**) {
             utility::SortPermutation(fitnesses, [](double const& a, double const& b) { return a > b; });
         const uint id(permutation_vector.at(0));
 
-        if (fitnesses.at(id) > 1.8) {
+        if (fitnesses.at(id) > 9) {
             std::cout << "HERE" << std::endl;
             std::cout << id << std::endl;
 
@@ -150,7 +150,7 @@ std::vector<double> Execute(const NEAT &neat) {
     }
 
     for (uint j = 0; j < neat.GetGenotypes().size(); j++) {
-        fitnesses.at(j) = std::sqrt(4.0 - fitnesses.at(j));
+        fitnesses.at(j) = std::pow(4.0 - fitnesses.at(j), 2);
     }
 
     return fitnesses;

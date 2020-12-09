@@ -209,9 +209,60 @@ void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Speci
 }
 
 void SortByFitness(const std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes) {
-    auto permutation_vector =
-        utility::SortPermutation(fitnesses, [](double const& a, double const& b) { return a > b; });
-    utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+    std::vector<std::pair<double, uint>> sorted(fitnesses.size());
+    uint spec_id(0), old_id(0);
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        sorted.at(i).first = fitnesses.at(i);
+        sorted.at(i).second = i;
+    }
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        if (genotypes.at(i).species_id != spec_id) {
+            std::sort(sorted.begin() + old_id, sorted.begin() + i, utility::greater());
+
+            //--------------------------------------------------------------------
+            std::vector<bool> done(genotypes.size());
+            for (std::size_t k = old_id; k < i; ++k) {
+                if (done[k]) {
+                    continue;
+                }
+                done[k] = true;
+                std::size_t prev_j = k;
+                std::size_t j = sorted[k].second;
+                while (k != j) {
+                    std::swap(genotypes[prev_j], genotypes[j]);
+                    done[j] = true;
+                    prev_j = j;
+                    j = sorted[j].second;
+                }
+            }
+            //---------------------------------------------------------------------
+
+            spec_id = genotypes.at(i).species_id;
+            old_id = i;
+        } else if (i == fitnesses.size() - 1) {
+            std::sort(sorted.begin() + old_id, sorted.begin() + i + 1, utility::greater());
+
+            //--------------------------------------------------------------------
+            std::vector<bool> done(genotypes.size());
+            for (std::size_t k = old_id; k < i; ++k) {
+                if (done[k]) {
+                    continue;
+                }
+                done[k] = true;
+                std::size_t prev_j = k;
+                std::size_t j = sorted[k].second;
+                while (k != j) {
+                    std::swap(genotypes[prev_j], genotypes[j]);
+                    done[j] = true;
+                    prev_j = j;
+                    j = sorted[j].second;
+                }
+            }
+            //---------------------------------------------------------------------
+        }
+    }
 }
 
 void SortBySpecies(std::vector<genome::Genotype>& genotypes) {
@@ -251,8 +302,8 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
     double total_fitness(0.0);
     std::vector<genome::Genotype> new_genotypes;
 
-    SortByFitness(fitnesses, genotypes);
     SortBySpecies(genotypes);
+    SortByFitness(fitnesses, genotypes);
 
     for (auto spec : species) {
         total_fitness += spec.total_fitness;
