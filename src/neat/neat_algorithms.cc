@@ -145,6 +145,8 @@ void ExecuteNetwork(const MatrixXd& matrix, VectorXd& nodes, const uint& n_const
 
 void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome::Species>& species,
                    const double& max_distance, const double& ceff1, const double& ceff2, const double& ceff3) {
+    std::vector<bool> sorted(species.size(), false);
+
     for (auto& spec : species) {
         spec.n_memeber = 0;
     }
@@ -159,6 +161,12 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
                     species.at(spec_id).n_memeber++;
                     genotype.species_id = spec_id;
                     found = true;
+
+                    if (spec_id < sorted.size() && !sorted.at(spec_id)) {
+                        species.at(spec_id).ref_genotype = genotype;
+                        sorted.at(spec_id) = true;
+                    }
+
                     break;
                 }
             }

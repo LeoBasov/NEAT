@@ -17,6 +17,8 @@ int main(int, char**) {
     const uint n_sensor_nodes(2), n_output_nodes(1), n_genotypes(150);
     std::vector<double> fitnesses;
 
+    config.prob_new_node = 0.01;
+
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
 
@@ -70,6 +72,47 @@ int main(int, char**) {
         std::cout << "N GENES     " << neat.GetGenePool().GetGenes().size() << std::endl;
         std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
         std::cout << "FITNESS     " << fitnesses.front() << std::endl;
+
+        double mean(0.0);
+
+        for (auto fit : fitnesses) {
+            mean += fit;
+        }
+
+        mean /= fitnesses.size();
+
+        std::cout << "MEAN FITNESS " << mean << std::endl;
+
+        auto permutation_vector =
+            utility::SortPermutation(fitnesses, [](double const& a, double const& b) { return a > b; });
+        const uint id(permutation_vector.at(0));
+
+        if (fitnesses.at(id) > 1.8) {
+            std::cout << "HERE" << std::endl;
+            std::cout << id << std::endl;
+
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "FITNESS     " << fitnesses.at(id) << std::endl;
+            Execute(neat);
+
+            std::vector<double> fitnesses_loc = neat.ExecuteNetwork({0.0, 0.0}, id);
+
+            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
+
+            fitnesses_loc = neat.ExecuteNetwork({1.0, 1.0}, id);
+
+            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
+
+            fitnesses_loc = neat.ExecuteNetwork({1.0, 0.0}, id);
+
+            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
+
+            fitnesses_loc = neat.ExecuteNetwork({0.0, 1.0}, id);
+
+            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
+
+            break;
+        }
     }
     total.Stop();
 
