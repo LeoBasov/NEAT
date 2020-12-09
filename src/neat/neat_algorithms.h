@@ -29,7 +29,8 @@ void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Speci
 void SortByFitness(const std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes);
 void SortBySpecies(std::vector<genome::Genotype>& genotypes);
 void ReproduceSpecies(const genome::Species& species, const std::vector<genome::Genotype>& genotypes,
-                      std::vector<genome::Genotype>& new_genotypes, const double& n_new_genotypes);
+                      std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes,
+                      const uint& species_id);
 void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
                std::vector<genome::Genotype>& genotypes, const double& n_genotypes);
 

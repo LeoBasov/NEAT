@@ -209,7 +209,30 @@ void SortBySpecies(std::vector<genome::Genotype>& genotypes) {
 }
 
 void ReproduceSpecies(const genome::Species& species, const std::vector<genome::Genotype>& genotypes,
-                      std::vector<genome::Genotype>& new_genotypes, const double& n_new_genotypes) {}
+                      std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes,
+                      const uint& species_id) {
+    uint n_genotypes(0);
+    Random random;
+
+    for (uint i = 0; i < genotypes.size(); i++) {
+        if (genotypes.at(i).species_id == species_id) {
+            while (n_genotypes < n_new_genotypes) {
+                for (uint j = i; j < i + species.n_memeber; j++) {
+                    if (n_genotypes >= n_new_genotypes) {
+                        return;
+                    } else if ((random.RandomNumber() < 0.75) && (j < i + species.n_memeber - 1)) {
+                        new_genotypes.push_back(Mate(genotypes.at(j), genotypes.at(j + 1), random));
+                        n_genotypes++;
+                    } else {
+                        new_genotypes.push_back(genotypes.at(j));
+                        n_genotypes++;
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
 
 void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
                std::vector<genome::Genotype>& genotypes, const double& n_genotypes) {
@@ -223,10 +246,10 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
         total_fitness += spec.total_fitness;
     }
 
-    for (const auto& spec : species) {
-        uint n_genotypes_loc(n_genotypes * (spec.total_fitness / total_fitness));
+    for (uint i = 0; i < species.size(); i++) {
+        uint n_genotypes_loc(n_genotypes * (species.at(i).total_fitness / total_fitness));
 
-        ReproduceSpecies(spec, genotypes, new_genotypes, n_genotypes_loc);
+        ReproduceSpecies(species.at(i), genotypes, new_genotypes, n_genotypes_loc, i);
     }
 }
 
