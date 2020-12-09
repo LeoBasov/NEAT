@@ -40,7 +40,7 @@ class NEAT {
     std::vector<double> ExecuteNetwork(const std::vector<double>& input_values, const uint& genotype_id) const;
 
     // Third to call
-    // void UpdateNetworks(const std::vector<double>& fitnesses);
+    void UpdateNetworks(std::vector<double> fitnesses);
 
     GenePool GetGenePool() const;
     std::vector<genome::Genotype> GetGenotypes() const;

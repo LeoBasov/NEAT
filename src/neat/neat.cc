@@ -64,6 +64,13 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
     return retvals;
 }
 
+void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
+    neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
+    // prolifirate
+    // mutate
+    // sort in species
+}
+
 GenePool NEAT::GetGenePool() const { return gene_pool_; }
 
 std::vector<genome::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
