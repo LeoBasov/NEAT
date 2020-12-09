@@ -5,62 +5,96 @@
 
 using namespace neat;
 
-void Execute(const MatrixXd& matrix, const GenePool& pool, const double& val1, const double& val2);
+std::vector<double> Execute(const NEAT &neat);
 
 int main(int, char**) {
     NEAT::Config config;
     genome::Genotype genotype;
     GenePool gene_pool;
     NEAT neat;
-    const uint n_sensors = 2, n_output = 1, n_genotypes = 1;
-    const double weight(1.0);
+    const uint n_sensor_nodes(2), n_output_nodes(1), n_genotypes(150);
+    std::vector<double> fitnesses;
 
-    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+    std::cout << "INITIALIZING" << std::endl;
+    neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
 
-    gene_pool = neat.GetGenePool();
-    genotype = neat.GetGenotypes().front();
+    for (uint i = 0; i < 100; i++) {
+        std::cout << "------------------------------------------------------" << std::endl;
+        std::cout << "ITTERATION: " << i << std::endl;
+        std::cout << "------------------------------------------------------" << std::endl;
+        std::cout << "EXECUTING" << std::endl;
+        fitnesses = Execute(neat);
 
-    neat_algorithms::AddNode(genotype, gene_pool, 1, weight);
-    neat_algorithms::AddNode(genotype, gene_pool, 2, weight);
+        if (fitnesses.front() > 1.75) {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "FITNESS     " << fitnesses.front() << std::endl;
+            Execute(neat);
 
-    neat_algorithms::AddConnection(genotype, gene_pool, 0, 4, weight);
-    neat_algorithms::AddConnection(genotype, gene_pool, 0, 5, weight);
+            std::vector<std::vector<double>> fitnesses_loc = neat.ExecuteNetworks({0.0, 0.0});
 
-    neat_algorithms::AddConnection(genotype, gene_pool, 1, 5, weight);
-    neat_algorithms::AddConnection(genotype, gene_pool, 2, 4, weight);
+            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
+                      << std::endl;
 
-    // Set BIAS node (2)
-    genotype.genes.at(7).weight = -2.32161229;
-    genotype.genes.at(8).weight = -5.2368337;
-    genotype.genes.at(0).weight = -3.13762134;
+            fitnesses_loc = neat.ExecuteNetworks({1.0, 1.0});
 
-    // Set input_node1
-    genotype.genes.at(3).weight = 5.70223616;
-    genotype.genes.at(9).weight = 3.42762429;
+            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
+                      << std::endl;
 
-    // Set input_node2
-    genotype.genes.at(10).weight = 5.73141813;
-    genotype.genes.at(5).weight = 3.4327536;
+            fitnesses_loc = neat.ExecuteNetworks({1.0, 0.0});
 
-    // Set hidden nodes
-    genotype.genes.at(4).weight = 7.05553511;
-    genotype.genes.at(6).weight = -7.68450564;
+            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
+                      << std::endl;
 
-    MatrixXd matrix = neat_algorithms::Genotype2Phenotype(genotype, gene_pool);
+            fitnesses_loc = neat.ExecuteNetworks({0.0, 1.0});
 
-    Execute(matrix, gene_pool, 1.0, 1.0);
-    Execute(matrix, gene_pool, 0.0, 0.0);
-    Execute(matrix, gene_pool, 1.0, 0.0);
-    Execute(matrix, gene_pool, 0.0, 1.0);
+            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
+                      << std::endl;
+
+            break;
+        }
+
+        std::cout << "UPDATING" << std::endl;
+        neat.UpdateNetworks(fitnesses);
+
+        std::cout << "N SPECIES   " << neat.GetSpecies().size() << std::endl;
+        std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
+        std::cout << "N GENES     " << neat.GetGenePool().GetGenes().size() << std::endl;
+        std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
+        std::cout << "FITNESS     " << fitnesses.front() << std::endl;
+    }
+
+    std::cout << "==========================================================" << std::endl;
 
     return 0;
 }
 
-void Execute(const MatrixXd& matrix, const GenePool& pool, const double& val1, const double& val2) {
-    VectorXd vec = neat_algorithms::SetUpNodes({val1, val2}, pool);
+std::vector<double> Execute(const NEAT &neat) {
+    std::vector<double> refs(4);
+    std::vector<double> fitnesses(neat.GetGenotypes().size(), 0.0);
+    std::vector<std::vector<double>> fitnesses_loc;
+    std::vector<std::vector<double>> input_values(4);
 
-    neat_algorithms::ExecuteNetwork(matrix, vec, 3, 5.9);
-    neat_algorithms::ExecuteNetwork(matrix, vec, 3, 5.9);
+    refs.at(0) = 0.0;
+    refs.at(1) = 0.0;
+    refs.at(2) = 1.0;
+    refs.at(3) = 1.0;
 
-    std::cout << "VAL1: " << val1 << " VAL2: " << val2 << " OUTPUT: " << vec(3) << std::endl;
+    input_values.at(0) = {0.0, 0.0};
+    input_values.at(1) = {1.0, 1.0};
+    input_values.at(2) = {1.0, 0.0};
+    input_values.at(3) = {0.0, 1.0};
+
+    for (uint i = 0; i < 4; i++) {
+        fitnesses_loc = neat.ExecuteNetworks(input_values.at(i));
+
+        for (uint j = 0; j < neat.GetGenotypes().size(); j++) {
+            fitnesses.at(j) += std::abs(refs.at(i) - fitnesses_loc.at(j).at(0));
+        }
+    }
+
+    for (uint j = 0; j < neat.GetGenotypes().size(); j++) {
+        fitnesses.at(j) = std::sqrt(4.0 - fitnesses.at(j));
+    }
+
+    return fitnesses;
 }
