@@ -172,7 +172,8 @@ void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_p
         if (gene.enabled) {
             GenePool::Gene gene_loc(gene_pool.GetGene(gene.id));
 
-            stream << permutation_map.at(gene_loc.in_node) << "," << permutation_map.at(gene_loc.out_node) << std::endl;
+            stream << permutation_map.at(gene_loc.in_node) << "," << permutation_map.at(gene_loc.out_node) << ","
+                   << gene.weight << std::endl;
         }
     }
 }
