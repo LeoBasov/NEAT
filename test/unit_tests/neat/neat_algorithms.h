@@ -8,9 +8,9 @@
 namespace neat {
 namespace neat_algorithms {
 
-void ExecuteXOR(const MatrixXd& matrix, const GenePool& pool, const double& val1, const double& val2,
+void ExecuteXOR(const MatrixXd& matrix, const uint& n_nodes, const double& val1, const double& val2,
                 const double& ref) {
-    VectorXd vec = neat_algorithms::SetUpNodes({val1, val2}, pool);
+    VectorXd vec = neat_algorithms::SetUpNodes({val1, val2}, n_nodes);
 
     neat_algorithms::ExecuteNetwork(matrix, vec, 3, 5.9);
     neat_algorithms::ExecuteNetwork(matrix, vec, 3, 5.9);
@@ -182,7 +182,7 @@ TEST(neat_algorithms, SetUpNodes) {
     gene_pool = neat.GetGenePool();
     genotype = neat.GetGenotypes().front();
 
-    VectorXd input_vector = SetUpNodes(input_values, gene_pool);
+    VectorXd input_vector = SetUpNodes(input_values, genotype.nodes.size());
 
     ASSERT_EQ(4, input_vector.rows());
 
@@ -208,7 +208,7 @@ TEST(neat_algorithms, ExecuteNetwork) {
     genotype.genes.at(1).weight = 1.0;
 
     MatrixXd network = Genotype2Phenotype(genotype, gene_pool);
-    VectorXd nodes = SetUpNodes(input_values, gene_pool);
+    VectorXd nodes = SetUpNodes(input_values, genotype.nodes.size());
 
     ExecuteNetwork(network, nodes, 2);
 
@@ -260,10 +260,10 @@ TEST(neat_algorithms, XOR) {
 
     MatrixXd matrix = neat_algorithms::Genotype2Phenotype(genotype, gene_pool);
 
-    ExecuteXOR(matrix, gene_pool, 1.0, 1.0, 0.0);
-    ExecuteXOR(matrix, gene_pool, 0.0, 0.0, 0.0);
-    ExecuteXOR(matrix, gene_pool, 1.0, 0.0, 1.0);
-    ExecuteXOR(matrix, gene_pool, 0.0, 1.0, 1.0);
+    ExecuteXOR(matrix, genotype.nodes.size(), 1.0, 1.0, 0.0);
+    ExecuteXOR(matrix, genotype.nodes.size(), 0.0, 0.0, 0.0);
+    ExecuteXOR(matrix, genotype.nodes.size(), 1.0, 0.0, 1.0);
+    ExecuteXOR(matrix, genotype.nodes.size(), 0.0, 1.0, 1.0);
 }
 
 TEST(neat_algorithms, SortInSpecies) {

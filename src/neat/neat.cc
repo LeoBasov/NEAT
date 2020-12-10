@@ -52,7 +52,7 @@ std::vector<std::vector<double>> NEAT::ExecuteNetworks(const std::vector<double>
 
 std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values, const uint& genotype_id) const {
     std::vector<double> retvals(gene_pool_.GetNOutputNodes(), 0.0);
-    VectorXd nodes(neat_algorithms::SetUpNodes(input_values, gene_pool_));
+    VectorXd nodes(neat_algorithms::SetUpNodes(input_values, genotypes_.at(genotype_id).nodes.size()));
     const MatrixXd matrix(neat_algorithms::Genotype2Phenotype(genotypes_.at(genotype_id), gene_pool_));
     const uint n_const_nodes(gene_pool_.GetNSensorNodes() + 1);
 

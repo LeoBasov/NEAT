@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 #include <algorithm>
 #include <functional>
+#include <map>
 
 #include "../common/random.h"
 #include "../common/utility.h"
@@ -19,7 +20,8 @@ genome::Genotype Mate(const genome::Genotype& fitter_parent, const genome::Genot
 double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<genome::Gene>& genome2,
                     const double& ceff1, const double& ceff2, const double& ceff3);
 MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& pool);
-VectorXd SetUpNodes(const std::vector<double>& input_vaules, const GenePool& pool);
+std::map<uint, uint> GetPermutationMap(const genome::Genotype& genotype);
+VectorXd SetUpNodes(const std::vector<double>& input_vaules, const uint& node_size);
 
 // Const nodes must include bias node
 void ExecuteNetwork(const MatrixXd& matrix, VectorXd& nodes, const uint& n_const_nodes, const double& parameter = 1.0);

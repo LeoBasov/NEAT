@@ -107,13 +107,16 @@ double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<
 }
 
 MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& pool) {
-    MatrixXd matrix = MatrixXd::Zero(pool.GetNTotalNodes(), pool.GetNTotalNodes());
+    MatrixXd matrix = MatrixXd::Zero(genotype.nodes.size(), genotype.nodes.size());
+    const std::map<uint, uint> permutation_map(neat_algorithms::GetPermutationMap(genotype));
 
     for (const auto& gene : genotype.genes) {
         if (gene.enabled) {
-            GenePool::Gene pool_gene = pool.GetGene(gene.id);
+            const GenePool::Gene pool_gene = pool.GetGene(gene.id);
+            const uint in_node(permutation_map.at(pool_gene.in_node));
+            const uint out_node(permutation_map.at(pool_gene.out_node));
 
-            matrix(pool_gene.out_node, pool_gene.in_node) += gene.weight;
+            matrix(out_node, in_node) += gene.weight;
         }
     }
 
@@ -124,8 +127,18 @@ MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& po
     return matrix;
 }
 
-VectorXd SetUpNodes(const std::vector<double>& input_vaules, const GenePool& pool) {
-    VectorXd vec = VectorXd::Zero(pool.GetNTotalNodes());
+std::map<uint, uint> GetPermutationMap(const genome::Genotype& genotype) {
+    std::map<uint, uint> permutaion_map;
+
+    for (uint i = 0; i < genotype.nodes.size(); i++) {
+        permutaion_map.insert({genotype.nodes.at(i), i});
+    }
+
+    return permutaion_map;
+}
+
+VectorXd SetUpNodes(const std::vector<double>& input_vaules, const uint& node_size) {
+    VectorXd vec = VectorXd::Zero(node_size);
 
     vec(0) = 1.0;
 
