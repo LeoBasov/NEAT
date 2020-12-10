@@ -9,6 +9,8 @@ void NEAT::Clear() {
     gene_pool_.Clear();
     species_.clear();
     genotypes_.clear();
+    unimproved_counter_ = 0;
+    best_fitness_ = 0.0;
 }
 
 void NEAT::Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_output_nodes,
@@ -66,6 +68,26 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
 }
 
 void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
+    std::vector<genome::Species> species;
+
+    FindBestFitness(fitnesses);
+
+    if (unimproved_counter_ > config_.max_unimproved_iterations) {
+        auto permutation_vector =
+            utility::SortPermutation(fitnesses, [](const double& a, const double& b) { return a > b; });
+        utility::ApplyPermutationInPlace(genotypes_, permutation_vector);
+        utility::ApplyPermutationInPlace(fitnesses, permutation_vector);
+
+        fitnesses.resize(20);
+        genotypes_.resize(20);
+
+        neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
+                                       config_.coeff3);
+
+        best_fitness_ = 0.0;
+        unimproved_counter_ = 0;
+    }
+
     neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
     neat_algorithms::Reproduce(fitnesses, species_, genotypes_, n_genotypes_init_, config_.prob_mate);
     neat_algorithms::Mutate(genotypes_, gene_pool_, config_.prob_weight_change, config_.prob_new_weight,
@@ -87,5 +109,19 @@ void NEAT::SetGenotypes(const std::vector<genome::Genotype>& genotypes) { genoty
 void NEAT::SetSpecies(const std::vector<genome::Species>& species) { species_ = species; }
 
 void NEAT::SetGenePool(const GenePool& gene_pool) { gene_pool_ = gene_pool; }
+
+void NEAT::FindBestFitness(std::vector<double> fitnesses) {
+    const double best_fitness_old(best_fitness_);
+
+    for (auto fitness : fitnesses) {
+        if (fitness > best_fitness_) {
+            best_fitness_ = fitness;
+        }
+    }
+
+    if (!(best_fitness_ > best_fitness_old)) {
+        unimproved_counter_++;
+    }
+}
 
 }  // namespace neat

@@ -12,10 +12,13 @@ void PrintResultsNetwork(const NEAT& neat, const uint& network_id);
 uint FindBestNetwork(const std::vector<double>& fitnesses);
 void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_pool,
                         const std::string& file_name = "best.csv");
+void WriteFitnessToFile(std::ofstream& stream, const std::vector<double>& fitnesses);
 
 int main(int, char**) {
-    const uint n_iterations(1000);
+    const uint n_iterations(5000);
     const double min_fitness(15.0);
+
+    std::ofstream stream("fitness.csv");
 
     Timer exex, update, total;
     NEAT::Config config;
@@ -56,6 +59,7 @@ int main(int, char**) {
 
             PrintResultsNetwork(neat, best_network_id);
             WriteNetworkToFile(neat.GetGenotypes().at(best_network_id), neat.GetGenePool());
+            WriteFitnessToFile(stream, fitnesses);
 
             break;
         }
@@ -81,6 +85,8 @@ int main(int, char**) {
         mean /= fitnesses.size();
 
         std::cout << "MEAN FITNESS " << mean << std::endl;
+
+        WriteFitnessToFile(stream, fitnesses);
     }
     total.Stop();
 
@@ -166,4 +172,11 @@ void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_p
             stream << gene_loc.in_node << "," << gene_loc.out_node << std::endl;
         }
     }
+}
+
+void WriteFitnessToFile(std::ofstream& stream, const std::vector<double>& fitnesses) {
+    for (auto fitness : fitnesses) {
+        stream << fitness << ",";
+    }
+    stream << std::endl;
 }

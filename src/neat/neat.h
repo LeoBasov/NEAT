@@ -24,6 +24,8 @@ class NEAT {
 
         bool allow_self_connection = true, allow_recurring_connection = true;
 
+        uint max_unimproved_iterations = 20;
+
         void Clear() {
             weight_range = {-10.0, 10.0};
             species_distance = 3.0;
@@ -36,6 +38,8 @@ class NEAT {
             prob_mate = 0.75;
 
             allow_self_connection = true, allow_recurring_connection = true;
+
+            max_unimproved_iterations = 20;
         };
     };
 
@@ -71,5 +75,9 @@ class NEAT {
     std::vector<genome::Species> species_;
     Random random_;
     uint n_genotypes_init_ = 0;
+    uint unimproved_counter_ = 0;
+    double best_fitness_ = 0.0;
+
+    void FindBestFitness(std::vector<double> fitnesses);
 };
 }  // namespace neat
