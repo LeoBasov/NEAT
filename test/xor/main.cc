@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 
 #include "../../src/common/timer.h"
@@ -9,10 +10,12 @@ using namespace neat;
 std::vector<double> Execute(const NEAT &neat);
 void PrintResultsNetwork(const NEAT& neat, const uint& network_id);
 uint FindBestNetwork(const std::vector<double>& fitnesses);
+void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_pool,
+                        const std::string& file_name = "best.csv");
 
 int main(int, char**) {
     const uint n_iterations(1000);
-    const double min_fitness(12.0);
+    const double min_fitness(13.0);
 
     Timer exex, update, total;
     NEAT::Config config;
@@ -47,6 +50,7 @@ int main(int, char**) {
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
 
             PrintResultsNetwork(neat, best_network_id);
+            WriteNetworkToFile(neat.GetGenotypes().at(best_network_id), neat.GetGenePool());
 
             break;
         }
@@ -145,4 +149,16 @@ uint FindBestNetwork(const std::vector<double>& fitnesses) {
     }
 
     return id;
+}
+
+void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_pool, const std::string& file_name) {
+    std::ofstream stream(file_name);
+
+    for (auto gene : genotype.genes) {
+        if (gene.enabled) {
+            GenePool::Gene gene_loc(gene_pool.GetGene(gene.id));
+
+            stream << gene_loc.in_node << "," << gene_loc.out_node << std::endl;
+        }
+    }
 }
