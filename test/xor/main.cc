@@ -15,7 +15,7 @@ void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_p
 void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses);
 
 int main(int, char**) {
-    const uint n_iterations(1500);
+    const uint n_iterations(2000);
     const double min_fitness(15.0);
 
     std::ofstream stream("fitness.csv");
@@ -61,7 +61,7 @@ int main(int, char**) {
             WriteNetworkToFile(neat.GetGenotypes().at(best_network_id), neat.GetGenePool());
             WriteFitnessToFile(stream, fitnesses);
 
-            // break;
+            break;
         }
 
         std::cout << "UPDATING" << std::endl;
