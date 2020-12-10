@@ -41,14 +41,9 @@ int main(int, char**) {
 
     total.Start();
     for (uint i = 0; i < n_iterations; i++) {
-        std::cout << "------------------------------------------------------" << std::endl;
-        std::cout << "ITTERATION: " << i << std::endl;
-        std::cout << "------------------------------------------------------" << std::endl;
-        std::cout << "EXECUTING" << std::endl;
         exex.Start();
         fitnesses = Execute(neat);
         exex.Stop();
-        std::cout << "EXECUTION TIME " << exex.GetCurrentDuration() << std::endl;
 
         best_network_id = FindBestNetwork(fitnesses);
 
@@ -64,17 +59,9 @@ int main(int, char**) {
             break;
         }
 
-        std::cout << "UPDATING" << std::endl;
         update.Start();
         neat.UpdateNetworks(fitnesses);
         update.Stop();
-        std::cout << "UPDATE TIME " << update.GetCurrentDuration() << std::endl;
-
-        std::cout << "N SPECIES   " << neat.GetSpecies().size() << std::endl;
-        std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
-        std::cout << "N GENES     " << neat.GetGenePool().GetGenes().size() << std::endl;
-        std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
-        std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
 
         double mean(0.0);
 
@@ -84,9 +71,21 @@ int main(int, char**) {
 
         mean /= fitnesses.size();
 
-        std::cout << "MEAN FITNESS " << mean << std::endl;
-
         WriteFitnessToFile(stream, fitnesses);
+
+        if (!(i % 10)) {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "ITTERATION: " << i << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "EXECUTION TIME " << exex.GetCurrentDuration() << std::endl;
+            std::cout << "UPDATE TIME " << update.GetCurrentDuration() << std::endl;
+            std::cout << "N SPECIES   " << neat.GetSpecies().size() << std::endl;
+            std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
+            std::cout << "N GENES     " << neat.GetGenePool().GetGenes().size() << std::endl;
+            std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
+            std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
+            std::cout << "MEAN FITNESS " << mean << std::endl;
+        }
     }
     total.Stop();
 
