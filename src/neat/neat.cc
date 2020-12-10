@@ -76,8 +76,18 @@ void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
         utility::ApplyPermutationInPlace(genotypes_, permutation_vector);
         utility::ApplyPermutationInPlace(fitnesses, permutation_vector);
 
-        fitnesses.resize(20);
-        genotypes_.resize(20);
+        genotypes_.resize(n_genotypes_init_);
+
+        for (uint i = 19, j = 0; i < n_genotypes_init_; i++) {
+            if (j == 19) {
+                j = 0;
+            }
+
+            genotypes_.at(i) = genotypes_.at(j++);
+        }
+
+        std::random_shuffle(genotypes_.begin(), genotypes_.end());
+        fitnesses = std::vector<double>(genotypes_.size(), 1.0);
 
         neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
                                        config_.coeff3);
