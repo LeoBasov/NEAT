@@ -89,6 +89,9 @@ int main(int, char**) {
     }
     total.Stop();
 
+    PrintResultsNetwork(neat, best_network_id);
+    WriteNetworkToFile(neat.GetGenotypes().at(best_network_id), neat.GetGenePool(), "last.csv");
+
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "TOTAL EXECUTION TIME " << exex.GetTotalDuration() << std::endl;
     std::cout << "TOTAL UPDATE TIME " << update.GetTotalDuration() << std::endl;
@@ -163,12 +166,13 @@ uint FindBestNetwork(const std::vector<double>& fitnesses) {
 
 void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_pool, const std::string& file_name) {
     std::ofstream stream(file_name);
+    const std::map<uint, uint> permutation_map(neat_algorithms::GetPermutationMap(genotype));
 
     for (auto gene : genotype.genes) {
         if (gene.enabled) {
             GenePool::Gene gene_loc(gene_pool.GetGene(gene.id));
 
-            stream << gene_loc.in_node << "," << gene_loc.out_node << std::endl;
+            stream << permutation_map.at(gene_loc.in_node) << "," << permutation_map.at(gene_loc.out_node) << std::endl;
         }
     }
 }
