@@ -300,7 +300,7 @@ TEST(NEAT, UpdateNetworks_Mate_2) {
     species.front().ref_genotype = genotypes.front();
 
     gene_pool = neat.GetGenePool();
-    neat_algorithms::AddConnection(genotypes.front(), gene_pool, 3, 3, 1.0);
+    neat_algorithms::AddConnection(genotypes.front(), gene_pool, 3, 3, 1.0, true, true);
     genotypes.front().genes.front().weight = 10.0;
     fitnesses.front() = 10;
 

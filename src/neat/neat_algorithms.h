@@ -14,7 +14,7 @@ namespace neat_algorithms {
 
 bool AddNode(genome::Genotype& genotype, GenePool& pool, const uint& gene_id, const double& weight);
 bool AddConnection(genome::Genotype& genotype, GenePool& pool, const uint& in_node, const uint& out_node,
-                   const double& weight);
+                   const double& weight, const bool& allow_self_connection, const bool& allow_recurring_connection);
 genome::Genotype Mate(const genome::Genotype& fitter_parent, const genome::Genotype& parent, Random& random);
 double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<genome::Gene>& genome2,
                     const double& ceff1, const double& ceff2, const double& ceff3);
@@ -36,7 +36,8 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
                std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate);
 void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
             const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
-            const double& weight_min, const double& weight_max);
+            const double& weight_min, const double& weight_max, const bool& allow_self_connection,
+            const bool& allow_recurring_connection);
 
 }  // namespace neat_algorithms
 }  // namespace neat

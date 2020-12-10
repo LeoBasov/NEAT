@@ -32,7 +32,9 @@ std::pair<unsigned int, unsigned int> GenePool::AddNode(const unsigned int& gene
     return {genes_.size() - 2, genes_.size() - 1};
 }
 
-std::pair<bool, unsigned int> GenePool::AddConnection(unsigned int in_node, unsigned int out_node) {
+std::pair<bool, unsigned int> GenePool::AddConnection(unsigned int in_node, unsigned int out_node,
+                                                      const bool& allow_self_connection,
+                                                      const bool& allow_recurring_connection) {
     if(out_node >= GetNTotalNodes()){
         throw std::domain_error("out_node out of bounds");
     }else if(in_node >= GetNTotalNodes()){
@@ -40,13 +42,18 @@ std::pair<bool, unsigned int> GenePool::AddConnection(unsigned int in_node, unsi
     }
 
     // sensor nodes can not be out nodes of new connection
-    if (out_node <= n_sensor_nodes_ || out_node >= GetNTotalNodes() || in_node >= GetNTotalNodes()) {
+    if (out_node <= n_sensor_nodes_) {
+        return {false, 0};
+    } else if (!allow_self_connection && (in_node == out_node)) {
         return {false, 0};
     }
 
     // The authors make this check only for innovations happening in the same generation
     for (size_t i = 0; i < genes_.size(); i++) {
         if (genes_.at(i).in_node == in_node && genes_.at(i).out_node == out_node) {
+            return {true, i};
+        } else if (!allow_recurring_connection &&
+                   (genes_.at(i).in_node == out_node && genes_.at(i).out_node == in_node)) {
             return {true, i};
         }
     }

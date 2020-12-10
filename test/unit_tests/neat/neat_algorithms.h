@@ -61,7 +61,7 @@ TEST(neat_algorithms, AddConnection) {
     gene_pool = neat.GetGenePool();
     genotype = neat.GetGenotypes().front();
 
-    ASSERT_TRUE(AddConnection(genotype, gene_pool, in_node, out_node, new_weight));
+    ASSERT_TRUE(AddConnection(genotype, gene_pool, in_node, out_node, new_weight, true, true));
     ASSERT_EQ(4, genotype.nodes.size());
     ASSERT_EQ(4, genotype.genes.size());
     ASSERT_DOUBLE_EQ(new_weight, genotype.genes.back().weight);
@@ -71,7 +71,7 @@ TEST(neat_algorithms, AddConnection) {
     ASSERT_EQ(in_node, gene.in_node);
     ASSERT_EQ(out_node, gene.out_node);
 
-    ASSERT_FALSE(AddConnection(genotype, gene_pool, in_node, 0, new_weight));
+    ASSERT_FALSE(AddConnection(genotype, gene_pool, in_node, 0, new_weight, true, true));
 }
 
 TEST(neat_algorithms, Mate) {
@@ -90,7 +90,7 @@ TEST(neat_algorithms, Mate) {
     genotype2 = neat.GetGenotypes().at(1);
 
     AddNode(genotype1, gene_pool, gene_id, new_weight);
-    AddConnection(genotype2, gene_pool, in_node, out_node, new_weight);
+    AddConnection(genotype2, gene_pool, in_node, out_node, new_weight, true, true);
 
     genome::Genotype child = Mate(genotype1, genotype2, random);
 
@@ -235,11 +235,11 @@ TEST(neat_algorithms, XOR) {
     neat_algorithms::AddNode(genotype, gene_pool, 1, weight);
     neat_algorithms::AddNode(genotype, gene_pool, 2, weight);
 
-    neat_algorithms::AddConnection(genotype, gene_pool, 0, 4, weight);
-    neat_algorithms::AddConnection(genotype, gene_pool, 0, 5, weight);
+    neat_algorithms::AddConnection(genotype, gene_pool, 0, 4, weight, true, true);
+    neat_algorithms::AddConnection(genotype, gene_pool, 0, 5, weight, true, true);
 
-    neat_algorithms::AddConnection(genotype, gene_pool, 1, 5, weight);
-    neat_algorithms::AddConnection(genotype, gene_pool, 2, 4, weight);
+    neat_algorithms::AddConnection(genotype, gene_pool, 1, 5, weight, true, true);
+    neat_algorithms::AddConnection(genotype, gene_pool, 2, 4, weight, true, true);
 
     // Set BIAS node (2)
     genotype.genes.at(7).weight = -2.32161229;
@@ -508,7 +508,7 @@ TEST(neat_algorithms, Mutate_NULL) {
     genotypes_old = neat.GetGenotypes();
     genotypes_new = neat.GetGenotypes();
 
-    Mutate(genotypes_new, gene_pool_new, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    Mutate(genotypes_new, gene_pool_new, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, true);
 
     ASSERT_EQ(gene_pool_old.GetNSensorNodes(), gene_pool_new.GetNSensorNodes());
     ASSERT_EQ(gene_pool_old.GetNOutputNodes(), gene_pool_new.GetNOutputNodes());
@@ -539,7 +539,7 @@ TEST(neat_algorithms, Mutate_AddNode) {
     genotypes_old = neat.GetGenotypes();
     genotypes_new = neat.GetGenotypes();
 
-    Mutate(genotypes_new, gene_pool_new, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+    Mutate(genotypes_new, gene_pool_new, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, true, true);
 
     ASSERT_EQ(gene_pool_old.GetNSensorNodes(), gene_pool_new.GetNSensorNodes());
     ASSERT_EQ(gene_pool_old.GetNOutputNodes(), gene_pool_new.GetNOutputNodes());

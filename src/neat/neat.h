@@ -22,6 +22,8 @@ class NEAT {
         double prob_new_connection = 0.05;
         double prob_mate = 0.75;
 
+        bool allow_self_connection = true, allow_recurring_connection = true;
+
         void Clear() {
             weight_range = {-10.0, 10.0};
             species_distance = 3.0;
@@ -32,6 +34,8 @@ class NEAT {
             prob_new_node = 0.03;
             prob_new_connection = 0.05;
             prob_mate = 0.75;
+
+            allow_self_connection = true, allow_recurring_connection = true;
         };
     };
 

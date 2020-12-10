@@ -15,7 +15,7 @@ void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_p
 
 int main(int, char**) {
     const uint n_iterations(1000);
-    const double min_fitness(13.0);
+    const double min_fitness(15.0);
 
     Timer exex, update, total;
     NEAT::Config config;

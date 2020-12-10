@@ -25,8 +25,9 @@ bool AddNode(genome::Genotype& genotype, GenePool& pool, const uint& gene_id, co
 }
 
 bool AddConnection(genome::Genotype& genotype, GenePool& pool, const uint& in_node, const uint& out_node,
-                   const double& weight) {
-    std::pair<bool, unsigned int> retval = pool.AddConnection(in_node, out_node);
+                   const double& weight, const bool& allow_self_connection, const bool& allow_recurring_connection) {
+    std::pair<bool, unsigned int> retval =
+        pool.AddConnection(in_node, out_node, allow_self_connection, allow_recurring_connection);
 
     if (retval.first) {
         if (std::find(genotype.genes.begin(), genotype.genes.end(), retval.second) != genotype.genes.end()) {
@@ -320,7 +321,8 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
 
 void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
             const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
-            const double& weight_min, const double& weight_max) {
+            const double& weight_min, const double& weight_max, const bool& allow_self_connection,
+            const bool& allow_recurring_connection) {
     Random random;
 
     for (auto& genotype : genotypes) {
@@ -335,7 +337,8 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
         if (rand < prob_new_node) {
             AddNode(genotype, pool, gene_id, genotype.genes.at(gene_genome_id).weight);
         } else if (rand < prob_new_connection) {
-            AddConnection(genotype, pool, node_id1, node_id2, random.RandomNumber(weight_min, weight_max));
+            AddConnection(genotype, pool, node_id1, node_id2, random.RandomNumber(weight_min, weight_max),
+                          allow_self_connection, allow_recurring_connection);
         } else if (rand < prob_weight_change) {
             if (random.RandomNumber() < prob_new_weight) {
                 genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
