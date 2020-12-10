@@ -68,8 +68,6 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
 }
 
 void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
-    std::vector<genome::Species> species;
-
     FindBestFitness(fitnesses);
 
     if (unimproved_counter_ > config_.max_unimproved_iterations) {
