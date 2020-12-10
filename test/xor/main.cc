@@ -7,8 +7,13 @@
 using namespace neat;
 
 std::vector<double> Execute(const NEAT &neat);
+void PrintResultsNetwork(const NEAT& neat, const uint& network_id);
+uint FindBestNetwork(const std::vector<double>& fitnesses);
 
 int main(int, char**) {
+    const uint n_iterations(1000);
+    const double min_fitness(12.0);
+
     Timer exex, update, total;
     NEAT::Config config;
     genome::Genotype genotype;
@@ -16,14 +21,15 @@ int main(int, char**) {
     NEAT neat;
     const uint n_sensor_nodes(2), n_output_nodes(1), n_genotypes(150);
     std::vector<double> fitnesses;
+    uint best_network_id;
 
-    config.prob_new_node = 0.001;
+    config.prob_new_node = 0.003;
 
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
 
     total.Start();
-    for (uint i = 0; i < 5000; i++) {
+    for (uint i = 0; i < n_iterations; i++) {
         std::cout << "------------------------------------------------------" << std::endl;
         std::cout << "ITTERATION: " << i << std::endl;
         std::cout << "------------------------------------------------------" << std::endl;
@@ -33,30 +39,14 @@ int main(int, char**) {
         exex.Stop();
         std::cout << "EXECUTION TIME " << exex.GetCurrentDuration() << std::endl;
 
-        if (fitnesses.front() > 9) {
+        best_network_id = FindBestNetwork(fitnesses);
+
+        if (fitnesses.at(best_network_id) >= min_fitness) {
             std::cout << "------------------------------------------------------" << std::endl;
-            std::cout << "FITNESS     " << fitnesses.front() << std::endl;
-            Execute(neat);
+            std::cout << "----- CRITERIUM ACHIEVED -----" << std::endl;
+            std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
 
-            std::vector<std::vector<double>> fitnesses_loc = neat.ExecuteNetworks({0.0, 0.0});
-
-            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
-                      << std::endl;
-
-            fitnesses_loc = neat.ExecuteNetworks({1.0, 1.0});
-
-            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
-                      << std::endl;
-
-            fitnesses_loc = neat.ExecuteNetworks({1.0, 0.0});
-
-            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
-                      << std::endl;
-
-            fitnesses_loc = neat.ExecuteNetworks({0.0, 1.0});
-
-            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front().at(0)
-                      << std::endl;
+            PrintResultsNetwork(neat, best_network_id);
 
             break;
         }
@@ -71,7 +61,7 @@ int main(int, char**) {
         std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
         std::cout << "N GENES     " << neat.GetGenePool().GetGenes().size() << std::endl;
         std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
-        std::cout << "FITNESS     " << fitnesses.front() << std::endl;
+        std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
 
         double mean(0.0);
 
@@ -82,37 +72,6 @@ int main(int, char**) {
         mean /= fitnesses.size();
 
         std::cout << "MEAN FITNESS " << mean << std::endl;
-
-        auto permutation_vector =
-            utility::SortPermutation(fitnesses, [](double const& a, double const& b) { return a > b; });
-        const uint id(permutation_vector.at(0));
-
-        if (fitnesses.at(id) > 9) {
-            std::cout << "HERE" << std::endl;
-            std::cout << id << std::endl;
-
-            std::cout << "------------------------------------------------------" << std::endl;
-            std::cout << "FITNESS     " << fitnesses.at(id) << std::endl;
-            Execute(neat);
-
-            std::vector<double> fitnesses_loc = neat.ExecuteNetwork({0.0, 0.0}, id);
-
-            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
-
-            fitnesses_loc = neat.ExecuteNetwork({1.0, 1.0}, id);
-
-            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
-
-            fitnesses_loc = neat.ExecuteNetwork({1.0, 0.0}, id);
-
-            std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
-
-            fitnesses_loc = neat.ExecuteNetwork({0.0, 1.0}, id);
-
-            std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses_loc.front() << std::endl;
-
-            break;
-        }
     }
     total.Stop();
 
@@ -154,4 +113,36 @@ std::vector<double> Execute(const NEAT &neat) {
     }
 
     return fitnesses;
+}
+
+void PrintResultsNetwork(const NEAT& neat, const uint& network_id) {
+    std::vector<std::vector<double>> fitnesses(4);
+
+    fitnesses.at(0) = neat.ExecuteNetwork({0.0, 0.0}, network_id);
+    fitnesses.at(1) = neat.ExecuteNetwork({1.0, 1.0}, network_id);
+    fitnesses.at(2) = neat.ExecuteNetwork({1.0, 0.0}, network_id);
+    fitnesses.at(3) = neat.ExecuteNetwork({0.0, 1.0}, network_id);
+
+    std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses.at(0).at(0) << std::endl;
+    std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses.at(1).at(0) << std::endl;
+    std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses.at(2).at(0) << std::endl;
+    std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses.at(3).at(0) << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
+
+    std::cout << "N NODES: " << neat.GetGenotypes().at(network_id).nodes.size();
+    std::cout << " N GENES: " << neat.GetGenotypes().at(network_id).genes.size() << std::endl;
+}
+
+uint FindBestNetwork(const std::vector<double>& fitnesses) {
+    uint id(0);
+    double best(0.0);
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        if (fitnesses.at(i) > best) {
+            id = i;
+            best = fitnesses.at(i);
+        }
+    }
+
+    return id;
 }
