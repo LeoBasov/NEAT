@@ -43,6 +43,10 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
 
 // Update values that check if population has not developed for certain time
 void AdjustStagnationControll(const std::vector<double>& fitnesses, double& best_fitness, uint& unimproved_counter);
+void RepopulateWithBestSpecies(std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes,
+                               std::vector<genome::Species>& species, const uint& n_genotypes_init,
+                               const double& species_distance, const double& coeff1, const double& coeff2,
+                               const double& coeff3, const uint& n_sprared_genotypes);
 
 }  // namespace neat_algorithms
 }  // namespace neat

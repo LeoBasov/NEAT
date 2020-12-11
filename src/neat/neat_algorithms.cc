@@ -377,5 +377,30 @@ void AdjustStagnationControll(const std::vector<double>& fitnesses, double& best
     }
 }
 
+void RepopulateWithBestSpecies(std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes,
+                               std::vector<genome::Species>& species, const uint& n_genotypes_init,
+                               const double& species_distance, const double& coeff1, const double& coeff2,
+                               const double& coeff3, const uint& n_sprared_genotypes) {
+    auto permutation_vector =
+        utility::SortPermutation(fitnesses, [](const double& a, const double& b) { return a > b; });
+    utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+    utility::ApplyPermutationInPlace(fitnesses, permutation_vector);
+
+    genotypes.resize(n_genotypes_init);
+
+    for (uint i = n_sprared_genotypes - 1, j = 0; i < n_genotypes_init; i++) {
+        if (j >= n_sprared_genotypes - 1) {
+            j = 0;
+        }
+
+        genotypes.at(i) = genotypes.at(j++);
+    }
+
+    std::random_shuffle(genotypes.begin(), genotypes.end());
+    fitnesses = std::vector<double>(genotypes.size(), 1.0);
+
+    neat_algorithms::SortInSpecies(genotypes, species, species_distance, coeff1, coeff2, coeff3);
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

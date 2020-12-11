@@ -24,7 +24,7 @@ class NEAT {
 
         bool allow_self_connection = true, allow_recurring_connection = true;
 
-        uint max_unimproved_iterations = 20;
+        uint max_unimproved_iterations = 20, n_sprared_genotypes = 20;
 
         void Clear() {
             weight_range = {-10.0, 10.0};
@@ -39,7 +39,7 @@ class NEAT {
 
             allow_self_connection = true, allow_recurring_connection = true;
 
-            max_unimproved_iterations = 20;
+            max_unimproved_iterations = 20, n_sprared_genotypes = 20;
         };
     };
 

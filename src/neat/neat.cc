@@ -71,26 +71,9 @@ void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
     neat_algorithms::AdjustStagnationControll(fitnesses, best_fitness_, unimproved_counter_);
 
     if (unimproved_counter_ > config_.max_unimproved_iterations) {
-        auto permutation_vector =
-            utility::SortPermutation(fitnesses, [](const double& a, const double& b) { return a > b; });
-        utility::ApplyPermutationInPlace(genotypes_, permutation_vector);
-        utility::ApplyPermutationInPlace(fitnesses, permutation_vector);
-
-        genotypes_.resize(n_genotypes_init_);
-
-        for (uint i = 19, j = 0; i < n_genotypes_init_; i++) {
-            if (j == 19) {
-                j = 0;
-            }
-
-            genotypes_.at(i) = genotypes_.at(j++);
-        }
-
-        std::random_shuffle(genotypes_.begin(), genotypes_.end());
-        fitnesses = std::vector<double>(genotypes_.size(), 1.0);
-
-        neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
-                                       config_.coeff3);
+        neat_algorithms::RepopulateWithBestSpecies(fitnesses, genotypes_, species_, n_genotypes_init_,
+                                                   config_.species_distance, config_.coeff1, config_.coeff2,
+                                                   config_.coeff3, config_.n_sprared_genotypes);
 
         best_fitness_ = 0.0;
         unimproved_counter_ = 0;
