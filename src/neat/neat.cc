@@ -69,18 +69,17 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
 
 void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
     neat_algorithms::AdjustStagnationControll(fitnesses, best_fitness_, unimproved_counter_);
+    neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
 
     if (unimproved_counter_ > config_.max_unimproved_iterations) {
-        neat_algorithms::RepopulateWithBestSpecies(fitnesses, genotypes_, species_, n_genotypes_init_,
-                                                   config_.species_distance, config_.coeff1, config_.coeff2,
-                                                   config_.coeff3, config_.n_sprared_genotypes);
+        neat_algorithms::ReproduceBestSpecies(fitnesses, species_, genotypes_, n_genotypes_init_, config_.prob_mate, 2);
 
         best_fitness_ = 0.0;
         unimproved_counter_ = 0;
+    } else {
+        neat_algorithms::Reproduce(fitnesses, species_, genotypes_, n_genotypes_init_, config_.prob_mate);
     }
 
-    neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
-    neat_algorithms::Reproduce(fitnesses, species_, genotypes_, n_genotypes_init_, config_.prob_mate);
     neat_algorithms::Mutate(genotypes_, gene_pool_, config_.prob_weight_change, config_.prob_new_weight,
                             config_.prob_new_node, config_.prob_new_connection, config_.weight_range.first,
                             config_.weight_range.second, config_.allow_self_connection,

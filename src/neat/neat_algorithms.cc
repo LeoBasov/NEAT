@@ -332,6 +332,32 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
     genotypes = new_genotypes;
 }
 
+void ReproduceBestSpecies(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
+                          std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate,
+                          const uint& n_species) {
+    double total_fitness(0.0);
+    std::vector<genome::Genotype> new_genotypes;
+
+    SortBySpecies(genotypes);
+    SortByFitness(fitnesses, genotypes);
+
+    for (auto spec : species) {
+        total_fitness += spec.total_fitness;
+    }
+
+    auto permutation_vector = utility::SortPermutation(
+        species, [](genome::Species const& a, genome::Species const& b) { return a.total_fitness > b.total_fitness; });
+
+    for (uint i = 0; i < n_species; i++) {
+        const uint species_id(permutation_vector.at(i));
+        uint n_genotypes_loc(n_genotypes * (species.at(species_id).total_fitness / total_fitness));
+
+        ReproduceSpecies(species.at(species_id), genotypes, new_genotypes, n_genotypes_loc, species_id, prob_mate);
+    }
+
+    genotypes = new_genotypes;
+}
+
 void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
             const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
             const double& weight_min, const double& weight_max, const bool& allow_self_connection,
