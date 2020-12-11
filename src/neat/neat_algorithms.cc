@@ -382,8 +382,16 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
             if (random.RandomNumber() < prob_new_weight) {
                 genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
             } else {
-                genotype.genes.at(gene_genome_id).weight =
-                    random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
+                if (genotype.genes.at(gene_genome_id).weight >= 0.0) {
+                    genotype.genes.at(gene_genome_id).weight +=
+                        random.RandomNumber(-0.1 * genotype.genes.at(gene_genome_id).weight,
+                                            0.1 * genotype.genes.at(gene_genome_id).weight);
+                } else {
+                    genotype.genes.at(gene_genome_id).weight +=
+                        random.RandomNumber(0.1 * genotype.genes.at(gene_genome_id).weight,
+                                            -0.1 * genotype.genes.at(gene_genome_id).weight);
+                }
+                // random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
             }
         }
     }
