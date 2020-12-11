@@ -100,4 +100,6 @@ void NEAT::SetSpecies(const std::vector<genome::Species>& species) { species_ = 
 
 void NEAT::SetGenePool(const GenePool& gene_pool) { gene_pool_ = gene_pool; }
 
+uint NEAT::GetUnimprovedCounter() const { return unimproved_counter_; }
+
 }  // namespace neat

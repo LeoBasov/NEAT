@@ -63,6 +63,7 @@ class NEAT {
     GenePool GetGenePool() const;
     std::vector<genome::Genotype> GetGenotypes() const;
     std::vector<genome::Species> GetSpecies() const;
+    uint GetUnimprovedCounter() const;
 
     void SetGenotypes(const std::vector<genome::Genotype>& genotypes);
     void SetSpecies(const std::vector<genome::Species>& species);
