@@ -68,7 +68,7 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
 }
 
 void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
-    FindBestFitness(fitnesses);
+    neat_algorithms::AdjustStagnationControll(fitnesses, best_fitness_, unimproved_counter_);
 
     if (unimproved_counter_ > config_.max_unimproved_iterations) {
         auto permutation_vector =
@@ -117,19 +117,5 @@ void NEAT::SetGenotypes(const std::vector<genome::Genotype>& genotypes) { genoty
 void NEAT::SetSpecies(const std::vector<genome::Species>& species) { species_ = species; }
 
 void NEAT::SetGenePool(const GenePool& gene_pool) { gene_pool_ = gene_pool; }
-
-void NEAT::FindBestFitness(std::vector<double> fitnesses) {
-    const double best_fitness_old(best_fitness_);
-
-    for (auto fitness : fitnesses) {
-        if (fitness > best_fitness_) {
-            best_fitness_ = fitness;
-        }
-    }
-
-    if (!(best_fitness_ > best_fitness_old)) {
-        unimproved_counter_++;
-    }
-}
 
 }  // namespace neat

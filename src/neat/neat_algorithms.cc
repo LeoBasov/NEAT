@@ -363,5 +363,19 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
     }
 }
 
+void AdjustStagnationControll(const std::vector<double>& fitnesses, double& best_fitness, uint& unimproved_counter) {
+    const double best_fitness_old(best_fitness);
+
+    for (auto fitness : fitnesses) {
+        if (fitness > best_fitness) {
+            best_fitness = fitness;
+        }
+    }
+
+    if (!(best_fitness > best_fitness_old)) {
+        unimproved_counter++;
+    }
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat

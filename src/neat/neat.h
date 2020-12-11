@@ -77,7 +77,5 @@ class NEAT {
     uint n_genotypes_init_ = 0;
     uint unimproved_counter_ = 0;
     double best_fitness_ = 0.0;
-
-    void FindBestFitness(std::vector<double> fitnesses);
 };
 }  // namespace neat

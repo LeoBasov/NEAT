@@ -556,5 +556,21 @@ TEST(neat_algorithms, Mutate_AddNode) {
     }
 }
 
+TEST(neat_algorithms, AdjustStagnationControll) {
+    const std::vector<double> fintesses{1.0, 2.0, 3.0};
+    double best_fitness1(1.0), best_fitness2(3.1);
+    uint counter(0);
+
+    AdjustStagnationControll(fintesses, best_fitness1, counter);
+
+    ASSERT_EQ(0, counter);
+    ASSERT_DOUBLE_EQ(3.0, best_fitness1);
+
+    AdjustStagnationControll(fintesses, best_fitness2, counter);
+
+    ASSERT_EQ(1, counter);
+    ASSERT_DOUBLE_EQ(3.1, best_fitness2);
+}
+
 }  // namespace neat_algorithms
 }  // namespace neat
