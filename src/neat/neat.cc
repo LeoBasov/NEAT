@@ -9,12 +9,15 @@ void NEAT::Clear() {
     gene_pool_.Clear();
     species_.clear();
     genotypes_.clear();
+    unimproved_counter_ = 0;
+    best_fitness_ = 0.0;
 }
 
 void NEAT::Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_output_nodes,
                       const unsigned int& n_genotypes, const Config config) {
     Clear();
     config_ = config;
+    n_genotypes_init_ = n_genotypes;
     gene_pool_.Initialize(n_sensor_nodes, n_output_nodes);
     genotypes_.resize(n_genotypes);
 
@@ -49,7 +52,7 @@ std::vector<std::vector<double>> NEAT::ExecuteNetworks(const std::vector<double>
 
 std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values, const uint& genotype_id) const {
     std::vector<double> retvals(gene_pool_.GetNOutputNodes(), 0.0);
-    VectorXd nodes(neat_algorithms::SetUpNodes(input_values, gene_pool_));
+    VectorXd nodes(neat_algorithms::SetUpNodes(input_values, genotypes_.at(genotype_id).nodes.size()));
     const MatrixXd matrix(neat_algorithms::Genotype2Phenotype(genotypes_.at(genotype_id), gene_pool_));
     const uint n_const_nodes(gene_pool_.GetNSensorNodes() + 1);
 
@@ -64,6 +67,45 @@ std::vector<double> NEAT::ExecuteNetwork(const std::vector<double>& input_values
     return retvals;
 }
 
+void NEAT::UpdateNetworks(std::vector<double> fitnesses) {
+    FindBestFitness(fitnesses);
+
+    if (unimproved_counter_ > config_.max_unimproved_iterations) {
+        auto permutation_vector =
+            utility::SortPermutation(fitnesses, [](const double& a, const double& b) { return a > b; });
+        utility::ApplyPermutationInPlace(genotypes_, permutation_vector);
+        utility::ApplyPermutationInPlace(fitnesses, permutation_vector);
+
+        genotypes_.resize(n_genotypes_init_);
+
+        for (uint i = 19, j = 0; i < n_genotypes_init_; i++) {
+            if (j == 19) {
+                j = 0;
+            }
+
+            genotypes_.at(i) = genotypes_.at(j++);
+        }
+
+        std::random_shuffle(genotypes_.begin(), genotypes_.end());
+        fitnesses = std::vector<double>(genotypes_.size(), 1.0);
+
+        neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
+                                       config_.coeff3);
+
+        best_fitness_ = 0.0;
+        unimproved_counter_ = 0;
+    }
+
+    neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
+    neat_algorithms::Reproduce(fitnesses, species_, genotypes_, n_genotypes_init_, config_.prob_mate);
+    neat_algorithms::Mutate(genotypes_, gene_pool_, config_.prob_weight_change, config_.prob_new_weight,
+                            config_.prob_new_node, config_.prob_new_connection, config_.weight_range.first,
+                            config_.weight_range.second, config_.allow_self_connection,
+                            config_.allow_recurring_connection);
+    neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
+                                   config_.coeff3);
+}
+
 GenePool NEAT::GetGenePool() const { return gene_pool_; }
 
 std::vector<genome::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
@@ -71,5 +113,23 @@ std::vector<genome::Genotype> NEAT::GetGenotypes() const { return genotypes_; }
 std::vector<genome::Species> NEAT::GetSpecies() const { return species_; }
 
 void NEAT::SetGenotypes(const std::vector<genome::Genotype>& genotypes) { genotypes_ = genotypes; }
+
+void NEAT::SetSpecies(const std::vector<genome::Species>& species) { species_ = species; }
+
+void NEAT::SetGenePool(const GenePool& gene_pool) { gene_pool_ = gene_pool; }
+
+void NEAT::FindBestFitness(std::vector<double> fitnesses) {
+    const double best_fitness_old(best_fitness_);
+
+    for (auto fitness : fitnesses) {
+        if (fitness > best_fitness_) {
+            best_fitness_ = fitness;
+        }
+    }
+
+    if (!(best_fitness_ > best_fitness_old)) {
+        unimproved_counter_++;
+    }
+}
 
 }  // namespace neat

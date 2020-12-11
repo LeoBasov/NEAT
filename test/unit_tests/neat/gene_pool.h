@@ -83,24 +83,24 @@ TEST(GenePool, AddConnection) {
     retval1 = gene_pool.AddNode(0);
 
     for (unsigned int i = 0; i < 3; i++) {
-        retval2 = gene_pool.AddConnection(0, i);
+        retval2 = gene_pool.AddConnection(0, i, true, true);
 
         ASSERT_TRUE(!retval2.first);
     }
 
-    ASSERT_THROW(gene_pool.AddConnection(0, 5), std::domain_error);
+    ASSERT_THROW(gene_pool.AddConnection(0, 5, true, true), std::domain_error);
 
-    retval2 = gene_pool.AddConnection(0, 3);
-
-    ASSERT_TRUE(retval2.first);
-    ASSERT_EQ(0, retval2.second);
-
-    retval2 = gene_pool.AddConnection(0, 3);
+    retval2 = gene_pool.AddConnection(0, 3, true, true);
 
     ASSERT_TRUE(retval2.first);
     ASSERT_EQ(0, retval2.second);
 
-    retval2 = gene_pool.AddConnection(1, 4);
+    retval2 = gene_pool.AddConnection(0, 3, true, true);
+
+    ASSERT_TRUE(retval2.first);
+    ASSERT_EQ(0, retval2.second);
+
+    retval2 = gene_pool.AddConnection(1, 4, true, true);
 
     ASSERT_TRUE(retval2.first);
     ASSERT_EQ((n_sensors + 1) * n_output + 2 + 1 - 1, retval2.second);

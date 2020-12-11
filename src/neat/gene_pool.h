@@ -20,7 +20,9 @@ class GenePool {
     void Initialize(const unsigned int& n_sensor_nodes, const unsigned int& n_output_nodes);
 
     std::pair<unsigned int, unsigned int> AddNode(const unsigned int& gene_id);
-    std::pair<bool, unsigned int> AddConnection(unsigned int in_node, unsigned int out_node);
+    std::pair<bool, unsigned int> AddConnection(unsigned int in_node, unsigned int out_node,
+                                                const bool& allow_self_connection,
+                                                const bool& allow_recurring_connection);
 
     unsigned int GetNSensorNodes() const;
     unsigned int GetNOutputNodes() const;

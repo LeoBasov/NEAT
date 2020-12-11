@@ -14,17 +14,24 @@ struct Gene {
 
     inline bool operator==(const Gene& other) { return id == other.id; }
     inline bool operator!=(const Gene& other) { return !(*this == other); }
+
+    inline bool operator<(const Gene& other) { return (*this).id < other.id; }
+    inline bool operator>(const Gene& other) { return (*this).id > other.id; }
+    inline bool operator<=(const Gene& other) { return !(*this > other); }
+    inline bool operator>=(const Gene& other) { return !(*this < other); }
 };
 
 struct Genotype {
     std::vector<unsigned int > nodes;
     std::vector<Gene> genes;
     unsigned int species_id = 0;
+
+    inline bool operator<(const Genotype& other) { return (*this).species_id < other.species_id; }
 };
 
 struct Species {
     Genotype ref_genotype;
-    unsigned int n_memeber = 0;
+    unsigned int n_member = 0;
     double total_fitness = 0.0;
 };
 

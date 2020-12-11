@@ -14,6 +14,9 @@ bool AddNode(genome::Genotype& genotype, GenePool& pool, const uint& gene_id, co
             genotype.genes.push_back(genome::Gene(retval.first, 1.0));
             genotype.genes.push_back(genome::Gene(retval.second, weight));
 
+            std::sort(genotype.nodes.begin(), genotype.nodes.end());
+            std::sort(genotype.genes.begin(), genotype.genes.end());
+
             return true;
         }
     }
@@ -22,14 +25,16 @@ bool AddNode(genome::Genotype& genotype, GenePool& pool, const uint& gene_id, co
 }
 
 bool AddConnection(genome::Genotype& genotype, GenePool& pool, const uint& in_node, const uint& out_node,
-                   const double& weight) {
-    std::pair<bool, unsigned int> retval = pool.AddConnection(in_node, out_node);
+                   const double& weight, const bool& allow_self_connection, const bool& allow_recurring_connection) {
+    std::pair<bool, unsigned int> retval =
+        pool.AddConnection(in_node, out_node, allow_self_connection, allow_recurring_connection);
 
     if (retval.first) {
         if (std::find(genotype.genes.begin(), genotype.genes.end(), retval.second) != genotype.genes.end()) {
             return false;
         } else {
             genotype.genes.push_back(genome::Gene(retval.second, weight));
+            std::sort(genotype.genes.begin(), genotype.genes.end());
         }
     }
 
@@ -85,9 +90,9 @@ double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<
         }
     }
 
-    if ((genome1.size() - 1) > i) {
+    if (genome1.size() > i) {
         n_excess = genome1.size() - i;
-    } else if ((genome2.size() - 1) > j) {
+    } else if (genome2.size() > j) {
         n_excess = genome2.size() - j;
     }
 
@@ -102,13 +107,16 @@ double CalcDistance(const std::vector<genome::Gene>& genome1, const std::vector<
 }
 
 MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& pool) {
-    MatrixXd matrix = MatrixXd::Zero(pool.GetNTotalNodes(), pool.GetNTotalNodes());
+    MatrixXd matrix = MatrixXd::Zero(genotype.nodes.size(), genotype.nodes.size());
+    const std::map<uint, uint> permutation_map(neat_algorithms::GetPermutationMap(genotype));
 
     for (const auto& gene : genotype.genes) {
         if (gene.enabled) {
-            GenePool::Gene pool_gene = pool.GetGene(gene.id);
+            const GenePool::Gene pool_gene = pool.GetGene(gene.id);
+            const uint in_node(permutation_map.at(pool_gene.in_node));
+            const uint out_node(permutation_map.at(pool_gene.out_node));
 
-            matrix(pool_gene.out_node, pool_gene.in_node) += gene.weight;
+            matrix(out_node, in_node) += gene.weight;
         }
     }
 
@@ -119,8 +127,18 @@ MatrixXd Genotype2Phenotype(const genome::Genotype& genotype, const GenePool& po
     return matrix;
 }
 
-VectorXd SetUpNodes(const std::vector<double>& input_vaules, const GenePool& pool) {
-    VectorXd vec = VectorXd::Zero(pool.GetNTotalNodes());
+std::map<uint, uint> GetPermutationMap(const genome::Genotype& genotype) {
+    std::map<uint, uint> permutaion_map;
+
+    for (uint i = 0; i < genotype.nodes.size(); i++) {
+        permutaion_map.insert({genotype.nodes.at(i), i});
+    }
+
+    return permutaion_map;
+}
+
+VectorXd SetUpNodes(const std::vector<double>& input_vaules, const uint& node_size) {
+    VectorXd vec = VectorXd::Zero(node_size);
 
     vec(0) = 1.0;
 
@@ -141,6 +159,12 @@ void ExecuteNetwork(const MatrixXd& matrix, VectorXd& nodes, const uint& n_const
 
 void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome::Species>& species,
                    const double& max_distance, const double& ceff1, const double& ceff2, const double& ceff3) {
+    std::vector<bool> sorted(species.size(), false);
+
+    for (auto& spec : species) {
+        spec.n_member = 0;
+    }
+
     for (auto& genotype : genotypes) {
         if (species.size()) {
             bool found(false);
@@ -148,9 +172,15 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
             for (uint spec_id = 0; spec_id < species.size(); spec_id++) {
                 if (CalcDistance(genotype.genes, species.at(spec_id).ref_genotype.genes, ceff1, ceff2, ceff3) <
                     max_distance) {
-                    species.at(spec_id).n_memeber++;
+                    species.at(spec_id).n_member++;
                     genotype.species_id = spec_id;
                     found = true;
+
+                    if (spec_id < sorted.size() && !sorted.at(spec_id)) {
+                        species.at(spec_id).ref_genotype = genotype;
+                        sorted.at(spec_id) = true;
+                    }
+
                     break;
                 }
             }
@@ -159,7 +189,7 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
                 genome::Species spec;
 
                 spec.ref_genotype = genotype;
-                spec.n_memeber = 1;
+                spec.n_member = 1;
                 genotype.species_id = species.size();
 
                 species.push_back(spec);
@@ -168,10 +198,167 @@ void SortInSpecies(std::vector<genome::Genotype>& genotypes, std::vector<genome:
             genome::Species spec;
 
             spec.ref_genotype = genotype;
-            spec.n_memeber = 1;
+            spec.n_member = 1;
             genotype.species_id = species.size();
 
             species.push_back(spec);
+        }
+    }
+}
+
+void AdjustedFitnesses(std::vector<double>& fitnesses, std::vector<genome::Species>& species,
+                       const std::vector<genome::Genotype>& genotypes) {
+    if (fitnesses.size() != genotypes.size()) {
+        throw std::domain_error("fitness size != genotype size");
+    }
+
+    for (auto& spec : species) {
+        spec.total_fitness = 0.0;
+    }
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        fitnesses.at(i) /= static_cast<double>(species.at(genotypes.at(i).species_id).n_member);
+        species.at(genotypes.at(i).species_id).total_fitness += fitnesses.at(i);
+    }
+}
+
+void SortByFitness(const std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes) {
+    std::vector<std::pair<double, uint>> sorted(fitnesses.size());
+    uint spec_id(0), old_id(0);
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        sorted.at(i).first = fitnesses.at(i);
+        sorted.at(i).second = i;
+    }
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        if (genotypes.at(i).species_id != spec_id) {
+            std::sort(sorted.begin() + old_id, sorted.begin() + i, utility::greater());
+
+            //--------------------------------------------------------------------
+            std::vector<bool> done(genotypes.size());
+            for (std::size_t k = old_id; k < i; ++k) {
+                if (done[k]) {
+                    continue;
+                }
+                done[k] = true;
+                std::size_t prev_j = k;
+                std::size_t j = sorted[k].second;
+                while (k != j) {
+                    std::swap(genotypes[prev_j], genotypes[j]);
+                    done[j] = true;
+                    prev_j = j;
+                    j = sorted[j].second;
+                }
+            }
+            //---------------------------------------------------------------------
+
+            spec_id = genotypes.at(i).species_id;
+            old_id = i;
+        } else if (i == fitnesses.size() - 1) {
+            std::sort(sorted.begin() + old_id, sorted.begin() + i + 1, utility::greater());
+
+            //--------------------------------------------------------------------
+            std::vector<bool> done(genotypes.size());
+            for (std::size_t k = old_id; k < i; ++k) {
+                if (done[k]) {
+                    continue;
+                }
+                done[k] = true;
+                std::size_t prev_j = k;
+                std::size_t j = sorted[k].second;
+                while (k != j) {
+                    std::swap(genotypes[prev_j], genotypes[j]);
+                    done[j] = true;
+                    prev_j = j;
+                    j = sorted[j].second;
+                }
+            }
+            //---------------------------------------------------------------------
+        }
+    }
+}
+
+void SortBySpecies(std::vector<genome::Genotype>& genotypes) {
+    auto permutation_vector = utility::SortPermutation(
+        genotypes, [](genome::Genotype const& a, genome::Genotype const& b) { return a.species_id < b.species_id; });
+    utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+}
+
+void ReproduceSpecies(const genome::Species& species, const std::vector<genome::Genotype>& genotypes,
+                      std::vector<genome::Genotype>& new_genotypes, const uint& n_new_genotypes, const uint& species_id,
+                      const double& prob_mate) {
+    uint n_genotypes(0);
+    Random random;
+
+    for (uint i = 0; i < genotypes.size(); i++) {
+        if (genotypes.at(i).species_id == species_id) {
+            while (n_genotypes < n_new_genotypes) {
+                for (uint j = i; j < i + species.n_member; j++) {
+                    if (n_genotypes >= n_new_genotypes) {
+                        return;
+                    } else if ((random.RandomNumber() < prob_mate) && (j < i + species.n_member - 1)) {
+                        new_genotypes.push_back(Mate(genotypes.at(j), genotypes.at(j + 1), random));
+                        n_genotypes++;
+                    } else {
+                        new_genotypes.push_back(genotypes.at(j));
+                        n_genotypes++;
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
+void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
+               std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate) {
+    double total_fitness(0.0);
+    std::vector<genome::Genotype> new_genotypes;
+
+    SortBySpecies(genotypes);
+    SortByFitness(fitnesses, genotypes);
+
+    for (auto spec : species) {
+        total_fitness += spec.total_fitness;
+    }
+
+    for (uint i = 0; i < species.size(); i++) {
+        uint n_genotypes_loc(n_genotypes * (species.at(i).total_fitness / total_fitness));
+
+        ReproduceSpecies(species.at(i), genotypes, new_genotypes, n_genotypes_loc, i, prob_mate);
+    }
+
+    genotypes = new_genotypes;
+}
+
+void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
+            const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
+            const double& weight_min, const double& weight_max, const bool& allow_self_connection,
+            const bool& allow_recurring_connection) {
+    Random random;
+
+    for (auto& genotype : genotypes) {
+        const double rand(random.RandomNumber());
+        const uint gene_genome_id = static_cast<uint>(std::round(random.RandomNumber(0.0, genotype.genes.size() - 1)));
+        const uint gene_id(genotype.genes.at(gene_genome_id).id);
+        const uint node_genome_id1 = static_cast<uint>(std::round(random.RandomNumber(0.0, genotype.nodes.size() - 1)));
+        const uint node_genome_id2 = static_cast<uint>(std::round(random.RandomNumber(0.0, genotype.nodes.size() - 1)));
+        const uint node_id1(genotype.nodes.at(node_genome_id1));
+        const uint node_id2(genotype.nodes.at(node_genome_id2));
+
+        if (rand < prob_new_node) {
+            AddNode(genotype, pool, gene_id, genotype.genes.at(gene_genome_id).weight);
+        } else if (rand < prob_new_connection) {
+            AddConnection(genotype, pool, node_id1, node_id2, random.RandomNumber(weight_min, weight_max),
+                          allow_self_connection, allow_recurring_connection);
+        } else if (rand < prob_weight_change) {
+            if (random.RandomNumber() < prob_new_weight) {
+                genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
+            } else {
+                genotype.genes.at(gene_genome_id).weight =
+                    random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
+            }
         }
     }
 }
