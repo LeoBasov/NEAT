@@ -43,6 +43,9 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
             const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
             const double& weight_min, const double& weight_max, const bool& allow_self_connection,
             const bool& allow_recurring_connection);
+void AssignNewWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& weight_min,
+                     const double& weight_max);
+void PertubateWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& perturbation_fraq);
 
 // Update values that check if population has not developed for certain time
 void AdjustStagnationControll(const std::vector<double>& fitnesses, double& best_fitness, uint& unimproved_counter);

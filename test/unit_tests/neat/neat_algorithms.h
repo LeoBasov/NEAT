@@ -556,6 +556,56 @@ TEST(neat_algorithms, Mutate_AddNode) {
     }
 }
 
+TEST(neat_algorithms, AssignNewWeight) {
+    NEAT::Config config;
+    genome::Genotype genotype;
+    GenePool gene_pool_new, gene_pool_old;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    const uint genotype_gene_id(0);
+    const double weight_min(-10.0), weight_max(10.0), weight_ini(-100.0);
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotype = neat.GetGenotypes().front();
+
+    genotype.genes.at(genotype_gene_id).weight = weight_ini;
+
+    AssignNewWeight(genotype, genotype_gene_id, weight_min, weight_max);
+
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight > weight_ini);
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight <= weight_max);
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight >= weight_min);
+}
+
+TEST(neat_algorithms, PertubateWeight) {
+    NEAT::Config config;
+    genome::Genotype genotype;
+    GenePool gene_pool_new, gene_pool_old;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    const uint genotype_gene_id(0);
+    const double perturbation_fraq(0.1), weight_ini1(-100.0), weight_ini2(100.0);
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotype = neat.GetGenotypes().front();
+
+    genotype.genes.at(genotype_gene_id).weight = weight_ini1;
+
+    PertubateWeight(genotype, genotype_gene_id, perturbation_fraq);
+
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight >= weight_ini1 * (1.0 + perturbation_fraq));
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight <= weight_ini1 * (1.0 - perturbation_fraq));
+
+    genotype.genes.at(genotype_gene_id).weight = weight_ini2;
+
+    PertubateWeight(genotype, genotype_gene_id, perturbation_fraq);
+
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight <= weight_ini2 * (1.0 + perturbation_fraq));
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight >= weight_ini2 * (1.0 - perturbation_fraq));
+}
+
 TEST(neat_algorithms, AdjustStagnationControll) {
     const std::vector<double> fintesses{1.0, 2.0, 3.0};
     double best_fitness1(1.0), best_fitness2(3.1);

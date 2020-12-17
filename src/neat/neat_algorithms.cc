@@ -380,21 +380,35 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
                           allow_self_connection, allow_recurring_connection);
         } else if (rand < prob_weight_change) {
             if (random.RandomNumber() < prob_new_weight) {
-                genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
+                AssignNewWeight(genotype, gene_genome_id, weight_min, weight_max);
             } else {
-                if (genotype.genes.at(gene_genome_id).weight >= 0.0) {
-                    genotype.genes.at(gene_genome_id).weight +=
-                        random.RandomNumber(-0.1 * genotype.genes.at(gene_genome_id).weight,
-                                            0.1 * genotype.genes.at(gene_genome_id).weight);
-                } else {
-                    genotype.genes.at(gene_genome_id).weight +=
-                        random.RandomNumber(0.1 * genotype.genes.at(gene_genome_id).weight,
-                                            -0.1 * genotype.genes.at(gene_genome_id).weight);
-                }
-                // random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
+                const double perturbation_fraq(0.1);
+                PertubateWeight(genotype, gene_genome_id, perturbation_fraq);
             }
         }
     }
+}
+
+void AssignNewWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& weight_min,
+                     const double& weight_max) {
+    Random random;
+
+    genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
+}
+
+void PertubateWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& perturbation_fraq) {
+    Random random;
+
+    if (genotype.genes.at(gene_genome_id).weight >= 0.0) {
+        genotype.genes.at(gene_genome_id).weight +=
+            random.RandomNumber(-perturbation_fraq * genotype.genes.at(gene_genome_id).weight,
+                                perturbation_fraq * genotype.genes.at(gene_genome_id).weight);
+    } else {
+        genotype.genes.at(gene_genome_id).weight +=
+            random.RandomNumber(perturbation_fraq * genotype.genes.at(gene_genome_id).weight,
+                                -perturbation_fraq * genotype.genes.at(gene_genome_id).weight);
+    }
+    // random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
 }
 
 void AdjustStagnationControll(const std::vector<double>& fitnesses, double& best_fitness, uint& unimproved_counter) {
