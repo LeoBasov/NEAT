@@ -14,7 +14,7 @@ void Genome::Clear() {
     genes_.clear();
 }
 
-uint Genome::Initialize(uint n_sensor_nodes, uint n_output_nodes) {
+void Genome::Initialize(uint n_sensor_nodes, uint n_output_nodes) {
     uint innov(0);
 
     Clear();
@@ -33,8 +33,15 @@ uint Genome::Initialize(uint n_sensor_nodes, uint n_output_nodes) {
             genes_.push_back(Gene(i, o, innov++));
         }
     }
+}
 
-    return --innov;
+void Genome::AddNode(uint gene_id, uint innov) {
+    n_hidden_nodes_++;
+
+    nodes_.push_back(nodes_.back() + 1);
+
+    genes_.push_back(Gene(genes_.at(gene_id).in, nodes_.back(), ++innov));
+    genes_.push_back(Gene(nodes_.back(), genes_.at(gene_id).out, ++innov, genes_.at(gene_id).weight));
 }
 
 }  // namespace neat
