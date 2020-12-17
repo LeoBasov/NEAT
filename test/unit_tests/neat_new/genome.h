@@ -73,8 +73,48 @@ TEST(Genome, AddNode) {
 
     for (uint i = 0; i < genome.genes_.size(); i++) {
         ASSERT_EQ(i, genome.genes_.at(i).innov);
-        ASSERT_TRUE(genome.genes_.at(i).enabled);
+
+        if (i == gene_id) {
+            ASSERT_FALSE(genome.genes_.at(i).enabled);
+        } else {
+            ASSERT_TRUE(genome.genes_.at(i).enabled);
+        }
     }
+}
+
+TEST(Genome, AddConnection) {
+    const uint n_sensor_nodes(2), n_output_nodes(1), gene_id(0), in(1), out(4);
+    uint innov(((n_sensor_nodes + 1) * n_output_nodes) - 1);
+    Genome genome(n_sensor_nodes, n_output_nodes);
+    bool allow_self_connection(false), allow_recurring_connection(false);
+
+    genome.AddNode(gene_id, innov);
+    innov += 2;
+
+    ASSERT_TRUE(genome.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
+    ASSERT_FALSE(genome.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
+    innov++;
+
+    ASSERT_EQ(innov, genome.genes_.size() - 1);
+
+    ASSERT_EQ(in, genome.genes_.back().in);
+    ASSERT_EQ(out, genome.genes_.back().out);
+
+    for (uint i = 0; i < genome.genes_.size(); i++) {
+        ASSERT_EQ(i, genome.genes_.at(i).innov);
+
+        if (i == gene_id) {
+            ASSERT_FALSE(genome.genes_.at(i).enabled);
+        } else {
+            ASSERT_TRUE(genome.genes_.at(i).enabled);
+        }
+    }
+
+    ASSERT_EQ(n_sensor_nodes, genome.n_sensor_nodes_);
+    ASSERT_EQ(n_output_nodes, genome.n_output_nodes_);
+    ASSERT_EQ(1, genome.n_hidden_nodes_);
+    ASSERT_EQ(n_sensor_nodes + n_output_nodes + 2, genome.nodes_.size());
+    ASSERT_EQ(((n_sensor_nodes + 1) * n_output_nodes) + 3, genome.genes_.size());
 }
 
 }  // namespace neat
