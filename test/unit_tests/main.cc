@@ -4,6 +4,7 @@
 #include "neat/gene_pool.h"
 #include "neat/neat.h"
 #include "neat/neat_algorithms.h"
+#include "neat_new/genome.h"
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
