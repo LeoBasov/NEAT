@@ -494,6 +494,44 @@ TEST(neat_algorithms, Reproduce) {
     ASSERT_EQ(3, genotypes.size());
 };
 
+TEST(neat_algorithms, ReproduceBestSpecies) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    GenePool gene_pool;
+    NEAT neat;
+    std::vector<genome::Species> species;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    std::vector<double> fitnesses;
+    const double prob_mate(0.75);
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool = neat.GetGenePool();
+    genotypes = neat.GetGenotypes();
+
+    for (auto& genotype : genotypes) {
+        for (auto& gene : genotype.genes) {
+            gene.weight = 1.0;
+        }
+    }
+
+    fitnesses = {10.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+    SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
+
+    AdjustedFitnesses(fitnesses, species, genotypes);
+    SortByFitness(fitnesses, genotypes);
+    SortBySpecies(genotypes);
+
+    ReproduceBestSpecies(fitnesses, species, genotypes, n_genotypes, prob_mate, 1);
+
+    ASSERT_EQ(n_genotypes, genotypes.size());
+
+    for (auto& genotype : genotypes) {
+        ASSERT_EQ(0, genotype.species_id);
+    }
+}
+
 TEST(neat_algorithms, Mutate_NULL) {
     NEAT::Config config;
     std::vector<genome::Genotype> genotypes_new, genotypes_old;
