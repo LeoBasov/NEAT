@@ -382,6 +382,7 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
             if (random.RandomNumber() < prob_new_weight) {
                 AssignNewWeight(genotype, gene_genome_id, weight_min, weight_max);
             } else {
+                // TODO (LB): this needs to be outside
                 const double perturbation_fraq(0.1);
                 PertubateWeight(genotype, gene_genome_id, perturbation_fraq);
             }

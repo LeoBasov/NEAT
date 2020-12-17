@@ -30,13 +30,13 @@ int main(int, char**) {
     uint best_network_id;
     double mean(0.0);
 
-    config.prob_new_node = 0.003;
+    // config.prob_new_node = 0.003;
 
     config.allow_recurring_connection = false;
     config.allow_self_connection = false;
 
-    config.weight_range.first = -1000.0;
-    config.weight_range.second = 1000.0;
+    config.weight_range.first = -10.0;  // before -1000.0
+    config.weight_range.second = 10.0;  // before  1000.0
 
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
