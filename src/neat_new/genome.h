@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <stdexcept>
 #include <vector>
 
@@ -28,6 +29,9 @@ class Genome {
     void AddNode(const uint gene_id, uint innov);
     bool AddConnection(const uint in, const uint out, uint innov, const bool allow_self_connection,
                        const bool allow_recurring_connection);
+
+    static double Distance(const Genome& genome1, const Genome& genome2, const std::array<double, 3>& coefficient);
+    double Distance(const Genome& other, const std::array<double, 3>& coefficient) const;
 
     // The fist node is allways the bias node, followd by sensor nodes, followed by output nodes.
     // All hidden nodes follow after.

@@ -74,4 +74,45 @@ bool Genome::AddConnection(const uint in, const uint out, uint innov, const bool
     return true;
 }
 
+double Genome::Distance(const Genome& genome1, const Genome& genome2, const std::array<double, 3>& coefficient) {
+    const uint size(std::max(genome1.genes_.size(), genome2.genes_.size()));
+    double average_weight(0.0);
+    uint n_disjoint(0), n_excess(0), n_common(0);
+    uint i = 0, j = 0;
+
+    for (; (i < genome1.genes_.size()) && (j < genome2.genes_.size());) {
+        if (genome1.genes_.at(i).innov < genome2.genes_.at(j).innov) {
+            n_disjoint++;
+            i++;
+        } else if (genome1.genes_.at(i).innov > genome2.genes_.at(j).innov) {
+            n_disjoint++;
+            j++;
+        } else {
+            average_weight += std::abs(genome1.genes_.at(i).weight - genome2.genes_.at(j).weight);
+            n_common++;
+            i++;
+            j++;
+        }
+    }
+
+    if (genome1.genes_.size() > i) {
+        n_excess = genome1.genes_.size() - i;
+    } else if (genome2.genes_.size() > j) {
+        n_excess = genome2.genes_.size() - j;
+    }
+
+    if (n_common) {
+        average_weight /= static_cast<double>(n_common);
+    } else {
+        average_weight = 0.0;
+    }
+
+    return coefficient.at(0) * (static_cast<double>(n_excess) / size) +
+           coefficient.at(1) * (static_cast<double>(n_disjoint) / size) + coefficient.at(2) * average_weight;
+}
+
+double Genome::Distance(const Genome& other, const std::array<double, 3>& coefficient) const {
+    return Distance(*this, other, coefficient);
+}
+
 }  // namespace neat

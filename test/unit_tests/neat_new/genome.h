@@ -117,4 +117,66 @@ TEST(Genome, AddConnection) {
     ASSERT_EQ(((n_sensor_nodes + 1) * n_output_nodes) + 3, genome.genes_.size());
 }
 
+TEST(Genome, Distance_static) {
+    const uint n_sensor_nodes(2), n_output_nodes(1), gene_id(0), in(1), out(4);
+    const std::array<double, 3> coefficient{1.0, 3.0, 5.0};
+    uint innov(((n_sensor_nodes + 1) * n_output_nodes) - 1);
+    Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
+    bool allow_self_connection(false), allow_recurring_connection(false);
+
+    genome1.AddNode(gene_id, innov);
+    innov += 2;
+
+    ASSERT_TRUE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
+    ASSERT_FALSE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
+    innov++;
+
+    ASSERT_DOUBLE_EQ(0.0, Genome::Distance(genome1, genome1, coefficient));
+    ASSERT_DOUBLE_EQ(0.0, Genome::Distance(genome2, genome2, coefficient));
+
+    ASSERT_DOUBLE_EQ(0.5, Genome::Distance(genome1, genome2, coefficient));
+
+    genome2.genes_.at(0).weight = 3.0;
+    genome2.genes_.at(1).weight = 5.0;
+    genome2.genes_.at(2).weight = 7.0;
+
+    ASSERT_DOUBLE_EQ((2.0 + 4.0 + 6.0) * 5.0 / 3.0 + 0.5, Genome::Distance(genome1, genome2, coefficient));
+
+    genome2.genes_.push_back(genome1.genes_.at(4));
+
+    ASSERT_DOUBLE_EQ((2.0 + 4.0 + 6.0) * 5.0 / 4.0 + (1.0 * 1.0 / 6.0) + (3.0 * 1.0 / 6.0),
+                     Genome::Distance(genome1, genome2, coefficient));
+}
+
+TEST(Genome, Distance) {
+    const uint n_sensor_nodes(2), n_output_nodes(1), gene_id(0), in(1), out(4);
+    const std::array<double, 3> coefficient{1.0, 3.0, 5.0};
+    uint innov(((n_sensor_nodes + 1) * n_output_nodes) - 1);
+    Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
+    bool allow_self_connection(false), allow_recurring_connection(false);
+
+    genome1.AddNode(gene_id, innov);
+    innov += 2;
+
+    ASSERT_TRUE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
+    ASSERT_FALSE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
+    innov++;
+
+    ASSERT_DOUBLE_EQ(0.0, genome1.Distance(genome1, coefficient));
+    ASSERT_DOUBLE_EQ(0.0, genome2.Distance(genome2, coefficient));
+
+    ASSERT_DOUBLE_EQ(0.5, genome1.Distance(genome2, coefficient));
+
+    genome2.genes_.at(0).weight = 3.0;
+    genome2.genes_.at(1).weight = 5.0;
+    genome2.genes_.at(2).weight = 7.0;
+
+    ASSERT_DOUBLE_EQ((2.0 + 4.0 + 6.0) * 5.0 / 3.0 + 0.5, genome1.Distance(genome2, coefficient));
+
+    genome2.genes_.push_back(genome1.genes_.at(4));
+
+    ASSERT_DOUBLE_EQ((2.0 + 4.0 + 6.0) * 5.0 / 4.0 + (1.0 * 1.0 / 6.0) + (3.0 * 1.0 / 6.0),
+                     genome1.Distance(genome2, coefficient));
+}
+
 }  // namespace neat
