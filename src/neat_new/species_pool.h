@@ -27,6 +27,8 @@ class SpeciesPool {
     SpeciesPool();
     ~SpeciesPool() = default;
 
+    void Clear();
+
     void SetConfig(const Config& config);
     std::vector<Species> GetSpecies() const;
     double GetTotalFitness() const;

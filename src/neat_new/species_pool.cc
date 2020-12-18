@@ -4,6 +4,11 @@ namespace neat {
 
 SpeciesPool::SpeciesPool() {}
 
+void SpeciesPool::Clear() {
+    species_.clear();
+    total_fitness_ = 0.0;
+}
+
 void SpeciesPool::SetConfig(const Config& config) { config_ = config; }
 
 std::vector<SpeciesPool::Species> SpeciesPool::GetSpecies() const { return species_; }
