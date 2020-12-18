@@ -18,6 +18,7 @@ void Neat::Initialize(const uint& n_sensor_nodes, const uint& n_output_nodes, co
     }
 
     species_pool_.SortInSpecies(genomes_);
+    innovation_ = genomes_.front().genes_.size();
 }
 
 std::vector<Network> Neat::GetNetworks() const {
@@ -46,9 +47,9 @@ void Neat::Evolve(std::vector<double>) {
     neat_algorithms::Mutate(genotypes_, gene_pool_, config_.prob_weight_change, config_.prob_new_weight,
                             config_.prob_new_node, config_.prob_new_connection, config_.weight_range.first,
                             config_.weight_range.second, config_.allow_self_connection,
-                            config_.allow_recurring_connection);
-    neat_algorithms::SortInSpecies(genotypes_, species_, config_.species_distance, config_.coeff1, config_.coeff2,
-                                   config_.coeff3);*/
+                            config_.allow_recurring_connection);*/
+    mutator_.Mutate(genomes_, innovation_);
+    species_pool_.SortInSpecies(genomes_);
 }
 
 SpeciesPool Neat::GetSpeciesPool() const { return species_pool_; }

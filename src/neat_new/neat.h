@@ -30,5 +30,6 @@ class Neat {
     Mutator mutator_;
     SpeciesPool species_pool_;
     Random random_;
+    uint innovation_ = 0;
 };
 }  // namespace neat
