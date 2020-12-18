@@ -24,6 +24,7 @@ class Neat {
 
     SpeciesPool GetSpeciesPool() const;
     std::vector<Genome> GetGenotypes() const;
+    uint GetInnovation() const;
 
    private:
     std::vector<Genome> genomes_;

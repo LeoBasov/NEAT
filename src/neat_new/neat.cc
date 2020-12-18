@@ -56,4 +56,6 @@ SpeciesPool Neat::GetSpeciesPool() const { return species_pool_; }
 
 std::vector<Genome> Neat::GetGenotypes() const { return genomes_; }
 
+uint Neat::GetInnovation() const { return innovation_; }
+
 }  // namespace neat

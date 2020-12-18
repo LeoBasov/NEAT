@@ -12,7 +12,7 @@ uint FindBestNetwork(const std::vector<double>& fitnesses);
 void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "best.csv");
 
 int main(int, char**) {
-    const uint n_iterations(2000);
+    const uint n_iterations(100);
     const double min_fitness(15.0);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
@@ -74,7 +74,7 @@ int main(int, char**) {
             std::cout << "UPDATE TIME " << update.GetCurrentDuration() << std::endl;
             std::cout << "N SPECIES   " << neat.GetSpeciesPool().GetSpecies().size() << std::endl;
             std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
-            // std::cout << "N GENES     " << neat.GetGenePool().GetGenes().size() << std::endl;
+            std::cout << "INNOVATION: " << neat.GetInnovation() << std::endl;
             // std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
             std::cout << "MEAN FITNESS " << mean << std::endl;
