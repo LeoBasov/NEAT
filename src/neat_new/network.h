@@ -16,10 +16,10 @@ class Network {
     void Build(const Genome& genome);
     std::vector<double> Execute(const std::vector<double>& input_vaules);
 
-    std::vector<size_t> SetUpOutputNodes(const Genome& genome) const;
-    MatrixXd GenomeToMatrix(const Genome& genome) const;
-    VectorXd GenomeToVector(const std::vector<double>& input_vaules, const uint& n_nodes) const;
-    std::vector<double> VectorToStd(const VectorXd& vec) const;
+    static std::vector<size_t> SetUpOutputNodes(const Genome& genome);
+    static MatrixXd GenomeToMatrix(const Genome& genome);
+    static VectorXd GenomeToVector(const std::vector<double>& input_vaules, const uint& n_nodes);
+    static std::vector<double> VectorToStd(const VectorXd& vec, const std::vector<size_t>& output_nodes);
 
     MatrixXd matrix_;
     std::vector<size_t> output_nodes_;

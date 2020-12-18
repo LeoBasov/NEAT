@@ -24,10 +24,10 @@ std::vector<double> Network::Execute(const std::vector<double>& input_vaules) {
         }
     }
 
-    return VectorToStd(vec);
+    return VectorToStd(vec, output_nodes_);
 }
 
-std::vector<size_t> Network::SetUpOutputNodes(const Genome& genome) const {
+std::vector<size_t> Network::SetUpOutputNodes(const Genome& genome) {
     std::vector<size_t> output_nodes;
 
     for (uint i = genome.n_sensor_nodes_ + 1; i < (genome.n_output_nodes_ + genome.n_sensor_nodes_ + 1); i++) {
@@ -37,7 +37,7 @@ std::vector<size_t> Network::SetUpOutputNodes(const Genome& genome) const {
     return output_nodes;
 }
 
-MatrixXd Network::GenomeToMatrix(const Genome& genome) const {
+MatrixXd Network::GenomeToMatrix(const Genome& genome) {
     MatrixXd matrix(MatrixXd::Zero(genome.nodes_.size(), genome.nodes_.size()));
     const std::map<size_t, size_t> permutation_map(genome.GetNodePermuationMap());
 
@@ -57,7 +57,7 @@ MatrixXd Network::GenomeToMatrix(const Genome& genome) const {
     return matrix;
 }
 
-VectorXd Network::GenomeToVector(const std::vector<double>& input_vaules, const uint& n_nodes) const {
+VectorXd Network::GenomeToVector(const std::vector<double>& input_vaules, const uint& n_nodes) {
     VectorXd vec(VectorXd::Zero(n_nodes));
 
     vec(0) = 1.0;
@@ -69,11 +69,11 @@ VectorXd Network::GenomeToVector(const std::vector<double>& input_vaules, const 
     return vec;
 }
 
-std::vector<double> Network::VectorToStd(const VectorXd& vec) const {
-    std::vector<double> ret_vals(output_nodes_.size());
+std::vector<double> Network::VectorToStd(const VectorXd& vec, const std::vector<size_t>& output_nodes) {
+    std::vector<double> ret_vals(output_nodes.size());
 
-    for (uint i = 0; i < output_nodes_.size(); i++) {
-        ret_vals.at(i) = vec(output_nodes_.at(i));
+    for (uint i = 0; i < output_nodes.size(); i++) {
+        ret_vals.at(i) = vec(output_nodes.at(i));
     }
 
     return ret_vals;
