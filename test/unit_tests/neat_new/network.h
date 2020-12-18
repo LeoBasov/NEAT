@@ -59,4 +59,28 @@ TEST(Network, GenomeToMatrix) {
     }
 }
 
+TEST(Network, GenomeToVector) {
+    const uint n_sensor_nodes(2), n_output_nodes(1);
+    const std::vector<double> input_vals{3.0, 7.0};
+    Genome genome(n_sensor_nodes, n_output_nodes);
+    uint innov(genome.genes_.size());
+    VectorXd vector;
+
+    genome.AddNode(0, innov);
+
+    vector = Network::GenomeToVector(input_vals, genome.nodes_.size());
+
+    for (uint i = 0; i < genome.nodes_.size(); i++) {
+        if (i == 0) {
+            ASSERT_DOUBLE_EQ(1.0, vector(i));
+        } else if (i == 1) {
+            ASSERT_DOUBLE_EQ(input_vals.at(0), vector(i));
+        } else if (i == 2) {
+            ASSERT_DOUBLE_EQ(input_vals.at(1), vector(i));
+        } else {
+            ASSERT_DOUBLE_EQ(0.0, vector(i));
+        }
+    }
+}
+
 }  // namespace neat
