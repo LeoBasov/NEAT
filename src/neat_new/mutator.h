@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "genome.h"
 
 namespace neat {
@@ -24,13 +26,13 @@ class Mutator {
     ~Mutator() = default;
 
     void SetConfig(const Config& config);
-    void SetrRandom(const Random& random);
+    void SetrRandom(std::shared_ptr<Random> random);
 
     void Mutate(Genome& genome, uint& innovation);
     static void PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const double& perturbation_fraq);
 
    private:
     Config config_;
-    Random random_;
+    std::shared_ptr<Random> random_ = std::make_shared<Random>();
 };
 }  // namespace neat
