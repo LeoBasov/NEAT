@@ -29,8 +29,10 @@ class SpeciesPool {
 
     void SetConfig(const Config& config);
     std::vector<Species> GetSpecies() const;
+    double GetTotalFitness() const;
 
     void SortInSpecies(std::vector<Genome>& genomes);
+    void AdjustFitnesses(std::vector<double>& fitnesses, const std::vector<Genome>& genomes);
 
    private:
     std::vector<Species> species_;
