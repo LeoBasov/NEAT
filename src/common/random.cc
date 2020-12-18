@@ -9,6 +9,11 @@ double Random::RandomNumber(const double& min, const double& max) {
     return uniform_distribution(mersenne_twister_);
 }
 
+int Random::RandomIntNumber(const int& min, const int& max) {
+    std::uniform_int_distribution<> uniform_distribution{min, max};
+    return uniform_distribution(mersenne_twister_);
+}
+
 Vector3d Random::RandomVector(Vector3d min, Vector3d max) {
     return Vector3d(RandomNumber(min(0), max(0)), RandomNumber(min(1), max(1)), RandomNumber(min(2), max(2)));
 }

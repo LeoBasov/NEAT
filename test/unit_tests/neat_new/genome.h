@@ -85,16 +85,17 @@ TEST(Genome, AddNode) {
 
 TEST(Genome, AddConnection) {
     const uint n_sensor_nodes(2), n_output_nodes(1), gene_id(0), in(1), out(4);
-    uint innov(((n_sensor_nodes + 1) * n_output_nodes) - 1);
+    const uint innov_begin(((n_sensor_nodes + 1) * n_output_nodes) - 1);
+    uint innov(innov_begin);
     Genome genome(n_sensor_nodes, n_output_nodes);
     bool allow_self_connection(false), allow_recurring_connection(false);
 
-    genome.AddNode(gene_id, innov);
-    innov += 2;
+    innov = genome.AddNode(gene_id, innov);
+    innov = genome.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection);
+    ASSERT_EQ(innov_begin + 3, innov);
 
-    ASSERT_TRUE(genome.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
-    ASSERT_FALSE(genome.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
-    innov++;
+    innov = genome.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection);
+    ASSERT_EQ(innov_begin + 3, innov);
 
     ASSERT_EQ(innov, genome.genes_.size() - 1);
 
@@ -125,12 +126,8 @@ TEST(Genome, Distance_static) {
     Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
     bool allow_self_connection(false), allow_recurring_connection(false);
 
-    genome1.AddNode(gene_id, innov);
-    innov += 2;
-
-    ASSERT_TRUE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
-    ASSERT_FALSE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
-    innov++;
+    innov = genome1.AddNode(gene_id, innov);
+    innov = genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection);
 
     ASSERT_DOUBLE_EQ(0.0, Genome::Distance(genome1, genome1, coefficient));
     ASSERT_DOUBLE_EQ(0.0, Genome::Distance(genome2, genome2, coefficient));
@@ -156,12 +153,8 @@ TEST(Genome, Distance) {
     Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
     bool allow_self_connection(false), allow_recurring_connection(false);
 
-    genome1.AddNode(gene_id, innov);
-    innov += 2;
-
-    ASSERT_TRUE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
-    ASSERT_FALSE(genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection));
-    innov++;
+    innov = genome1.AddNode(gene_id, innov);
+    innov = genome1.AddConnection(in, out, innov, allow_self_connection, allow_recurring_connection);
 
     ASSERT_DOUBLE_EQ(0.0, genome1.Distance(genome1, coefficient));
     ASSERT_DOUBLE_EQ(0.0, genome2.Distance(genome2, coefficient));

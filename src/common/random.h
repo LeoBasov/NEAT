@@ -12,6 +12,7 @@ class Random {
     ~Random() = default;
 
     virtual double RandomNumber(const double &min = 0.0, const double &max = 1.0);
+    virtual int RandomIntNumber(const int &min, const int &max);
     virtual Vector3d RandomVector(Vector3d min = Vector3d(0.0, 0.0, 0.0), Vector3d max = Vector3d(1.0, 1.0, 1.0));
     virtual double NormalRandomNumber(const double &mean = 0.0, const double &stddev = 1.0);
     virtual Vector3d NormalRandomVector(const double &mean = 0.0, const double &stddev = 1.0);
