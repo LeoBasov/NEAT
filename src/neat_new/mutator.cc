@@ -36,13 +36,7 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
 }
 
 void Mutator::PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const double& perturbation_fraq) {
-    if (genome.genes_.at(gene_id).weight >= 0.0) {
-        genome.genes_.at(gene_id).weight += random.RandomNumber(-perturbation_fraq * genome.genes_.at(gene_id).weight,
-                                                                perturbation_fraq * genome.genes_.at(gene_id).weight);
-    } else {
-        genome.genes_.at(gene_id).weight += random.RandomNumber(perturbation_fraq * genome.genes_.at(gene_id).weight,
-                                                                -perturbation_fraq * genome.genes_.at(gene_id).weight);
-    }
+    genome.genes_.at(gene_id).weight *= (1.0 - perturbation_fraq) + 2 * (perturbation_fraq)*random.RandomNumber();
 }
 
 }  // namespace neat

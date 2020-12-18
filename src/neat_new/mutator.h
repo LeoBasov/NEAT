@@ -27,7 +27,7 @@ class Mutator {
     void SetrRandom(const Random& random);
 
     void Mutate(Genome& genome, uint& innovation);
-    void PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const double& perturbation_fraq);
+    static void PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const double& perturbation_fraq);
 
    private:
     Config config_;

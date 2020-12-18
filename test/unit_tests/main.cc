@@ -5,6 +5,7 @@
 #include "neat/neat.h"
 #include "neat/neat_algorithms.h"
 #include "neat_new/genome.h"
+#include "neat_new/mutator.h"
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
