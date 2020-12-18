@@ -10,6 +10,7 @@ void Genome::Clear() {
     n_sensor_nodes_ = 0;
     n_output_nodes_ = 0;
     n_hidden_nodes_ = 0;
+    species_id_ = 0;
     nodes_.clear();
     genes_.clear();
 }
