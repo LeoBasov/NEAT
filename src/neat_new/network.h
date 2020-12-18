@@ -26,6 +26,6 @@ class Network {
     uint n_executions_ = 0;
     uint n_const_nodes_ = 0;
     bool cyclic = false;
-    double parameter_ = 4.9;
+    double parameter_ = 5.9;
 };
 }  // namespace neat
