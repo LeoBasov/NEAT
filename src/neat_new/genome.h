@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <map>
 #include <stdexcept>
 #include <vector>
 
@@ -38,6 +39,8 @@ class Genome {
 
     void AdjustNodes(const uint n_sensor_nodes, const uint n_output_nodes);
     static Genome Mate(const Genome& fitter_parent, const Genome& parent, Random& random);
+
+    std::map<size_t, size_t> GetNodePermuationMap() const;
 
     // The fist node is allways the bias node, followd by sensor nodes, followed by output nodes.
     // All hidden nodes follow after.

@@ -165,4 +165,16 @@ Genome Genome::Mate(const Genome& fitter_parent, const Genome& parent, Random& r
     return child;
 }
 
+std::map<size_t, size_t> Genome::GetNodePermuationMap() const {
+    std::map<size_t, size_t> permutaion_map;
+
+    for (uint i = 0; i < nodes_.size(); i++) {
+        if (!permutaion_map.insert({nodes_.at(i), i}).second) {
+            throw std::domain_error("insertion in permutaion map not possible");
+        }
+    }
+
+    return permutaion_map;
+}
+
 }  // namespace neat

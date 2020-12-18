@@ -255,4 +255,29 @@ TEST(Genome, Mate) {
     }
 }
 
+TEST(Genome, GetNodePermuationMap) {
+    const uint n_sensor_nodes(2), n_output_nodes(1);
+    Genome genome(n_sensor_nodes, n_output_nodes);
+    std::map<size_t, size_t> map;
+
+    genome.nodes_.push_back(12);
+    genome.nodes_.push_back(25);
+    genome.nodes_.push_back(30);
+
+    map = genome.GetNodePermuationMap();
+
+    ASSERT_EQ(0, map.at(0));
+    ASSERT_EQ(1, map.at(1));
+    ASSERT_EQ(2, map.at(2));
+    ASSERT_EQ(3, map.at(3));
+
+    ASSERT_EQ(4, map.at(12));
+    ASSERT_EQ(5, map.at(25));
+    ASSERT_EQ(6, map.at(30));
+
+    genome.nodes_.push_back(30);
+
+    ASSERT_THROW(genome.GetNodePermuationMap(), std::domain_error);
+}
+
 }  // namespace neat
