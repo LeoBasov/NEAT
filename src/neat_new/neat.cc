@@ -51,4 +51,8 @@ void Neat::Evolve(std::vector<double>) {
                                    config_.coeff3);*/
 }
 
+SpeciesPool Neat::GetSpeciesPool() const { return species_pool_; }
+
+std::vector<Genome> Neat::GetGenotypes() const { return genomes_; }
+
 }  // namespace neat
