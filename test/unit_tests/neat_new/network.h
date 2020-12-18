@@ -103,4 +103,20 @@ TEST(Network, VectorToStd) {
     ASSERT_DOUBLE_EQ(vector(n_sensor_nodes + 1), ret_vec.front());
 }
 
+TEST(Network, Build) {
+    const uint n_sensor_nodes(2), n_output_nodes(1);
+    const std::vector<double> input_vals{3.0, 7.0};
+    Genome genome(n_sensor_nodes, n_output_nodes);
+    uint innov(genome.genes_.size());
+    VectorXd vector;
+    const std::vector<size_t> output_nodes{n_sensor_nodes + 1};
+
+    genome.AddNode(0, innov);
+
+    Network network(genome);
+
+    ASSERT_EQ(genome.genes_.size(), network.n_executions_);
+    ASSERT_EQ(genome.n_sensor_nodes_ + 1, network.n_const_nodes_);
+}
+
 }  // namespace neat
