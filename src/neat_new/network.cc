@@ -10,7 +10,7 @@ void Network::Build(const Genome& genome) {
     matrix_ = GenomeToMatrix(genome);
     output_nodes_ = SetUpOutputNodes(genome);
     n_executions_ = genome.genes_.size();
-    n_const_nodes_ = genome.n_output_nodes_ + genome.n_sensor_nodes_ + 1;
+    n_const_nodes_ = genome.n_sensor_nodes_ + 1;
 }
 
 std::vector<double> Network::Execute(const std::vector<double>& input_vaules) {
