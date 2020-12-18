@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include "../../../src/common/random_fake.h"
 #include "../../../src/neat_new/genome.h"
 
 namespace neat {
@@ -177,6 +178,91 @@ TEST(Genome, Distance) {
 
     ASSERT_DOUBLE_EQ((2.0 + 4.0 + 6.0) * 5.0 / 4.0 + (1.0 * 1.0 / 6.0) + (3.0 * 1.0 / 6.0),
                      genome1.Distance(genome2, coefficient));
+}
+
+TEST(Genome, AdjustNodes) {
+    const uint n_sensor_nodes(2), n_output_nodes(1);
+    Genome genome;
+
+    genome.genes_ = {Genome::Gene(0, 3, 0), Genome::Gene(1, 3, 1), Genome::Gene(2, 1, 2)};
+
+    genome.AdjustNodes(n_sensor_nodes, n_output_nodes);
+
+    ASSERT_EQ(n_sensor_nodes + n_output_nodes + 1, genome.nodes_.size());
+
+    ASSERT_EQ(n_sensor_nodes, genome.n_sensor_nodes_);
+    ASSERT_EQ(n_output_nodes, genome.n_output_nodes_);
+    ASSERT_EQ(0, genome.n_hidden_nodes_);
+
+    for (uint i = 0; i < genome.nodes_.size(); i++) {
+        ASSERT_EQ(i, genome.nodes_.at(i));
+    }
+
+    genome.genes_.push_back(Genome::Gene(0, 4, 3));
+    genome.genes_.push_back(Genome::Gene(4, 3, 4));
+
+    genome.AdjustNodes(n_sensor_nodes, n_output_nodes);
+
+    ASSERT_EQ(n_sensor_nodes + n_output_nodes + 2, genome.nodes_.size());
+
+    ASSERT_EQ(n_sensor_nodes, genome.n_sensor_nodes_);
+    ASSERT_EQ(n_output_nodes, genome.n_output_nodes_);
+    ASSERT_EQ(1, genome.n_hidden_nodes_);
+
+    for (uint i = 0; i < genome.nodes_.size(); i++) {
+        ASSERT_EQ(i, genome.nodes_.at(i));
+        ;
+    }
+}
+
+TEST(Genome, Mate) {
+    RandomFake random;
+    const uint n_sensor_nodes(2), n_output_nodes(1);
+    Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes), child;
+    const double weight(13.11);
+
+    genome1.genes_.push_back(Genome::Gene(0, 4, 3));
+    genome1.genes_.push_back(Genome::Gene(4, 3, 4));
+
+    genome1.AdjustNodes(n_sensor_nodes, n_output_nodes);
+
+    for (uint i = 0; i < genome2.genes_.size(); i++) {
+        genome2.genes_.at(i).weight = weight;
+    }
+
+    child = Genome::Mate(genome1, genome2, random);
+
+    ASSERT_EQ(n_sensor_nodes, child.n_sensor_nodes_);
+    ASSERT_EQ(n_output_nodes, child.n_output_nodes_);
+    ASSERT_EQ(1, child.n_hidden_nodes_);
+    ASSERT_EQ(genome1.nodes_.size(), child.nodes_.size());
+
+    for (uint i = 0; i < child.nodes_.size(); i++) {
+        ASSERT_EQ(i, child.nodes_.at(i));
+        ;
+    }
+
+    for (uint i = 0; i < genome2.genes_.size(); i++) {
+        ASSERT_DOUBLE_EQ(weight, child.genes_.at(i).weight);
+    }
+
+    random.SetRetVal(1.0);
+
+    child = Genome::Mate(genome1, genome2, random);
+
+    ASSERT_EQ(n_sensor_nodes, child.n_sensor_nodes_);
+    ASSERT_EQ(n_output_nodes, child.n_output_nodes_);
+    ASSERT_EQ(1, child.n_hidden_nodes_);
+    ASSERT_EQ(genome1.nodes_.size(), child.nodes_.size());
+
+    for (uint i = 0; i < child.nodes_.size(); i++) {
+        ASSERT_EQ(i, child.nodes_.at(i));
+        ;
+    }
+
+    for (uint i = 0; i < genome2.genes_.size(); i++) {
+        ASSERT_DOUBLE_EQ(1.0, child.genes_.at(i).weight);
+    }
 }
 
 }  // namespace neat

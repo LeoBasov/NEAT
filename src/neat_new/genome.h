@@ -1,8 +1,11 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <stdexcept>
 #include <vector>
+
+#include "../common/random.h"
 
 namespace neat {
 using uint = unsigned int;
@@ -32,6 +35,9 @@ class Genome {
 
     static double Distance(const Genome& genome1, const Genome& genome2, const std::array<double, 3>& coefficient);
     double Distance(const Genome& other, const std::array<double, 3>& coefficient) const;
+
+    void AdjustNodes(const uint n_sensor_nodes, const uint n_output_nodes);
+    static Genome Mate(const Genome& fitter_parent, const Genome& parent, Random& random);
 
     // The fist node is allways the bias node, followd by sensor nodes, followed by output nodes.
     // All hidden nodes follow after.

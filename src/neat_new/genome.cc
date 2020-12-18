@@ -115,4 +115,52 @@ double Genome::Distance(const Genome& other, const std::array<double, 3>& coeffi
     return Distance(*this, other, coefficient);
 }
 
+void Genome::AdjustNodes(const uint n_sensor_nodes, const uint n_output_nodes) {
+    n_sensor_nodes_ = n_sensor_nodes;
+    n_output_nodes_ = n_output_nodes;
+    n_hidden_nodes_ = 0;
+
+    nodes_.clear();
+
+    for (uint i = 0; i < (n_sensor_nodes_ + n_output_nodes_ + 1); i++) {
+        nodes_.push_back(i);
+    }
+
+    for (auto& gene : genes_) {
+        if (std::find(nodes_.begin(), nodes_.end(), gene.in) == nodes_.end()) {
+            nodes_.push_back(gene.in);
+            n_hidden_nodes_++;
+        }
+
+        if (std::find(nodes_.begin(), nodes_.end(), gene.out) == nodes_.end()) {
+            nodes_.push_back(gene.out);
+            n_hidden_nodes_++;
+        }
+    }
+
+    std::sort(nodes_.begin(), nodes_.end());
+}
+
+Genome Genome::Mate(const Genome& fitter_parent, const Genome& parent, Random& random) {
+    Genome child;
+
+    child.genes_ = fitter_parent.genes_;
+
+    for (uint i = 0, p = 0; i < child.genes_.size(); i++) {
+        while ((parent.genes_.at(p).innov < child.genes_.at(i).innov) && (p < (parent.genes_.size() - 1))) {
+            p++;
+        }
+
+        if (child.genes_.at(i).innov > parent.genes_.back().innov) {
+            break;
+        } else if ((parent.genes_.at(p).innov == child.genes_.at(i).innov) && (random.RandomNumber() < 0.5)) {
+            child.genes_.at(i) = parent.genes_.at(p);
+        }
+    }
+
+    child.AdjustNodes(fitter_parent.n_sensor_nodes_, fitter_parent.n_output_nodes_);
+
+    return child;
+}
+
 }  // namespace neat
