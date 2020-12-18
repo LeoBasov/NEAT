@@ -211,7 +211,6 @@ TEST(Genome, AdjustNodes) {
 
     for (uint i = 0; i < genome.nodes_.size(); i++) {
         ASSERT_EQ(i, genome.nodes_.at(i));
-        ;
     }
 }
 
@@ -239,7 +238,6 @@ TEST(Genome, Mate) {
 
     for (uint i = 0; i < child.nodes_.size(); i++) {
         ASSERT_EQ(i, child.nodes_.at(i));
-        ;
     }
 
     for (uint i = 0; i < genome2.genes_.size(); i++) {
@@ -257,7 +255,6 @@ TEST(Genome, Mate) {
 
     for (uint i = 0; i < child.nodes_.size(); i++) {
         ASSERT_EQ(i, child.nodes_.at(i));
-        ;
     }
 
     for (uint i = 0; i < genome2.genes_.size(); i++) {
