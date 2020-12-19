@@ -9,8 +9,6 @@ void Mutator::SetConfig(const Config& config) { config_ = config; }
 void Mutator::SetrRandom(std::shared_ptr<Random> random) { random_ = random; }
 
 void Mutator::Mutate(std::vector<Genome>& genomes, uint& innovation) {
-    // Here one needs to keep trak of all gene additions in a generation and eventually reset innovtaion number
-    // Which means: resort genes, adjust nodes (fnkt availible)
     last_genes_.clear();
 
     for (auto& genome : genomes) {
