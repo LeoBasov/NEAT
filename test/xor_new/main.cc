@@ -12,7 +12,7 @@ uint FindBestNetwork(const std::vector<double>& fitnesses);
 void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "best.csv");
 
 int main(int, char**) {
-    const uint n_iterations(100);
+    const uint n_iterations(500);
     const double min_fitness(15.0);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
@@ -22,6 +22,9 @@ int main(int, char**) {
     std::vector<double> fitnesses;
     uint best_network_id(0);
     double mean(0.0);
+
+    config.mutator_config.allow_recurring_connection = false;
+    config.mutator_config.allow_self_connection = false;
 
     // config.prob_new_node = 0.003;
 

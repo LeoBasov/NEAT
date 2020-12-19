@@ -38,23 +38,19 @@ std::vector<Network> Neat::GetNetworks() const {
     return networks;
 }
 
-void Neat::Evolve(std::vector<double>) {
-    /*neat_algorithms::AdjustStagnationControll(fitnesses, best_fitness_, unimproved_counter_);
-    neat_algorithms::AdjustedFitnesses(fitnesses, species_, genotypes_);
+void Neat::Evolve(std::vector<double> fitnesses) {
+    // neat_algorithms::AdjustStagnationControll(fitnesses, best_fitness_, unimproved_counter_);
+    species_pool_.AdjustFitnesses(fitnesses, genomes_);
 
-    if (unimproved_counter_ > config_.max_unimproved_iterations) {
+    /*if (unimproved_counter_ > config_.max_unimproved_iterations) {
         neat_algorithms::ReproduceBestSpecies(fitnesses, species_, genotypes_, n_genotypes_init_, config_.prob_mate, 2);
 
         best_fitness_ = 0.0;
         unimproved_counter_ = 0;
     } else {
 
-    }
+    }*/
 
-    neat_algorithms::Mutate(genotypes_, gene_pool_, config_.prob_weight_change, config_.prob_new_weight,
-                            config_.prob_new_node, config_.prob_new_connection, config_.weight_range.first,
-                            config_.weight_range.second, config_.allow_self_connection,
-                            config_.allow_recurring_connection);*/
     mutator_.Mutate(genomes_, innovation_);
     species_pool_.SortInSpecies(genomes_);
 }

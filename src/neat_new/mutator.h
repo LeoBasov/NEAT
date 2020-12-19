@@ -21,6 +21,14 @@ class Mutator {
         bool allow_recurring_connection = true;
     };
 
+    struct LastGene {
+        enum Type { ADD_NODE, ADD_CONNECTION, NONE };
+
+        Type type = NONE;
+        uint in = 0, out = 0;
+        std::pair<Genome::Gene, Genome::Gene> genes;
+    };
+
    public:
     Mutator();
     ~Mutator() = default;
@@ -31,9 +39,11 @@ class Mutator {
     void Mutate(std::vector<Genome>& genomes, uint& innovation);
     void Mutate(Genome& genome, uint& innovation);
     static void PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const double& perturbation_fraq);
+    std::pair<bool, uint> InLastGenes(const uint& in, const uint& out, LastGene::Type type) const;
 
    private:
     Config config_;
     std::shared_ptr<Random> random_ = std::make_shared<Random>();
+    std::vector<LastGene> last_genes_;
 };
 }  // namespace neat

@@ -51,14 +51,10 @@ uint Genome::AddNode(const uint gene_id, uint innov) {
 
 uint Genome::AddConnection(const uint in, const uint out, uint innov, const bool allow_self_connection,
                            const bool allow_recurring_connection) {
-    if (out >= nodes_.size()) {
-        throw std::domain_error("out_node out of bounds");
-    } else if (in >= nodes_.size()) {
-        throw std::domain_error("in_node out of bounds");
-    }
-
     // sensor nodes can not be out nodes of new connection
     if (out <= n_sensor_nodes_) {
+        return innov;
+    } else if (!allow_self_connection && (in >= 1 + n_sensor_nodes_) && (in < 1 + n_sensor_nodes_ + n_output_nodes_)) {
         return innov;
     } else if (!allow_self_connection && (in == out)) {
         return innov;
