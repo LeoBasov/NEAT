@@ -13,7 +13,7 @@ void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "
 void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter);
 
 int main(int, char**) {
-    const uint n_iterations(500);
+    const uint n_iterations(2000);
     const double min_fitness(15.0);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
@@ -24,13 +24,15 @@ int main(int, char**) {
     uint best_network_id(0);
     double mean(0.0);
 
+    config.species_pool_config.distance_coefficients.at(2) = 0.5e-3;
+
     config.mutator_config.allow_recurring_connection = false;
     config.mutator_config.allow_self_connection = false;
 
     config.mutator_config.prob_new_node = 0.003;
 
-    config.mutator_config.weight_min = -10.0;  // before -1000.0
-    config.mutator_config.weight_max = 10.0;   // before  1000.0
+    config.mutator_config.weight_min = -1000.0;  // before -1000.0
+    config.mutator_config.weight_max = 1000.0;   // before  1000.0
 
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
