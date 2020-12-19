@@ -80,4 +80,109 @@ void SpeciesPool::AdjustFitnesses(std::vector<double>& fitnesses, const std::vec
     }
 }
 
+void SpeciesPool::Reproduce(std::vector<Genome>& genotypes, const std::vector<double>& fitnesses,
+                            const uint& n_genotypes) {
+    std::vector<Genome> new_genotypes;
+
+    SortBySpecies(genotypes);
+    SortByFitness(fitnesses, genotypes);
+
+    for (uint i = 0; i < species_.size(); i++) {
+        uint n_genotypes_loc(n_genotypes * (species_.at(i).total_fitness / total_fitness_));
+
+        ReproduceSpecies(species_.at(i), genotypes, new_genotypes, n_genotypes_loc, i, config_.prob_mate);
+    }
+
+    genotypes = new_genotypes;
+}
+
+void SpeciesPool::ReproduceSpecies(const Species& species, const std::vector<Genome>& genotypes,
+                                   std::vector<Genome>& new_genotypes, const uint& n_new_genotypes,
+                                   const uint& species_id, const double& prob_mate) {
+    uint n_genotypes(0);
+    Random random;
+
+    for (uint i = 0; i < genotypes.size(); i++) {
+        if (genotypes.at(i).species_id_ == species_id) {
+            while (n_genotypes < n_new_genotypes) {
+                for (uint j = i; j < i + species.n_member; j++) {
+                    if (n_genotypes >= n_new_genotypes) {
+                        return;
+                    } else if ((random.RandomNumber() < prob_mate) && (j < i + species.n_member - 1)) {
+                        new_genotypes.push_back(Genome::Mate(genotypes.at(j), genotypes.at(j + 1), random));
+                        n_genotypes++;
+                    } else {
+                        new_genotypes.push_back(genotypes.at(j));
+                        n_genotypes++;
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
+void SpeciesPool::SortBySpecies(std::vector<Genome>& genotypes) {
+    auto permutation_vector = utility::SortPermutation(
+        genotypes, [](Genome const& a, Genome const& b) { return a.species_id_ < b.species_id_; });
+    utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+}
+
+void SpeciesPool::SortByFitness(const std::vector<double>& fitnesses, std::vector<Genome>& genotypes) {
+    std::vector<std::pair<double, uint>> sorted(fitnesses.size());
+    uint spec_id(0), old_id(0);
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        sorted.at(i).first = fitnesses.at(i);
+        sorted.at(i).second = i;
+    }
+
+    for (uint i = 0; i < fitnesses.size(); i++) {
+        if (genotypes.at(i).species_id_ != spec_id) {
+            std::sort(sorted.begin() + old_id, sorted.begin() + i, utility::greater());
+
+            //--------------------------------------------------------------------
+            std::vector<bool> done(genotypes.size());
+            for (std::size_t k = old_id; k < i; ++k) {
+                if (done[k]) {
+                    continue;
+                }
+                done[k] = true;
+                std::size_t prev_j = k;
+                std::size_t j = sorted[k].second;
+                while (k != j) {
+                    std::swap(genotypes[prev_j], genotypes[j]);
+                    done[j] = true;
+                    prev_j = j;
+                    j = sorted[j].second;
+                }
+            }
+            //---------------------------------------------------------------------
+
+            spec_id = genotypes.at(i).species_id_;
+            old_id = i;
+        } else if (i == fitnesses.size() - 1) {
+            std::sort(sorted.begin() + old_id, sorted.begin() + i + 1, utility::greater());
+
+            //--------------------------------------------------------------------
+            std::vector<bool> done(genotypes.size());
+            for (std::size_t k = old_id; k < i; ++k) {
+                if (done[k]) {
+                    continue;
+                }
+                done[k] = true;
+                std::size_t prev_j = k;
+                std::size_t j = sorted[k].second;
+                while (k != j) {
+                    std::swap(genotypes[prev_j], genotypes[j]);
+                    done[j] = true;
+                    prev_j = j;
+                    j = sorted[j].second;
+                }
+            }
+            //---------------------------------------------------------------------
+        }
+    }
+}
+
 }  // namespace neat

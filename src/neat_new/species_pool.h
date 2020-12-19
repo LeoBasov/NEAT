@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../common/utility.h"
 #include "genome.h"
 
 namespace neat {
@@ -22,6 +23,7 @@ class SpeciesPool {
     struct Config {
         std::array<double, 3> distance_coefficients{1.0, 1.0, 0.4};
         double max_species_distance = 3.0;
+        double prob_mate = 0.75;
     };
 
     SpeciesPool();
@@ -35,6 +37,12 @@ class SpeciesPool {
 
     void SortInSpecies(std::vector<Genome>& genomes);
     void AdjustFitnesses(std::vector<double>& fitnesses, const std::vector<Genome>& genomes);
+    void Reproduce(std::vector<Genome>& genotypes, const std::vector<double>& fitnesses, const uint& n_genotypes);
+    void ReproduceSpecies(const Species& species, const std::vector<Genome>& genotypes,
+                          std::vector<Genome>& new_genotypes, const uint& n_new_genotypes, const uint& species_id,
+                          const double& prob_mate);
+    void SortBySpecies(std::vector<Genome>& genotypes);
+    void SortByFitness(const std::vector<double>& fitnesses, std::vector<Genome>& genotypes);
 
    private:
     std::vector<Species> species_;

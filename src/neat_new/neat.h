@@ -20,7 +20,7 @@ class Neat {
     void Initialize(const uint& n_sensor_nodes, const uint& n_output_nodes, const uint& n_genotypes,
                     const Config config);
     std::vector<Network> GetNetworks() const;
-    void Evolve(std::vector<double> fitnesses);
+    void Evolve(std::vector<double> fitnesses, const uint& n_genotypes);
 
     SpeciesPool GetSpeciesPool() const;
     std::vector<Genome> GetGenomes() const;

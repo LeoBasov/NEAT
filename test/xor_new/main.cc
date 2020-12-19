@@ -10,6 +10,7 @@ std::vector<double> Execute(const Neat& neat);
 // void PrintResultsNetwork(const Neat &neat, const uint& network_id);
 uint FindBestNetwork(const std::vector<double>& fitnesses);
 void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "best.csv");
+void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter);
 
 int main(int, char**) {
     const uint n_iterations(500);
@@ -26,13 +27,10 @@ int main(int, char**) {
     config.mutator_config.allow_recurring_connection = false;
     config.mutator_config.allow_self_connection = false;
 
-    // config.prob_new_node = 0.003;
+    config.mutator_config.prob_new_node = 0.003;
 
-    // config.allow_recurring_connection = false;
-    // config.allow_self_connection = false;
-
-    // config.weight_range.first = -10.0;  // before -1000.0
-    // config.weight_range.second = 10.0;  // before  1000.0
+    config.mutator_config.weight_min = -10.0;  // before -1000.0
+    config.mutator_config.weight_max = 10.0;   // before  1000.0
 
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
@@ -52,13 +50,13 @@ int main(int, char**) {
 
             // PrintResultsNetwork(neat, best_network_id);
             WriteNetworkToFile(neat.GetGenomes().at(best_network_id));
-            // WriteFitnessToFile(stream, fitnesses, neat.GetUnimprovedCounter());
+            WriteFitnessToFile(stream, fitnesses, 0);
 
             break;
         }
 
         update.Start();
-        neat.Evolve(fitnesses);
+        neat.Evolve(fitnesses, n_genotypes);
         update.Stop();
 
         mean = 0.0;
@@ -68,6 +66,7 @@ int main(int, char**) {
         }
 
         mean /= fitnesses.size();
+        WriteFitnessToFile(stream, fitnesses, 0);
 
         if (!(i % 10)) {
             std::cout << "------------------------------------------------------" << std::endl;
@@ -175,7 +174,7 @@ void WriteNetworkToFile(const Genome& genotype, const std::string& file_name) {
     }
 }
 
-/*void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter) {
+void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter) {
     double mean(0.0), top(0.0), buttom(0.0);
     uint percetile(fitnesses.size() / 10);
 
@@ -206,4 +205,3 @@ void WriteNetworkToFile(const Genome& genotype, const std::string& file_name) {
 
     stream << top << "," << buttom << "," << mean << "," << unimproved_counter << std::endl;
 }
-*/

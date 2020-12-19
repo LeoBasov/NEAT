@@ -30,7 +30,7 @@ int main(int, char**) {
     uint best_network_id;
     double mean(0.0);
 
-    // config.prob_new_node = 0.003;
+    config.prob_new_node = 0.003;
 
     config.allow_recurring_connection = false;
     config.allow_self_connection = false;
