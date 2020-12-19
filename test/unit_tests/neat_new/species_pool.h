@@ -38,6 +38,18 @@ TEST(SpeciesPool, SortInSpecies) {
 
     ASSERT_EQ(0, genomes.at(0).species_id_);
     ASSERT_EQ(1, genomes.at(1).species_id_);
+
+    pool.SortInSpecies(genomes);
+
+    species = pool.GetSpecies();
+
+    ASSERT_EQ(2, species.size());
+
+    ASSERT_EQ(1, species.at(0).n_member);
+    ASSERT_EQ(1, species.at(1).n_member);
+
+    ASSERT_EQ(0, genomes.at(0).species_id_);
+    ASSERT_EQ(1, genomes.at(1).species_id_);
 }
 
 TEST(SpeciesPool, AdjustFitnesses) {
