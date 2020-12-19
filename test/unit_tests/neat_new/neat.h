@@ -39,4 +39,17 @@ TEST(Neat, Initialize) {
     }
 }
 
+TEST(Neat, GetNetworks) {
+    const uint n_sensort_nodes(2), n_output_nodes(3), n_genomes(150);
+    Neat::Config config;
+    Neat neat;
+
+    config.mutator_config.weight_min = 50.0;
+    config.mutator_config.weight_max = 75.0;
+
+    neat.Initialize(n_sensort_nodes, n_output_nodes, n_genomes, config);
+
+    ASSERT_EQ(neat.GetGenomes().size(), neat.GetNetworks().size());
+}
+
 }  // namespace neat
