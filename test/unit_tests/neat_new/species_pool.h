@@ -104,6 +104,10 @@ TEST(SpeciesPool, AdjustFitnesses) {
     ASSERT_DOUBLE_EQ(fitnesses_old.at(2), fitnesses.at(2));
 
     ASSERT_DOUBLE_EQ(fitnesses.at(0) + fitnesses.at(1) + fitnesses.at(2), pool.GetTotalFitness());
+
+    fitnesses.clear();
+
+    ASSERT_THROW(pool.AdjustFitnesses(fitnesses, genomes), std::domain_error);
 }
 
 TEST(SpeciesPool, Clear) {
