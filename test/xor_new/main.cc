@@ -48,7 +48,7 @@ int main(int, char**) {
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
 
             // PrintResultsNetwork(neat, best_network_id);
-            WriteNetworkToFile(neat.GetGenotypes().at(best_network_id));
+            WriteNetworkToFile(neat.GetGenomes().at(best_network_id));
             // WriteFitnessToFile(stream, fitnesses, neat.GetUnimprovedCounter());
 
             break;
@@ -73,7 +73,7 @@ int main(int, char**) {
             std::cout << "EXECUTION TIME " << exex.GetCurrentDuration() << std::endl;
             std::cout << "UPDATE TIME " << update.GetCurrentDuration() << std::endl;
             std::cout << "N SPECIES   " << neat.GetSpeciesPool().GetSpecies().size() << std::endl;
-            std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
+            std::cout << "N GENOTYPES " << neat.GetGenomes().size() << std::endl;
             std::cout << "INNOVATION: " << neat.GetInnovation() << std::endl;
             // std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
@@ -83,7 +83,7 @@ int main(int, char**) {
     total.Stop();
 
     // PrintResultsNetwork(neat, best_network_id);
-    WriteNetworkToFile(neat.GetGenotypes().at(best_network_id), "last.csv");
+    WriteNetworkToFile(neat.GetGenomes().at(best_network_id), "last.csv");
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "TOTAL EXECUTION TIME " << exex.GetTotalDuration() << std::endl;

@@ -15,6 +15,13 @@ void Neat::Initialize(const uint& n_sensor_nodes, const uint& n_output_nodes, co
 
     for (uint i = 0; i < n_genotypes; i++) {
         genomes_.at(i).Initialize(n_sensor_nodes, n_output_nodes);
+
+        for (uint k = 0; k < genomes_.at(i).genes_.size(); k++) {
+            const double weight(config.mutator_config.weight_min +
+                                (config.mutator_config.weight_max - config.mutator_config.weight_min) *
+                                    random_.RandomNumber());
+            genomes_.at(i).genes_.at(k).weight = weight;
+        }
     }
 
     species_pool_.SortInSpecies(genomes_);
@@ -54,7 +61,7 @@ void Neat::Evolve(std::vector<double>) {
 
 SpeciesPool Neat::GetSpeciesPool() const { return species_pool_; }
 
-std::vector<Genome> Neat::GetGenotypes() const { return genomes_; }
+std::vector<Genome> Neat::GetGenomes() const { return genomes_; }
 
 uint Neat::GetInnovation() const { return innovation_; }
 

@@ -6,6 +6,7 @@
 #include "neat/neat_algorithms.h"
 #include "neat_new/genome.h"
 #include "neat_new/mutator.h"
+#include "neat_new/neat.h"
 #include "neat_new/network.h"
 #include "neat_new/species_pool.h"
 

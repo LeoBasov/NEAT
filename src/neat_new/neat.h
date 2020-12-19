@@ -23,7 +23,7 @@ class Neat {
     void Evolve(std::vector<double> fitnesses);
 
     SpeciesPool GetSpeciesPool() const;
-    std::vector<Genome> GetGenotypes() const;
+    std::vector<Genome> GetGenomes() const;
     uint GetInnovation() const;
 
    private:
