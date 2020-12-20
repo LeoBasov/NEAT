@@ -51,7 +51,6 @@ std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const 
     for (uint i = 0; i < 4; i++) {
         input.read((char *)&masgic_number, sizeof(masgic_number));
         masgic_number = utility::swap_endian<uint32_t>(masgic_number);
-        std::cout << masgic_number << std::endl;
     }
 
     for (uint i = 0; i < n_images; i++) {
@@ -60,8 +59,6 @@ std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const 
 
             input.read((char *)&val, sizeof(val));
             images.at(i).pixes.at(k) = val;
-
-            std::cout << images.at(i).pixes.at(k) << std::endl;
         }
     }
 
