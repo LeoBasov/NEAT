@@ -10,12 +10,28 @@ int main(int, char**) {
 
     MNIST::ImageHeader image_header;
     MNIST reader;
+    std::vector<MNIST::Image> images;
+    const uint n_images(1);
+    const std::string file_name("/home/lbasov/AI/train-images-idx3-ubyte");
 
-    image_header = reader.ReadHeader("/home/lbasov/AI/train-images-idx3-ubyte");
+    image_header = reader.ReadHeader(file_name);
 
     std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
     std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
     std::cout << "N COLUMNS:     " << image_header.n_columns << " EXPECTED: 28" << std::endl;
+
+    std::cout << "------------------------------------------------------------------------" << std::endl;
+    std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
+
+    images = reader.ReadImages(file_name, n_images);
+
+    for (uint i = 0; i < images.front().pixes.size(); i++) {
+        if (images.front().pixes.at(i) > 255) {
+            throw Exception(std::to_string(images.front().pixes.at(i)));
+        }
+    }
+
+    std::cout << "========================================================================" << std::endl;
 
     return 0;
 }
