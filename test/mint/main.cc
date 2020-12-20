@@ -15,7 +15,7 @@ void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "
 void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter);
 
 int main(int, char**) {
-    const uint n_iterations(1);
+    const uint n_iterations(10);
     const double min_fitness(15.0);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
@@ -48,6 +48,7 @@ int main(int, char**) {
 
     total.Start();
     for (uint i = 0; i < n_iterations; i++) {
+        std::cout << "EXECUTING" << std::endl;
         exex.Start();
         fitnesses = Execute(neat, input);
         exex.Stop();
@@ -59,12 +60,13 @@ int main(int, char**) {
             std::cout << "----- CRITERIUM ACHIEVED -----" << std::endl;
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
 
-            // WriteNetworkToFile(neat.GetGenomes().at(best_network_id));
+            WriteNetworkToFile(neat.GetGenomes().at(best_network_id));
             WriteFitnessToFile(stream, fitnesses, 0);
 
             break;
         }
 
+        std::cout << "EVOLVING" << std::endl;
         update.Start();
         neat.Evolve(fitnesses, n_genotypes);
         update.Stop();
@@ -134,7 +136,7 @@ std::vector<MNIST::Image> GetInput(uint n_images) {
     labels = reader.ReadLabels(file_name_labels, n_images);
 
     for (uint i = 0; i < n_images; i++) {
-        images.at(i).label = labels.at(i);
+        images.at(i).label = MNIST::ConverToBinray(labels.at(i));
 
         for (uint p = 0; p < images.at(i).pixels.size(); p++) {
             images.at(i).pixels.at(p) /= 255.0;
@@ -146,10 +148,15 @@ std::vector<MNIST::Image> GetInput(uint n_images) {
 
 std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& images) {
     std::vector<Network> networks(neat.GetNetworks());
-    std::vector<double> fitnesses(networks.size(), 1.0);
+    std::vector<double> fitnesses(networks.size(), 0.0);
 
     for (uint n = 0; n < networks.size(); n++) {
         for (uint i = 0; i < images.size(); i++) {
+            std::vector<double> result = networks.at(n).Execute(images.at(i).pixels);
+
+            for (uint q = 0; q < result.size(); q++) {
+                fitnesses.at(n) += (1.0 - std::abs(images.at(i).pixels.at(q) - result.at(q))) / images.size();
+            }
         }
     }
 
