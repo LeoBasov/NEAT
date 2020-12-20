@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "common/utility.h"
+#include "io/mnist_reader.h"
 #include "neat/gene_pool.h"
 #include "neat/neat.h"
 #include "neat/neat_algorithms.h"

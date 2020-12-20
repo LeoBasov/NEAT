@@ -30,5 +30,7 @@ class MNIST {
     ImageHeader ReadImageHeader(const std::string& file_name) const;
     std::vector<Image> ReadImages(const std::string& file_name, const uint& n_images) const;
     std::vector<uint> ReadLabels(const std::string& file_name, const uint& n_images) const;
+
+    static std::vector<uint> ConverToBinray(uint val);
 };
 }  // namespace neat

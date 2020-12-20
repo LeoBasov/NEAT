@@ -101,4 +101,19 @@ std::vector<uint> MNIST::ReadLabels(const std::string &file_name, const uint &n_
     return labels;
 }
 
+std::vector<uint> MNIST::ConverToBinray(uint val) {
+    std::vector<uint> retval;
+
+    while (val) {
+        retval.push_back(val % 2);
+        val /= 2;
+    }
+
+    while (retval.size() < 8) {
+        retval.push_back(0);
+    }
+
+    return std::vector<uint>(retval.rbegin(), retval.rend());
+}
+
 }  // namespace neat
