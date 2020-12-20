@@ -6,6 +6,8 @@
 using namespace neat;
 
 int main(int, char**) {
+    // Data set found here: http://yann.lecun.com/exdb/mnist/
+
     MNIST::ImageHeader image_header;
     MNIST reader;
 
