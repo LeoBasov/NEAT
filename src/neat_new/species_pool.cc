@@ -103,8 +103,8 @@ void SpeciesPool::ReproduceSpecies(const Species& species, const std::vector<Gen
         return;
     }
 
-    const uint n_repoducable(species.n_member > 2 ? species.n_member / 2 : 1);
-    // const uint n_repoducable(species.n_member);
+    // const uint n_repoducable(species.n_member > 3 ? species.n_member / 3 : 1);
+    const uint n_repoducable(species.n_member);
     uint n_genotypes(0);
     Random random;
 
@@ -112,8 +112,16 @@ void SpeciesPool::ReproduceSpecies(const Species& species, const std::vector<Gen
         if (genotypes.at(i).species_id_ == species_id) {
             while (n_genotypes < n_new_genotypes) {
                 for (uint j = i; j < i + n_repoducable; j++) {
-                    if (n_genotypes >= n_new_genotypes) {
+                    // const double probability(1.0);
+                    // const double probability(static_cast<double>(n_repoducable + i - j)/n_repoducable);
+
+                    const double factor(-1.0 / (n_repoducable * n_repoducable));
+                    const double probability(factor * (j - i) * (j - i) + 1);
+
+                    if (n_genotypes > n_new_genotypes) {
                         return;
+                    } else if (random.RandomNumber() > probability) {
+                        continue;
                     } else if ((random.RandomNumber() < prob_mate) && (j < i + species.n_member - 1)) {
                         new_genotypes.push_back(Genome::Mate(genotypes.at(j), genotypes.at(j + 1), random));
                         n_genotypes++;
