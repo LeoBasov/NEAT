@@ -36,10 +36,23 @@ void ReproduceSpecies(const genome::Species& species, const std::vector<genome::
                       const double& prob_mate);
 void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
                std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate);
+void ReproduceBestSpecies(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
+                          std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate,
+                          const uint& n_species);
 void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
             const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
             const double& weight_min, const double& weight_max, const bool& allow_self_connection,
             const bool& allow_recurring_connection);
+void AssignNewWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& weight_min,
+                     const double& weight_max);
+void PertubateWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& perturbation_fraq);
+
+// Update values that check if population has not developed for certain time
+void AdjustStagnationControll(const std::vector<double>& fitnesses, double& best_fitness, uint& unimproved_counter);
+void RepopulateWithBestSpecies(std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes,
+                               std::vector<genome::Species>& species, const uint& n_genotypes_init,
+                               const double& species_distance, const double& coeff1, const double& coeff2,
+                               const double& coeff3, const uint& n_sprared_genotypes);
 
 }  // namespace neat_algorithms
 }  // namespace neat

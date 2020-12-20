@@ -2,41 +2,39 @@
 #include <iostream>
 
 #include "../../src/common/timer.h"
-#include "../../src/neat/neat.h"
-#include "../../src/neat/neat_algorithms.h"
+#include "../../src/neat_new/neat.h"
 
 using namespace neat;
 
-std::vector<double> Execute(const NEAT &neat);
-void PrintResultsNetwork(const NEAT& neat, const uint& network_id);
+std::vector<double> Execute(const Neat& neat);
+void PrintResultsNetwork(const Neat& neat, const uint& network_id);
 uint FindBestNetwork(const std::vector<double>& fitnesses);
-void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_pool,
-                        const std::string& file_name = "best.csv");
+void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "best.csv");
 void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter);
 
 int main(int, char**) {
     const uint n_iterations(2000);
     const double min_fitness(15.0);
-
     std::ofstream stream("fitness.csv");
-
     Timer exex, update, total;
-    NEAT::Config config;
-    genome::Genotype genotype;
-    GenePool gene_pool;
-    NEAT neat;
+    Neat::Config config;
+    Neat neat;
     const uint n_sensor_nodes(2), n_output_nodes(1), n_genotypes(150);
     std::vector<double> fitnesses;
-    uint best_network_id;
+    uint best_network_id(0);
     double mean(0.0);
 
-    config.prob_new_node = 0.003;
+    config.species_pool_config.distance_coefficients.at(0) = 3.0;
+    config.species_pool_config.distance_coefficients.at(1) = 3.0;
+    config.species_pool_config.distance_coefficients.at(2) = 1e-3;
 
-    config.allow_recurring_connection = false;
-    config.allow_self_connection = false;
+    config.mutator_config.allow_recurring_connection = false;
+    config.mutator_config.allow_self_connection = false;
 
-    config.weight_range.first = -10.0;  // before -1000.0
-    config.weight_range.second = 10.0;  // before  1000.0
+    config.mutator_config.prob_new_node = 0.003;
+
+    config.mutator_config.weight_min = -1000.0;  // before -1000.0
+    config.mutator_config.weight_max = 1000.0;   // before  1000.0
 
     std::cout << "INITIALIZING" << std::endl;
     neat.Initialize(n_sensor_nodes, n_output_nodes, n_genotypes, config);
@@ -49,20 +47,19 @@ int main(int, char**) {
 
         best_network_id = FindBestNetwork(fitnesses);
 
-        if (fitnesses.at(best_network_id) >= min_fitness) {
+        if (fitnesses.at(best_network_id) > min_fitness) {
             std::cout << "------------------------------------------------------" << std::endl;
             std::cout << "----- CRITERIUM ACHIEVED -----" << std::endl;
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
 
-            PrintResultsNetwork(neat, best_network_id);
-            WriteNetworkToFile(neat.GetGenotypes().at(best_network_id), neat.GetGenePool());
-            WriteFitnessToFile(stream, fitnesses, neat.GetUnimprovedCounter());
+            WriteNetworkToFile(neat.GetGenomes().at(best_network_id));
+            WriteFitnessToFile(stream, fitnesses, 0);
 
             break;
         }
 
         update.Start();
-        neat.UpdateNetworks(fitnesses);
+        neat.Evolve(fitnesses, n_genotypes);
         update.Stop();
 
         mean = 0.0;
@@ -72,8 +69,7 @@ int main(int, char**) {
         }
 
         mean /= fitnesses.size();
-
-        WriteFitnessToFile(stream, fitnesses, neat.GetUnimprovedCounter());
+        WriteFitnessToFile(stream, fitnesses, 0);
 
         if (!(i % 10)) {
             std::cout << "------------------------------------------------------" << std::endl;
@@ -81,10 +77,10 @@ int main(int, char**) {
             std::cout << "------------------------------------------------------" << std::endl;
             std::cout << "EXECUTION TIME " << exex.GetCurrentDuration() << std::endl;
             std::cout << "UPDATE TIME " << update.GetCurrentDuration() << std::endl;
-            std::cout << "N SPECIES   " << neat.GetSpecies().size() << std::endl;
-            std::cout << "N GENOTYPES " << neat.GetGenotypes().size() << std::endl;
-            std::cout << "N GENES     " << neat.GetGenePool().GetGenes().size() << std::endl;
-            std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
+            std::cout << "N SPECIES   " << neat.GetSpeciesPool().GetSpecies().size() << std::endl;
+            std::cout << "N GENOTYPES " << neat.GetGenomes().size() << std::endl;
+            std::cout << "INNOVATION: " << neat.GetInnovation() << std::endl;
+            // std::cout << "N NODES     " << neat.GetGenePool().GetNHiddenNodes() << std::endl;
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
             std::cout << "MEAN FITNESS " << mean << std::endl;
         }
@@ -92,7 +88,7 @@ int main(int, char**) {
     total.Stop();
 
     PrintResultsNetwork(neat, best_network_id);
-    WriteNetworkToFile(neat.GetGenotypes().at(best_network_id), neat.GetGenePool(), "last.csv");
+    WriteNetworkToFile(neat.GetGenomes().at(best_network_id), "last.csv");
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "TOTAL EXECUTION TIME " << exex.GetTotalDuration() << std::endl;
@@ -103,10 +99,11 @@ int main(int, char**) {
     return 0;
 }
 
-std::vector<double> Execute(const NEAT &neat) {
+std::vector<double> Execute(const Neat& neat) {
     std::vector<double> refs(4);
-    std::vector<double> fitnesses(neat.GetGenotypes().size(), 0.0);
-    std::vector<std::vector<double>> fitnesses_loc;
+    std::vector<Network> networks(neat.GetNetworks());
+    std::vector<double> fitnesses(networks.size(), 0.0);
+    std::vector<std::vector<double>> fitnesses_loc(networks.size());
     std::vector<std::vector<double>> input_values(4);
 
     refs.at(0) = 0.0;
@@ -120,36 +117,39 @@ std::vector<double> Execute(const NEAT &neat) {
     input_values.at(3) = {0.0, 1.0};
 
     for (uint i = 0; i < 4; i++) {
-        fitnesses_loc = neat.ExecuteNetworks(input_values.at(i));
+        for (uint j = 0; j < networks.size(); j++) {
+            fitnesses_loc.at(j) = networks.at(j).Execute(input_values.at(i));
+        }
 
-        for (uint j = 0; j < neat.GetGenotypes().size(); j++) {
+        for (uint j = 0; j < networks.size(); j++) {
             fitnesses.at(j) += std::abs(refs.at(i) - fitnesses_loc.at(j).at(0));
         }
     }
 
-    for (uint j = 0; j < neat.GetGenotypes().size(); j++) {
+    for (uint j = 0; j < fitnesses.size(); j++) {
         fitnesses.at(j) = std::pow(4.0 - fitnesses.at(j), 2);
     }
 
     return fitnesses;
 }
 
-void PrintResultsNetwork(const NEAT& neat, const uint& network_id) {
-    std::vector<std::vector<double>> fitnesses(4);
+void PrintResultsNetwork(const Neat& neat, const uint& network_id) {
+    Network network(neat.GetNetworks().at(network_id));
+    std::vector<std::vector<double>> resutls(4);
 
-    fitnesses.at(0) = neat.ExecuteNetwork({0.0, 0.0}, network_id);
-    fitnesses.at(1) = neat.ExecuteNetwork({1.0, 1.0}, network_id);
-    fitnesses.at(2) = neat.ExecuteNetwork({1.0, 0.0}, network_id);
-    fitnesses.at(3) = neat.ExecuteNetwork({0.0, 1.0}, network_id);
+    resutls.at(0) = network.Execute({0.0, 0.0});
+    resutls.at(1) = network.Execute({1.0, 1.0});
+    resutls.at(2) = network.Execute({1.0, 0.0});
+    resutls.at(3) = network.Execute({0.0, 1.0});
 
-    std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses.at(0).at(0) << std::endl;
-    std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses.at(1).at(0) << std::endl;
-    std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << fitnesses.at(2).at(0) << std::endl;
-    std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << fitnesses.at(3).at(0) << std::endl;
+    std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << resutls.at(0).at(0) << std::endl;
+    std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << resutls.at(1).at(0) << std::endl;
+    std::cout << "INPUT 1: " << 1.0 << " INPUT 2: " << 0.0 << " OUTPUT: " << resutls.at(2).at(0) << std::endl;
+    std::cout << "INPUT 1: " << 0.0 << " INPUT 2: " << 1.0 << " OUTPUT: " << resutls.at(3).at(0) << std::endl;
     std::cout << "------------------------------------------------------" << std::endl;
 
-    std::cout << "N NODES: " << neat.GetGenotypes().at(network_id).nodes.size();
-    std::cout << " N GENES: " << neat.GetGenotypes().at(network_id).genes.size() << std::endl;
+    std::cout << "N NODES: " << neat.GetGenomes().at(network_id).nodes_.size();
+    std::cout << " N GENES: " << neat.GetGenomes().at(network_id).genes_.size() << std::endl;
 }
 
 uint FindBestNetwork(const std::vector<double>& fitnesses) {
@@ -166,16 +166,14 @@ uint FindBestNetwork(const std::vector<double>& fitnesses) {
     return id;
 }
 
-void WriteNetworkToFile(const genome::Genotype& genotype, const GenePool& gene_pool, const std::string& file_name) {
+void WriteNetworkToFile(const Genome& genotype, const std::string& file_name) {
     std::ofstream stream(file_name);
-    const std::map<uint, uint> permutation_map(neat_algorithms::GetPermutationMap(genotype));
+    const std::map<size_t, size_t> permutation_map(genotype.GetNodePermuationMap());
 
-    for (auto gene : genotype.genes) {
+    for (auto gene : genotype.genes_) {
         if (gene.enabled) {
-            GenePool::Gene gene_loc(gene_pool.GetGene(gene.id));
-
-            stream << permutation_map.at(gene_loc.in_node) << "," << permutation_map.at(gene_loc.out_node) << ","
-                   << gene.weight << std::endl;
+            stream << permutation_map.at(gene.in) << "," << permutation_map.at(gene.out) << "," << gene.weight
+                   << std::endl;
         }
     }
 }

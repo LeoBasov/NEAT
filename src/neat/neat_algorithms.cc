@@ -332,6 +332,32 @@ void Reproduce(const std::vector<double>& fitnesses, const std::vector<genome::S
     genotypes = new_genotypes;
 }
 
+void ReproduceBestSpecies(const std::vector<double>& fitnesses, const std::vector<genome::Species>& species,
+                          std::vector<genome::Genotype>& genotypes, const uint& n_genotypes, const double& prob_mate,
+                          const uint& n_species) {
+    double total_fitness(0.0);
+    std::vector<genome::Genotype> new_genotypes;
+
+    SortBySpecies(genotypes);
+    SortByFitness(fitnesses, genotypes);
+
+    for (auto spec : species) {
+        total_fitness += spec.total_fitness;
+    }
+
+    auto permutation_vector = utility::SortPermutation(
+        species, [](genome::Species const& a, genome::Species const& b) { return a.total_fitness > b.total_fitness; });
+
+    for (uint i = 0; i < n_species; i++) {
+        const uint species_id(permutation_vector.at(i));
+        uint n_genotypes_loc(n_genotypes * (species.at(species_id).total_fitness / total_fitness));
+
+        ReproduceSpecies(species.at(species_id), genotypes, new_genotypes, n_genotypes_loc, species_id, prob_mate);
+    }
+
+    genotypes = new_genotypes;
+}
+
 void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const double& prob_weight_change,
             const double& prob_new_weight, const double& prob_new_node, const double& prob_new_connection,
             const double& weight_min, const double& weight_max, const bool& allow_self_connection,
@@ -354,13 +380,75 @@ void Mutate(std::vector<genome::Genotype>& genotypes, GenePool& pool, const doub
                           allow_self_connection, allow_recurring_connection);
         } else if (rand < prob_weight_change) {
             if (random.RandomNumber() < prob_new_weight) {
-                genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
+                AssignNewWeight(genotype, gene_genome_id, weight_min, weight_max);
             } else {
-                genotype.genes.at(gene_genome_id).weight =
-                    random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
+                // TODO (LB): this needs to be outside
+                const double perturbation_fraq(0.1);
+                PertubateWeight(genotype, gene_genome_id, perturbation_fraq);
             }
         }
     }
+}
+
+void AssignNewWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& weight_min,
+                     const double& weight_max) {
+    Random random;
+
+    genotype.genes.at(gene_genome_id).weight = random.RandomNumber(weight_min, weight_max);
+}
+
+void PertubateWeight(genome::Genotype& genotype, const uint& gene_genome_id, const double& perturbation_fraq) {
+    Random random;
+
+    if (genotype.genes.at(gene_genome_id).weight >= 0.0) {
+        genotype.genes.at(gene_genome_id).weight +=
+            random.RandomNumber(-perturbation_fraq * genotype.genes.at(gene_genome_id).weight,
+                                perturbation_fraq * genotype.genes.at(gene_genome_id).weight);
+    } else {
+        genotype.genes.at(gene_genome_id).weight +=
+            random.RandomNumber(perturbation_fraq * genotype.genes.at(gene_genome_id).weight,
+                                -perturbation_fraq * genotype.genes.at(gene_genome_id).weight);
+    }
+    // random.NormalRandomNumber(genotype.genes.at(gene_genome_id).weight, 1.0);
+}
+
+void AdjustStagnationControll(const std::vector<double>& fitnesses, double& best_fitness, uint& unimproved_counter) {
+    const double best_fitness_old(best_fitness);
+
+    for (auto fitness : fitnesses) {
+        if (fitness > best_fitness) {
+            best_fitness = fitness;
+        }
+    }
+
+    if (!(best_fitness > best_fitness_old)) {
+        unimproved_counter++;
+    }
+}
+
+void RepopulateWithBestSpecies(std::vector<double>& fitnesses, std::vector<genome::Genotype>& genotypes,
+                               std::vector<genome::Species>& species, const uint& n_genotypes_init,
+                               const double& species_distance, const double& coeff1, const double& coeff2,
+                               const double& coeff3, const uint& n_sprared_genotypes) {
+    auto permutation_vector =
+        utility::SortPermutation(fitnesses, [](const double& a, const double& b) { return a > b; });
+    utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+    utility::ApplyPermutationInPlace(fitnesses, permutation_vector);
+
+    genotypes.resize(n_genotypes_init);
+
+    for (uint i = n_sprared_genotypes - 1, j = 0; i < n_genotypes_init; i++) {
+        if (j >= n_sprared_genotypes - 1) {
+            j = 0;
+        }
+
+        genotypes.at(i) = genotypes.at(j++);
+    }
+
+    std::random_shuffle(genotypes.begin(), genotypes.end());
+    fitnesses = std::vector<double>(genotypes.size(), 1.0);
+
+    neat_algorithms::SortInSpecies(genotypes, species, species_distance, coeff1, coeff2, coeff3);
 }
 
 }  // namespace neat_algorithms

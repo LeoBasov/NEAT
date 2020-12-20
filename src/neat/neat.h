@@ -24,7 +24,7 @@ class NEAT {
 
         bool allow_self_connection = true, allow_recurring_connection = true;
 
-        uint max_unimproved_iterations = 20;
+        uint max_unimproved_iterations = 20, n_sprared_genotypes = 20;
 
         void Clear() {
             weight_range = {-10.0, 10.0};
@@ -39,7 +39,7 @@ class NEAT {
 
             allow_self_connection = true, allow_recurring_connection = true;
 
-            max_unimproved_iterations = 20;
+            max_unimproved_iterations = 20, n_sprared_genotypes = 20;
         };
     };
 
@@ -63,6 +63,7 @@ class NEAT {
     GenePool GetGenePool() const;
     std::vector<genome::Genotype> GetGenotypes() const;
     std::vector<genome::Species> GetSpecies() const;
+    uint GetUnimprovedCounter() const;
 
     void SetGenotypes(const std::vector<genome::Genotype>& genotypes);
     void SetSpecies(const std::vector<genome::Species>& species);
@@ -77,7 +78,5 @@ class NEAT {
     uint n_genotypes_init_ = 0;
     uint unimproved_counter_ = 0;
     double best_fitness_ = 0.0;
-
-    void FindBestFitness(std::vector<double> fitnesses);
 };
 }  // namespace neat

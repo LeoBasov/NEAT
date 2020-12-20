@@ -494,6 +494,44 @@ TEST(neat_algorithms, Reproduce) {
     ASSERT_EQ(3, genotypes.size());
 };
 
+TEST(neat_algorithms, ReproduceBestSpecies) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes;
+    GenePool gene_pool;
+    NEAT neat;
+    std::vector<genome::Species> species;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    std::vector<double> fitnesses;
+    const double prob_mate(0.75);
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    gene_pool = neat.GetGenePool();
+    genotypes = neat.GetGenotypes();
+
+    for (auto& genotype : genotypes) {
+        for (auto& gene : genotype.genes) {
+            gene.weight = 1.0;
+        }
+    }
+
+    fitnesses = {10.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+    SortInSpecies(genotypes, species, 3.0, 1.0, 1.0, 0.4);
+
+    AdjustedFitnesses(fitnesses, species, genotypes);
+    SortByFitness(fitnesses, genotypes);
+    SortBySpecies(genotypes);
+
+    ReproduceBestSpecies(fitnesses, species, genotypes, n_genotypes, prob_mate, 1);
+
+    ASSERT_EQ(n_genotypes, genotypes.size());
+
+    for (auto& genotype : genotypes) {
+        ASSERT_EQ(0, genotype.species_id);
+    }
+}
+
 TEST(neat_algorithms, Mutate_NULL) {
     NEAT::Config config;
     std::vector<genome::Genotype> genotypes_new, genotypes_old;
@@ -553,6 +591,113 @@ TEST(neat_algorithms, Mutate_AddNode) {
         ASSERT_EQ(genotypes_old.at(i).species_id, genotypes_new.at(i).species_id);
         ASSERT_EQ(genotypes_old.at(i).genes.size() + 2, genotypes_new.at(i).genes.size());
         ASSERT_EQ(genotypes_old.at(i).nodes.size() + 1, genotypes_new.at(i).nodes.size());
+    }
+}
+
+TEST(neat_algorithms, AssignNewWeight) {
+    NEAT::Config config;
+    genome::Genotype genotype;
+    GenePool gene_pool_new, gene_pool_old;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    const uint genotype_gene_id(0);
+    const double weight_min(-10.0), weight_max(10.0), weight_ini(-100.0);
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotype = neat.GetGenotypes().front();
+
+    genotype.genes.at(genotype_gene_id).weight = weight_ini;
+
+    AssignNewWeight(genotype, genotype_gene_id, weight_min, weight_max);
+
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight > weight_ini);
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight <= weight_max);
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight >= weight_min);
+}
+
+TEST(neat_algorithms, PertubateWeight) {
+    NEAT::Config config;
+    genome::Genotype genotype;
+    GenePool gene_pool_new, gene_pool_old;
+    NEAT neat;
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 6;
+    const uint genotype_gene_id(0);
+    const double perturbation_fraq(0.1), weight_ini1(-100.0), weight_ini2(100.0);
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotype = neat.GetGenotypes().front();
+
+    genotype.genes.at(genotype_gene_id).weight = weight_ini1;
+
+    PertubateWeight(genotype, genotype_gene_id, perturbation_fraq);
+
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight >= weight_ini1 * (1.0 + perturbation_fraq));
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight <= weight_ini1 * (1.0 - perturbation_fraq));
+
+    genotype.genes.at(genotype_gene_id).weight = weight_ini2;
+
+    PertubateWeight(genotype, genotype_gene_id, perturbation_fraq);
+
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight <= weight_ini2 * (1.0 + perturbation_fraq));
+    ASSERT_TRUE(genotype.genes.at(genotype_gene_id).weight >= weight_ini2 * (1.0 - perturbation_fraq));
+}
+
+TEST(neat_algorithms, AdjustStagnationControll) {
+    const std::vector<double> fintesses{1.0, 2.0, 3.0};
+    double best_fitness1(1.0), best_fitness2(3.1);
+    uint counter(0);
+
+    AdjustStagnationControll(fintesses, best_fitness1, counter);
+
+    ASSERT_EQ(0, counter);
+    ASSERT_DOUBLE_EQ(3.0, best_fitness1);
+
+    AdjustStagnationControll(fintesses, best_fitness2, counter);
+
+    ASSERT_EQ(1, counter);
+    ASSERT_DOUBLE_EQ(3.1, best_fitness2);
+}
+
+TEST(neat_algorithms, RepopulateWithBestSpecies) {
+    NEAT::Config config;
+    std::vector<genome::Genotype> genotypes_new, genotypes_old;
+    GenePool gene_pool_new, gene_pool_old;
+    NEAT neat;
+    std::vector<genome::Genotype> genotypes;
+    std::vector<genome::Species> species;
+    std::vector<double> fitnesses(10, 0.0);
+    const uint n_sensors = 2, n_output = 1, n_genotypes = 10;
+    const double weight(-123.45);
+    const uint modified_genotype(5);
+
+    config.n_sprared_genotypes = 1;
+
+    neat.Initialize(n_sensors, n_output, n_genotypes, config);
+
+    genotypes = neat.GetGenotypes();
+
+    for (auto& gene : genotypes.at(modified_genotype).genes) {
+        gene.enabled = false;
+        gene.weight = weight;
+    }
+
+    fitnesses.at(modified_genotype) = 1000.0;
+
+    RepopulateWithBestSpecies(fitnesses, genotypes, species, n_genotypes, config.species_distance, config.coeff1,
+                              config.coeff2, config.coeff3, 1);
+
+    ASSERT_EQ(1, species.size());
+    ASSERT_EQ(n_genotypes, genotypes.size());
+
+    for (auto genotype : genotypes) {
+        ASSERT_EQ(0, genotype.species_id);
+
+        for (auto& gene : genotype.genes) {
+            ASSERT_DOUBLE_EQ(weight, gene.weight);
+            ASSERT_FALSE(gene.enabled);
+        }
     }
 }
 
