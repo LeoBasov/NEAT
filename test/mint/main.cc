@@ -15,7 +15,7 @@ void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "
 void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter);
 
 int main(int, char**) {
-    const uint n_iterations(10);
+    const uint n_iterations(25);
     const double min_fitness(15.0);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
@@ -26,7 +26,7 @@ int main(int, char**) {
     uint best_network_id(0);
     double mean(0.0);
 
-    std::vector<MNIST::Image> input(GetInput(10));
+    std::vector<MNIST::Image> input(GetInput(50));
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "START NEAT" << std::endl;
@@ -91,6 +91,7 @@ int main(int, char**) {
             std::cout << "INNOVATION: " << neat.GetInnovation() << std::endl;
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
             std::cout << "MEAN FITNESS " << mean << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
         }
     }
     total.Stop();
@@ -151,12 +152,19 @@ std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& i
     std::vector<double> fitnesses(networks.size(), 0.0);
 
     for (uint n = 0; n < networks.size(); n++) {
+        std::vector<double> loc_fitness(images.size(), 0.0);
+
+#pragma omp parallel for
         for (uint i = 0; i < images.size(); i++) {
             std::vector<double> result = networks.at(n).Execute(images.at(i).pixels);
 
             for (uint q = 0; q < result.size(); q++) {
-                fitnesses.at(n) += (1.0 - std::abs(images.at(i).pixels.at(q) - result.at(q))) / images.size();
+                loc_fitness.at(i) += (1.0 - std::abs(images.at(i).pixels.at(q) - result.at(q))) / images.size();
             }
+        }
+
+        for (uint f = 0; f < loc_fitness.size(); f++) {
+            fitnesses.at(n) += loc_fitness.at(f);
         }
     }
 
