@@ -17,6 +17,8 @@ class Genome {
         Gene(const uint in, const uint out, const uint innov, const double weight = 1.0)
             : in(in), out(out), innov(innov), weight(weight) {}
 
+        inline bool operator<(const Gene& other) { return (*this).innov < other.innov; }
+
         uint in = 0, out = 0, innov = 0;
         double weight = 1.0;
         bool enabled = true;

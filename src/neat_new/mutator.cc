@@ -34,6 +34,7 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
                 genome.genes_.at(genome.genes_.size() - 2) = last_genes_.at(ret_pair.second).genes.first;
                 genome.genes_.at(genome.genes_.size() - 1) = last_genes_.at(ret_pair.second).genes.second;
 
+                std::sort(genome.genes_.begin(), genome.genes_.end());
                 genome.AdjustNodes(genome.n_sensor_nodes_, genome.n_output_nodes_);
 
                 innovation = last_innov;
@@ -61,6 +62,8 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
 
             if (ret_pair.first) {
                 genome.genes_.back() = last_genes_.at(ret_pair.second).genes.first;
+
+                std::sort(genome.genes_.begin(), genome.genes_.end());
 
                 innovation = last_innov;
             } else {
