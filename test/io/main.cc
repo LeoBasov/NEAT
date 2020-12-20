@@ -11,10 +11,12 @@ int main(int, char**) {
     MNIST::ImageHeader image_header;
     MNIST reader;
     std::vector<MNIST::Image> images;
+    std::vector<uint> labels;
     const uint n_images(5);
-    const std::string file_name("/home/lbasov/AI/train-images-idx3-ubyte");
+    const std::string file_name_images("/home/lbasov/AI/train-images-idx3-ubyte");
+    const std::string file_name_labels("/home/lbasov/AI/train-labels-idx1-ubyte");
 
-    image_header = reader.ReadHeader(file_name);
+    image_header = reader.ReadImageHeader(file_name_images);
 
     std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
     std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
@@ -23,7 +25,7 @@ int main(int, char**) {
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
 
-    images = reader.ReadImages(file_name, n_images);
+    images = reader.ReadImages(file_name_images, n_images);
 
     for (uint i = 0; i < images.front().pixes.size(); i++) {
         if (images.front().pixes.at(i) > 255) {
@@ -46,6 +48,15 @@ int main(int, char**) {
         }
 
         std::cout << std::endl;
+    }
+
+    std::cout << "------------------------------------------------------------------------" << std::endl;
+    std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
+
+    labels = reader.ReadLabels(file_name_labels, n_images);
+
+    for (uint p = 0; p < n_images; p++) {
+        std::cout << labels.at(p) << std::endl;
     }
 
     std::cout << "========================================================================" << std::endl;

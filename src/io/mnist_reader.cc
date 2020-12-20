@@ -4,7 +4,7 @@ namespace neat {
 
 MNIST::MNIST() {}
 
-MNIST::ImageHeader MNIST::ReadHeader(const std::string &file_name) const {
+MNIST::ImageHeader MNIST::ReadImageHeader(const std::string &file_name) const {
     MNIST::ImageHeader header;
     std::ifstream input(file_name, std::ios::binary);
     int masgic_number(0);
@@ -33,7 +33,7 @@ MNIST::ImageHeader MNIST::ReadHeader(const std::string &file_name) const {
 }
 
 std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const uint &n_images) const {
-    MNIST::ImageHeader header(ReadHeader(file_name));
+    MNIST::ImageHeader header(ReadImageHeader(file_name));
     std::vector<MNIST::Image> images(n_images, Image(header.n_columns * header.n_rows));
     std::ifstream input(file_name, std::ios::binary);
     int masgic_number(0);
@@ -63,6 +63,42 @@ std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const 
     }
 
     return images;
+}
+
+std::vector<uint> MNIST::ReadLabels(const std::string &file_name, const uint &n_images) const {
+    std::vector<uint> labels(n_images);
+    std::ifstream input(file_name, std::ios::binary);
+    int number_of_items(0);
+
+    if (!input.is_open()) {
+        throw Exception("Could not open file [" + file_name + "]", __PRETTY_FUNCTION__);
+    }
+
+    input.read((char *)&number_of_items, sizeof(number_of_items));
+    input.read((char *)&number_of_items, sizeof(number_of_items));
+
+    number_of_items = utility::swap_endian<uint32_t>(number_of_items);
+
+    if (static_cast<int>(n_images) > number_of_items) {
+        throw Exception("Given number of images [" + std::to_string(n_images) +
+                            "] > number of images given in header [" + std::to_string(number_of_items) + "]",
+                        __PRETTY_FUNCTION__);
+    }
+
+    for (uint i = 0; i < n_images; i++) {
+        unsigned char val;
+
+        input.read((char *)&val, sizeof(val));
+        labels.at(i) = val;
+    }
+
+    input.close();
+
+    if (!input.good()) {
+        throw Exception("Error occurred at reading file [" + file_name + "]", __PRETTY_FUNCTION__);
+    }
+
+    return labels;
 }
 
 }  // namespace neat
