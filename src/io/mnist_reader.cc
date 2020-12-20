@@ -54,11 +54,11 @@ std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const 
     }
 
     for (uint i = 0; i < n_images; i++) {
-        for (uint k = 0; k < images.at(i).pixes.size(); k++) {
+        for (uint k = 0; k < images.at(i).pixels.size(); k++) {
             unsigned char val;
 
             input.read((char *)&val, sizeof(val));
-            images.at(i).pixes.at(k) = val;
+            images.at(i).pixels.at(k) = val;
         }
     }
 

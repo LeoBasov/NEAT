@@ -7,24 +7,15 @@
 
 using namespace neat;
 
-std::vector<double> Execute(const Neat& neat);
+std::vector<MNIST::Image> GetInput(uint n_images);
+std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& images);
 void PrintResultsNetwork(const Neat& neat, const uint& network_id);
 uint FindBestNetwork(const std::vector<double>& fitnesses);
 void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "best.csv");
 void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter);
 
 int main(int, char**) {
-    // Data set found here: http://yann.lecun.com/exdb/mnist/
-
-    MNIST::ImageHeader image_header;
-    MNIST reader;
-    std::vector<MNIST::Image> images;
-    std::vector<uint> labels;
-    const uint n_images(5000);
-    const std::string file_name_images("/home/lbasov/AI/train-images-idx3-ubyte");
-    const std::string file_name_labels("/home/lbasov/AI/train-labels-idx1-ubyte");
-
-    const uint n_iterations(10);
+    const uint n_iterations(1);
     const double min_fitness(15.0);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
@@ -35,24 +26,8 @@ int main(int, char**) {
     uint best_network_id(0);
     double mean(0.0);
 
-    // READ FILES
-    image_header = reader.ReadImageHeader(file_name_images);
+    std::vector<MNIST::Image> input(GetInput(10));
 
-    std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
-    std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
-    std::cout << "N COLUMNS:     " << image_header.n_columns << " EXPECTED: 28" << std::endl;
-
-    std::cout << "------------------------------------------------------" << std::endl;
-    std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
-
-    images = reader.ReadImages(file_name_images, n_images);
-
-    std::cout << "------------------------------------------------------" << std::endl;
-    std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
-
-    labels = reader.ReadLabels(file_name_labels, n_images);
-
-    // START NEATs
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "START NEAT" << std::endl;
 
@@ -74,7 +49,7 @@ int main(int, char**) {
     total.Start();
     for (uint i = 0; i < n_iterations; i++) {
         exex.Start();
-        fitnesses = Execute(neat);
+        fitnesses = Execute(neat, input);
         exex.Stop();
 
         best_network_id = FindBestNetwork(fitnesses);
@@ -131,9 +106,52 @@ int main(int, char**) {
     return 0;
 }
 
-std::vector<double> Execute(const Neat& neat) {
+std::vector<MNIST::Image> GetInput(uint n_images) {
+    // Data set found here: http://yann.lecun.com/exdb/mnist/
+
+    MNIST::ImageHeader image_header;
+    MNIST reader;
+    std::vector<MNIST::Image> images;
+    std::vector<uint> labels;
+    const std::string file_name_images("/home/lbasov/AI/train-images-idx3-ubyte");
+    const std::string file_name_labels("/home/lbasov/AI/train-labels-idx1-ubyte");
+
+    // READ FILES
+    image_header = reader.ReadImageHeader(file_name_images);
+
+    std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
+    std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
+    std::cout << "N COLUMNS:     " << image_header.n_columns << " EXPECTED: 28" << std::endl;
+
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
+
+    images = reader.ReadImages(file_name_images, n_images);
+
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
+
+    labels = reader.ReadLabels(file_name_labels, n_images);
+
+    for (uint i = 0; i < n_images; i++) {
+        images.at(i).label = labels.at(i);
+
+        for (uint p = 0; p < images.at(i).pixels.size(); p++) {
+            images.at(i).pixels.at(p) /= 255.0;
+        }
+    }
+
+    return images;
+}
+
+std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& images) {
     std::vector<Network> networks(neat.GetNetworks());
     std::vector<double> fitnesses(networks.size(), 1.0);
+
+    for (uint n = 0; n < networks.size(); n++) {
+        for (uint i = 0; i < images.size(); i++) {
+        }
+    }
 
     return fitnesses;
 }

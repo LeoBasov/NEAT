@@ -27,9 +27,9 @@ int main(int, char**) {
 
     images = reader.ReadImages(file_name_images, n_images);
 
-    for (uint i = 0; i < images.front().pixes.size(); i++) {
-        if (images.front().pixes.at(i) > 255) {
-            throw Exception(std::to_string(images.front().pixes.at(i)));
+    for (uint i = 0; i < images.front().pixels.size(); i++) {
+        if (images.front().pixels.at(i) > 255) {
+            throw Exception(std::to_string(images.front().pixels.at(i)));
         }
     }
 
@@ -40,7 +40,7 @@ int main(int, char**) {
                 j = 0;
             }
 
-            if (images.at(p).pixes.at(i)) {
+            if (images.at(p).pixels.at(i)) {
                 std::cout << " ";
             } else {
                 std::cout << "█";

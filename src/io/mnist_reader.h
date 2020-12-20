@@ -14,10 +14,11 @@ class MNIST {
    public:
     struct Image {
         Image() {}
-        Image(const uint& n_pixels) : pixes(n_pixels) {}
+        Image(const uint& n_pixels) : pixels(n_pixels) {}
 
         // Pixel values are 0 to 255. 0 means background (white), 255 means foreground (black).
-        std::vector<uint> pixes;
+        std::vector<double> pixels;
+        uint label;
     };
 
     struct ImageHeader {
