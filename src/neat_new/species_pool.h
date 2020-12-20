@@ -37,13 +37,16 @@ class SpeciesPool {
 
     void SortInSpecies(std::vector<Genome>& genomes);
     void AdjustFitnesses(std::vector<double>& fitnesses, const std::vector<Genome>& genomes);
-    void Reproduce(std::vector<Genome>& genotypes, const std::vector<double>& fitnesses, const uint& n_genotypes);
+    void Reproduce(std::vector<Genome>& genotypes, std::vector<double>& fitnesses, const uint& n_genotypes);
     void ReproduceSpecies(const Species& species, const std::vector<Genome>& genotypes,
                           std::vector<Genome>& new_genotypes, const uint& n_new_genotypes, const uint& species_id,
                           const double& prob_mate);
 
-    static void SortBySpecies(std::vector<Genome>& genotypes);
-    static void SortByFitness(const std::vector<double>& fitnesses, std::vector<Genome>& genotypes);
+    static void SortBySpecies(std::vector<double>& fitnesses, std::vector<Genome>& genotypes);
+
+    // This functions is supposed to be keep the spcies order while sorting by fitness
+    // The fucntions sorts for fitness in DESCENDING order
+    static void SortByFitness(std::vector<double>& fitnesses, std::vector<Genome>& genotypes);
 
    private:
     std::vector<Species> species_;

@@ -141,6 +141,7 @@ TEST(SpeciesPool, Clear) {
 TEST(SpeciesPool, SortBySpecies) {
     const uint n_genomes(100);
     std::vector<Genome> genomes(n_genomes);
+    std::vector<double> fitnesses(n_genomes);
 
     for (uint i = 0; i < n_genomes; i++) {
         genomes.at(i).species_id_ = i;
@@ -150,14 +151,64 @@ TEST(SpeciesPool, SortBySpecies) {
     genomes.at(7).species_id_ = 5;
 
     std::random_shuffle(genomes.begin(), genomes.end());
-    SpeciesPool::SortBySpecies(genomes);
+
+    for (uint i = 0; i < n_genomes; i++) {
+        fitnesses.at(i) = static_cast<double>(genomes.at(i).species_id_);
+    }
+
+    SpeciesPool::SortBySpecies(fitnesses, genomes);
 
     for (uint i = 0; i < n_genomes; i++) {
         if (i == 6 || i == 7) {
             ASSERT_EQ(5, genomes.at(i).species_id_);
+            ASSERT_DOUBLE_EQ(5.0, fitnesses.at(i));
         } else {
             ASSERT_EQ(i, genomes.at(i).species_id_);
+            ASSERT_DOUBLE_EQ(static_cast<double>(i), fitnesses.at(i));
         }
+    }
+}
+
+TEST(SpeciesPool, SortByFitness) {
+    const uint n_genomes(10), species_id1(0), species_id2(1);
+    std::vector<Genome> genomes(n_genomes);
+    std::vector<double> fitnesses(n_genomes);
+    std::vector<size_t> permutation_vec(n_genomes);
+    double last_fitness(0.0);
+
+    for (uint i = 0; i < n_genomes; i++) {
+        fitnesses.at(i) = static_cast<double>(i);
+        permutation_vec.at(i) = i;
+    }
+
+    for (uint i = 0; i < n_genomes / 2; i++) {
+        genomes.at(i).species_id_ = species_id1;
+    }
+
+    for (uint i = n_genomes / 2; i < n_genomes; i++) {
+        genomes.at(i).species_id_ = species_id2;
+    }
+
+    std::random_shuffle(permutation_vec.begin(), permutation_vec.end());
+
+    utility::ApplyPermutationInPlace(genomes, permutation_vec);
+    utility::ApplyPermutationInPlace(fitnesses, permutation_vec);
+
+    SpeciesPool::SortBySpecies(fitnesses, genomes);
+    SpeciesPool::SortByFitness(fitnesses, genomes);
+
+    last_fitness = 100.0;
+    for (uint i = 0; i < n_genomes / 2; i++) {
+        ASSERT_EQ(species_id1, genomes.at(i).species_id_);
+        ASSERT_TRUE(last_fitness > fitnesses.at(i));
+        last_fitness = fitnesses.at(i);
+    }
+
+    last_fitness = 100.0;
+    for (uint i = n_genomes / 2; i < n_genomes; i++) {
+        ASSERT_EQ(species_id2, genomes.at(i).species_id_);
+        ASSERT_TRUE(last_fitness > fitnesses.at(i));
+        last_fitness = fitnesses.at(i);
     }
 }
 

@@ -80,11 +80,10 @@ void SpeciesPool::AdjustFitnesses(std::vector<double>& fitnesses, const std::vec
     }
 }
 
-void SpeciesPool::Reproduce(std::vector<Genome>& genotypes, const std::vector<double>& fitnesses,
-                            const uint& n_genotypes) {
+void SpeciesPool::Reproduce(std::vector<Genome>& genotypes, std::vector<double>& fitnesses, const uint& n_genotypes) {
     std::vector<Genome> new_genotypes;
 
-    SortBySpecies(genotypes);
+    SortBySpecies(fitnesses, genotypes);
     SortByFitness(fitnesses, genotypes);
 
     for (uint i = 0; i < species_.size(); i++) {
@@ -122,13 +121,14 @@ void SpeciesPool::ReproduceSpecies(const Species& species, const std::vector<Gen
     }
 }
 
-void SpeciesPool::SortBySpecies(std::vector<Genome>& genotypes) {
+void SpeciesPool::SortBySpecies(std::vector<double>& fitnesses, std::vector<Genome>& genotypes) {
     auto permutation_vector = utility::SortPermutation(
         genotypes, [](Genome const& a, Genome const& b) { return a.species_id_ < b.species_id_; });
     utility::ApplyPermutationInPlace(genotypes, permutation_vector);
+    utility::ApplyPermutationInPlace(fitnesses, permutation_vector);
 }
 
-void SpeciesPool::SortByFitness(const std::vector<double>& fitnesses, std::vector<Genome>& genotypes) {
+void SpeciesPool::SortByFitness(std::vector<double>& fitnesses, std::vector<Genome>& genotypes) {
     std::vector<std::pair<double, uint>> sorted(fitnesses.size());
     uint spec_id(0), old_id(0);
 
@@ -152,6 +152,7 @@ void SpeciesPool::SortByFitness(const std::vector<double>& fitnesses, std::vecto
                 std::size_t j = sorted[k].second;
                 while (k != j) {
                     std::swap(genotypes[prev_j], genotypes[j]);
+                    std::swap(fitnesses[prev_j], fitnesses[j]);
                     done[j] = true;
                     prev_j = j;
                     j = sorted[j].second;
@@ -175,6 +176,7 @@ void SpeciesPool::SortByFitness(const std::vector<double>& fitnesses, std::vecto
                 std::size_t j = sorted[k].second;
                 while (k != j) {
                     std::swap(genotypes[prev_j], genotypes[j]);
+                    std::swap(fitnesses[prev_j], fitnesses[j]);
                     done[j] = true;
                     prev_j = j;
                     j = sorted[j].second;
