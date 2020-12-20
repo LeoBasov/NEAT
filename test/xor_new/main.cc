@@ -24,8 +24,8 @@ int main(int, char**) {
     uint best_network_id(0);
     double mean(0.0);
 
-    config.species_pool_config.distance_coefficients.at(0) = 2.0;
-    config.species_pool_config.distance_coefficients.at(1) = 2.0;
+    config.species_pool_config.distance_coefficients.at(0) = 3.0;
+    config.species_pool_config.distance_coefficients.at(1) = 3.0;
     config.species_pool_config.distance_coefficients.at(2) = 1e-3;
 
     config.mutator_config.allow_recurring_connection = false;
