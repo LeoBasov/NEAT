@@ -146,8 +146,8 @@ TEST(SpeciesPool, SortBySpecies) {
         genomes.at(i).species_id_ = i;
     }
 
-    genomes.at(1).species_id_ = 5;
-    genomes.at(2).species_id_ = 5;
+    genomes.at(6).species_id_ = 5;
+    genomes.at(7).species_id_ = 5;
 
     std::random_shuffle(genomes.begin(), genomes.end());
     SpeciesPool::SortBySpecies(genomes);
