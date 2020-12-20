@@ -35,8 +35,9 @@ void SpeciesPool::SortInSpecies(std::vector<Genome>& genomes) {
         bool found(false);
 
         for (uint spec_id = 0; spec_id < species_.size(); spec_id++) {
-            if (species_.at(spec_id).ref_genome.Distance(genome, config_.distance_coefficients) <
-                config_.max_species_distance) {
+            const double distance(species_.at(spec_id).ref_genome.Distance(genome, config_.distance_coefficients));
+
+            if (distance < config_.max_species_distance) {
                 species_.at(spec_id).n_member++;
                 species_.at(spec_id).SetRefGenome(genome);
                 genome.species_id_ = spec_id;
@@ -98,13 +99,19 @@ void SpeciesPool::Reproduce(std::vector<Genome>& genotypes, std::vector<double>&
 void SpeciesPool::ReproduceSpecies(const Species& species, const std::vector<Genome>& genotypes,
                                    std::vector<Genome>& new_genotypes, const uint& n_new_genotypes,
                                    const uint& species_id, const double& prob_mate) {
+    if (!species.n_member) {
+        return;
+    }
+
+    const uint n_repoducable(species.n_member > 2 ? species.n_member / 2 : 1);
+    // const uint n_repoducable(species.n_member);
     uint n_genotypes(0);
     Random random;
 
     for (uint i = 0; i < genotypes.size(); i++) {
         if (genotypes.at(i).species_id_ == species_id) {
             while (n_genotypes < n_new_genotypes) {
-                for (uint j = i; j < i + species.n_member; j++) {
+                for (uint j = i; j < i + n_repoducable; j++) {
                     if (n_genotypes >= n_new_genotypes) {
                         return;
                     } else if ((random.RandomNumber() < prob_mate) && (j < i + species.n_member - 1)) {
