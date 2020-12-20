@@ -41,8 +41,9 @@ class SpeciesPool {
     void ReproduceSpecies(const Species& species, const std::vector<Genome>& genotypes,
                           std::vector<Genome>& new_genotypes, const uint& n_new_genotypes, const uint& species_id,
                           const double& prob_mate);
-    void SortBySpecies(std::vector<Genome>& genotypes);
-    void SortByFitness(const std::vector<double>& fitnesses, std::vector<Genome>& genotypes);
+
+    static void SortBySpecies(std::vector<Genome>& genotypes);
+    static void SortByFitness(const std::vector<double>& fitnesses, std::vector<Genome>& genotypes);
 
    private:
     std::vector<Species> species_;

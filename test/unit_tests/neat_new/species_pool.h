@@ -138,4 +138,27 @@ TEST(SpeciesPool, Clear) {
     ASSERT_DOUBLE_EQ(0.0, pool.GetTotalFitness());
 }
 
+TEST(SpeciesPool, SortBySpecies) {
+    const uint n_genomes(100);
+    std::vector<Genome> genomes(n_genomes);
+
+    for (uint i = 0; i < n_genomes; i++) {
+        genomes.at(i).species_id_ = i;
+    }
+
+    genomes.at(1).species_id_ = 5;
+    genomes.at(2).species_id_ = 5;
+
+    std::random_shuffle(genomes.begin(), genomes.end());
+    SpeciesPool::SortBySpecies(genomes);
+
+    for (uint i = 0; i < n_genomes; i++) {
+        if (i == 6 || i == 7) {
+            ASSERT_EQ(5, genomes.at(i).species_id_);
+        } else {
+            ASSERT_EQ(i, genomes.at(i).species_id_);
+        }
+    }
+}
+
 }  // namespace neat
