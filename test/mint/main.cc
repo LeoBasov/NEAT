@@ -18,7 +18,7 @@ void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, ui
 
 int main(int, char**) {
     const uint n_iterations(1500);
-    const double min_fitness(8);
+    const double min_fitness(7.8);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
     Neat::Config config;
@@ -29,7 +29,7 @@ int main(int, char**) {
     double mean(0.0);
     const uint n_refs(5);
 
-    std::vector<MNIST::Image> input(GetTrainingInput(50));
+    std::vector<MNIST::Image> input(GetTrainingInput(100));
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "START NEAT" << std::endl;
@@ -199,8 +199,10 @@ std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& i
         for (uint i = 0; i < images.size(); i++) {
             std::vector<double> result = networks.at(n).Execute(images.at(i).pixels);
 
-            for (uint q = 0; q < result.size(); q++) {
-                loc_fitness.at(i) += (1.0 - std::abs(images.at(i).label.at(q) - result.at(q))) / images.size();
+            if (!networks.at(n).cyclic_) {
+                for (uint q = 0; q < result.size(); q++) {
+                    loc_fitness.at(i) += (1.0 - std::abs(images.at(i).label.at(q) - result.at(q))) / images.size();
+                }
             }
         }
 

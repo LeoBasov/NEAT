@@ -122,7 +122,11 @@ std::vector<double> Execute(const Neat& neat) {
         }
 
         for (uint j = 0; j < networks.size(); j++) {
-            fitnesses.at(j) += std::abs(refs.at(i) - fitnesses_loc.at(j).at(0));
+            if (networks.at(j).cyclic_) {
+                fitnesses.at(j) = 4.0;
+            } else {
+                fitnesses.at(j) += std::abs(refs.at(i) - fitnesses_loc.at(j).at(0));
+            }
         }
     }
 
