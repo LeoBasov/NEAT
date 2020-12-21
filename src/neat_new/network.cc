@@ -9,7 +9,7 @@ Network::Network(const Genome& genome) { Build(genome); }
 void Network::Build(const Genome& genome) {
     matrix_ = GenomeToMatrix(genome);
     output_nodes_ = SetUpOutputNodes(genome);
-    n_executions_ = genome.genes_.size();  // 3;
+    n_executions_ = genome.n_hidden_nodes_ + 1;
     n_const_nodes_ = genome.n_sensor_nodes_ + 1;
 }
 

@@ -101,7 +101,7 @@ std::vector<uint> MNIST::ReadLabels(const std::string &file_name, const uint &n_
     return labels;
 }
 
-std::vector<uint> MNIST::ConverToBinray(uint val) {
+std::vector<uint> MNIST::Decimal2Binray(uint val) {
     std::vector<uint> retval;
 
     while (val) {
@@ -114,6 +114,30 @@ std::vector<uint> MNIST::ConverToBinray(uint val) {
     }
 
     return std::vector<uint>(retval.rbegin(), retval.rend());
+}
+
+uint MNIST::Binray2Decimal(const std::vector<uint> &val) {
+    uint retval(0);
+
+    for (uint i = 0; i < val.size(); i++) {
+        if (val.at(i)) {
+            retval += std::pow(2, val.size() - i - 1);
+        }
+    }
+
+    return retval;
+}
+
+uint MNIST::Binray2Decimal(const std::vector<double> &val) {
+    uint retval(0);
+
+    for (uint i = 0; i < val.size(); i++) {
+        if (std::round(val.at(i))) {
+            retval += std::pow(2, val.size() - i - 1);
+        }
+    }
+
+    return retval;
 }
 
 }  // namespace neat

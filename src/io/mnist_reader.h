@@ -32,6 +32,8 @@ class MNIST {
     std::vector<Image> ReadImages(const std::string& file_name, const uint& n_images) const;
     std::vector<uint> ReadLabels(const std::string& file_name, const uint& n_images) const;
 
-    static std::vector<uint> ConverToBinray(uint val);
+    static std::vector<uint> Decimal2Binray(uint val);
+    static uint Binray2Decimal(const std::vector<uint>& val);
+    static uint Binray2Decimal(const std::vector<double>& val);
 };
 }  // namespace neat
