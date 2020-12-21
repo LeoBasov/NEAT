@@ -6,11 +6,13 @@ Network::Network() {}
 
 Network::Network(const Genome& genome) { Build(genome); }
 
-void Network::Build(const Genome& genome) {
+void Network::Build(const Genome& genome, bool cyclic_check) {
     matrix_ = GenomeToMatrix(genome);
     output_nodes_ = SetUpOutputNodes(genome);
     n_executions_ = genome.n_hidden_nodes_ + 1;
     n_const_nodes_ = genome.n_sensor_nodes_ + 1;
+    cyclic_check_ = cyclic_check;
+    cyclic_ = false;
 }
 
 std::vector<double> Network::Execute(const std::vector<double>& input_vaules) {
@@ -21,6 +23,20 @@ std::vector<double> Network::Execute(const std::vector<double>& input_vaules) {
 
         for (Eigen::Index i = n_const_nodes_; i < vec.rows(); i++) {
             vec(i) = utility::Sigmoid(vec(i), parameter_);
+        }
+    }
+
+    if (cyclic_check_) {
+        const VectorXd last_values(vec);
+
+        vec = matrix_ * vec;
+
+        for (Eigen::Index i = n_const_nodes_; i < vec.rows(); i++) {
+            vec(i) = utility::Sigmoid(vec(i), parameter_);
+
+            if (std::abs(last_values(i) - vec(i)) > 1.0e-8) {
+                cyclic_ = true;
+            }
         }
     }
 

@@ -158,6 +158,26 @@ TEST(Network, Execute) {
 
     ASSERT_NEAR(0.0, network.Execute({1.0, 1.0}).front(), 1e-8);
     ASSERT_NEAR(0.0, network.Execute({0.0, 0.0}).front(), 1e-8);
+
+    ASSERT_FALSE(network.cyclic_);
+}
+
+TEST(Network, Execute_cyclic) {
+    const uint n_sensor_nodes(2), n_output_nodes(1);
+    const std::vector<double> input_vals{3.0, 7.0};
+    Genome genome(n_sensor_nodes, n_output_nodes);
+    uint innov(genome.genes_.size());
+
+    innov = genome.AddNode(1, innov);
+    innov = genome.AddConnection(4, 4, innov);
+
+    genome.genes_.back().weight = 0.5;
+
+    Network network(genome);
+
+    network.Execute({1.0, 1.0});
+
+    ASSERT_TRUE(network.cyclic_);
 }
 
 }  // namespace neat

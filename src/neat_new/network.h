@@ -13,7 +13,7 @@ class Network {
     Network(const Genome& genome);
     ~Network() = default;
 
-    void Build(const Genome& genome);
+    void Build(const Genome& genome, bool cyclic_check = true);
     std::vector<double> Execute(const std::vector<double>& input_vaules);
 
     static std::vector<size_t> SetUpOutputNodes(const Genome& genome);
@@ -25,7 +25,7 @@ class Network {
     std::vector<size_t> output_nodes_;
     uint n_executions_ = 0;
     uint n_const_nodes_ = 0;
-    bool cyclic = false;
+    bool cyclic_check_ = true, cyclic_ = false;
     double parameter_ = 5.9;
 };
 }  // namespace neat
