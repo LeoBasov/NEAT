@@ -54,11 +54,11 @@ std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const 
     }
 
     for (uint i = 0; i < n_images; i++) {
-        for (uint k = 0; k < images.at(i).pixes.size(); k++) {
+        for (uint k = 0; k < images.at(i).pixels.size(); k++) {
             unsigned char val;
 
             input.read((char *)&val, sizeof(val));
-            images.at(i).pixes.at(k) = val;
+            images.at(i).pixels.at(k) = val;
         }
     }
 
@@ -99,6 +99,45 @@ std::vector<uint> MNIST::ReadLabels(const std::string &file_name, const uint &n_
     }
 
     return labels;
+}
+
+std::vector<uint> MNIST::Decimal2Binray(uint val) {
+    std::vector<uint> retval;
+
+    while (val) {
+        retval.push_back(val % 2);
+        val /= 2;
+    }
+
+    while (retval.size() < 8) {
+        retval.push_back(0);
+    }
+
+    return std::vector<uint>(retval.rbegin(), retval.rend());
+}
+
+uint MNIST::Binray2Decimal(const std::vector<uint> &val) {
+    uint retval(0);
+
+    for (uint i = 0; i < val.size(); i++) {
+        if (val.at(i)) {
+            retval += std::pow(2, val.size() - i - 1);
+        }
+    }
+
+    return retval;
+}
+
+uint MNIST::Binray2Decimal(const std::vector<double> &val) {
+    uint retval(0);
+
+    for (uint i = 0; i < val.size(); i++) {
+        if (std::round(val.at(i))) {
+            retval += std::pow(2, val.size() - i - 1);
+        }
+    }
+
+    return retval;
 }
 
 }  // namespace neat

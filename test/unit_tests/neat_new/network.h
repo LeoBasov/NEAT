@@ -115,7 +115,7 @@ TEST(Network, Build) {
 
     Network network(genome);
 
-    ASSERT_EQ(genome.genes_.size(), network.n_executions_);
+    ASSERT_EQ(genome.n_hidden_nodes_ + 1, network.n_executions_);
     ASSERT_EQ(genome.n_sensor_nodes_ + 1, network.n_const_nodes_);
 }
 
