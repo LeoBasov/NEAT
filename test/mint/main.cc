@@ -17,8 +17,8 @@ void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "
 void WriteFitnessToFile(std::ofstream& stream, std::vector<double> fitnesses, uint unimproved_counter);
 
 int main(int, char**) {
-    const uint n_iterations(25);
-    const double min_fitness(15.0);
+    const uint n_iterations(1500);
+    const double min_fitness(8);
     std::ofstream stream("fitness.csv");
     Timer exex, update, total;
     Neat::Config config;
@@ -34,9 +34,9 @@ int main(int, char**) {
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "START NEAT" << std::endl;
 
-    config.species_pool_config.distance_coefficients.at(0) = 3.0;
-    config.species_pool_config.distance_coefficients.at(1) = 3.0;
-    config.species_pool_config.distance_coefficients.at(2) = 1e-3;
+    config.species_pool_config.distance_coefficients.at(0) = 3000.0;
+    config.species_pool_config.distance_coefficients.at(1) = 3000.0;
+    config.species_pool_config.distance_coefficients.at(2) = 2e-3;
 
     config.mutator_config.allow_recurring_connection = false;
     config.mutator_config.allow_self_connection = false;
@@ -58,7 +58,7 @@ int main(int, char**) {
 
         best_network_id = FindBestNetwork(fitnesses);
 
-        if (fitnesses.at(best_network_id) > min_fitness) {
+        if (fitnesses.at(best_network_id) >= min_fitness) {
             std::cout << "------------------------------------------------------" << std::endl;
             std::cout << "----- CRITERIUM ACHIEVED -----" << std::endl;
             std::cout << "BEST FITNESS: " << fitnesses.at(best_network_id) << std::endl;
@@ -200,7 +200,7 @@ std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& i
             std::vector<double> result = networks.at(n).Execute(images.at(i).pixels);
 
             for (uint q = 0; q < result.size(); q++) {
-                loc_fitness.at(i) += (1.0 - std::abs(images.at(i).pixels.at(q) - result.at(q))) / images.size();
+                loc_fitness.at(i) += (1.0 - std::abs(images.at(i).label.at(q) - result.at(q))) / images.size();
             }
         }
 
@@ -225,13 +225,13 @@ void PrintResultsNetwork(const Neat& neat, const uint& network_id, uint n_refs) 
             std::cout << input.at(k).label.at(i) << ",";
         }
 
-        std::cout << "] OUTPUT: [";
+        std::cout << "] VALUE: " + std::to_string(MNIST::Binray2Decimal(input.at(k).label)) + " OUTPUT: [";
 
         for (uint i = 0; i < result.size(); i++) {
             std::cout << result.at(i) << ",";
         }
 
-        std::cout << "] " << std::endl;
+        std::cout << "] VALUE: " + std::to_string(MNIST::Binray2Decimal(result)) << std::endl;
     }
 
     std::cout << "------------------------------------------------------" << std::endl;
