@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../../../src/io/mnist_reader.h"
+#include "../../../src/io/mnist.h"
 
 namespace neat {
 

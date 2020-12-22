@@ -1,10 +1,9 @@
-#include "mnist_reader.h"
+#include "mnist.h"
 
 namespace neat {
+namespace MNIST {
 
-MNIST::MNIST() {}
-
-MNIST::ImageHeader MNIST::ReadImageHeader(const std::string &file_name) const {
+MNIST::ImageHeader ReadImageHeader(const std::string &file_name) {
     MNIST::ImageHeader header;
     std::ifstream input(file_name, std::ios::binary);
     int masgic_number(0);
@@ -32,7 +31,7 @@ MNIST::ImageHeader MNIST::ReadImageHeader(const std::string &file_name) const {
     return header;
 }
 
-std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const uint &n_images) const {
+std::vector<MNIST::Image> ReadImages(const std::string &file_name, const uint &n_images) {
     MNIST::ImageHeader header(ReadImageHeader(file_name));
     std::vector<MNIST::Image> images(n_images, Image(header.n_columns * header.n_rows));
     std::ifstream input(file_name, std::ios::binary);
@@ -65,7 +64,7 @@ std::vector<MNIST::Image> MNIST::ReadImages(const std::string &file_name, const 
     return images;
 }
 
-std::vector<uint> MNIST::ReadLabels(const std::string &file_name, const uint &n_images) const {
+std::vector<uint> ReadLabels(const std::string &file_name, const uint &n_images) {
     std::vector<uint> labels(n_images);
     std::ifstream input(file_name, std::ios::binary);
     int number_of_items(0);
@@ -101,7 +100,7 @@ std::vector<uint> MNIST::ReadLabels(const std::string &file_name, const uint &n_
     return labels;
 }
 
-std::vector<uint> MNIST::Decimal2Binray(uint val) {
+std::vector<uint> Decimal2Binray(uint val) {
     std::vector<uint> retval;
 
     while (val) {
@@ -116,7 +115,7 @@ std::vector<uint> MNIST::Decimal2Binray(uint val) {
     return std::vector<uint>(retval.rbegin(), retval.rend());
 }
 
-uint MNIST::Binray2Decimal(const std::vector<uint> &val) {
+uint Binray2Decimal(const std::vector<uint> &val) {
     uint retval(0);
 
     for (uint i = 0; i < val.size(); i++) {
@@ -128,7 +127,7 @@ uint MNIST::Binray2Decimal(const std::vector<uint> &val) {
     return retval;
 }
 
-uint MNIST::Binray2Decimal(const std::vector<double> &val) {
+uint Binray2Decimal(const std::vector<double> &val) {
     uint retval(0);
 
     for (uint i = 0; i < val.size(); i++) {
@@ -140,4 +139,5 @@ uint MNIST::Binray2Decimal(const std::vector<double> &val) {
     return retval;
 }
 
+}  // namespace MNIST
 }  // namespace neat
