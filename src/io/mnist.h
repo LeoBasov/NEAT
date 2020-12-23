@@ -32,7 +32,7 @@ struct LabelHeader {
 ImageHeader ReadImageHeader(const std::string& file_name);
 LabelHeader ReadLabelHeader(const std::string& file_name);
 std::vector<Image> ReadImages(const std::string& file_name, const uint& n_images);
-std::vector<uint> ReadLabels(const std::string& file_name, const uint& n_images);
+std::vector<uint> ReadLabels(const std::string& file_name, const uint& n_labels);
 
 std::vector<uint> Decimal2Binray(uint val);
 uint Binray2Decimal(const std::vector<uint>& val);

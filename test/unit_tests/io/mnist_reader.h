@@ -6,9 +6,11 @@
 
 namespace neat {
 
+const std::string file_name_images("../../test/unit_tests/test_data/t10k-images-idx3-ubyte");
+const std::string file_name_labels("../../test/unit_tests/test_data/t10k-labels-idx1-ubyte");
+
 TEST(MNIST, ReadImageHeader) {
-    const std::string file_name("../../test/unit_tests/test_data/t10k-images-idx3-ubyte");
-    MNIST::ImageHeader header(MNIST::ReadImageHeader(file_name));
+    MNIST::ImageHeader header(MNIST::ReadImageHeader(file_name_images));
 
     ASSERT_EQ(2051, header.magic_number);
     ASSERT_EQ(10000, header.n_images);
@@ -17,11 +19,44 @@ TEST(MNIST, ReadImageHeader) {
 }
 
 TEST(MNIST, ReadLabelHeader) {
-    const std::string file_name("../../test/unit_tests/test_data/t10k-images-idx3-ubyte");
-    MNIST::LabelHeader header(MNIST::ReadLabelHeader(file_name));
+    ;
+    MNIST::LabelHeader header(MNIST::ReadLabelHeader(file_name_labels));
 
-    ASSERT_EQ(2051, header.magic_number);
+    ASSERT_EQ(2049, header.magic_number);
     ASSERT_EQ(10000, header.n_labels);
+}
+
+TEST(MNIST, ReadLabels) {
+    const uint n_lables(5);
+    std::vector<uint> labels(MNIST::ReadLabels(file_name_labels, n_lables));
+
+    ASSERT_EQ(n_lables, labels.size());
+
+    ASSERT_EQ(7, labels.at(0));
+    ASSERT_EQ(2, labels.at(1));
+    ASSERT_EQ(1, labels.at(2));
+    ASSERT_EQ(0, labels.at(3));
+    ASSERT_EQ(4, labels.at(4));
+}
+
+TEST(MNIST, ReadImages) {
+    const uint n_images(5);
+    const uint n_pixels(28 * 28);
+    std::vector<MNIST::Image> images(MNIST::ReadImages(file_name_images, n_images));
+
+    ASSERT_EQ(n_images, images.size());
+
+    for (auto image : images) {
+        ASSERT_EQ(n_pixels, image.pixels.size());
+
+        for (uint i = 0; i < image.pixels.size(); i++) {
+            ASSERT_TRUE(image.pixels.at(i) < 256);
+
+            if (i < 28 * 3) {
+                ASSERT_TRUE(image.pixels.at(i) == 0);
+            }
+        }
+    }
 }
 
 TEST(MNIST, Decimal2Binray) {

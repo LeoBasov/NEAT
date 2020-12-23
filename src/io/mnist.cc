@@ -86,8 +86,8 @@ std::vector<MNIST::Image> ReadImages(const std::string &file_name, const uint &n
     return images;
 }
 
-std::vector<uint> ReadLabels(const std::string &file_name, const uint &n_images) {
-    std::vector<uint> labels(n_images);
+std::vector<uint> ReadLabels(const std::string &file_name, const uint &n_labels) {
+    std::vector<uint> labels(n_labels);
     std::ifstream input(file_name, std::ios::binary);
     int number_of_items(0);
 
@@ -100,13 +100,13 @@ std::vector<uint> ReadLabels(const std::string &file_name, const uint &n_images)
 
     number_of_items = utility::swap_endian<uint32_t>(number_of_items);
 
-    if (static_cast<int>(n_images) > number_of_items) {
-        throw Exception("Given number of images [" + std::to_string(n_images) +
+    if (static_cast<int>(n_labels) > number_of_items) {
+        throw Exception("Given number of images [" + std::to_string(n_labels) +
                             "] > number of images given in header [" + std::to_string(number_of_items) + "]",
                         __PRETTY_FUNCTION__);
     }
 
-    for (uint i = 0; i < n_images; i++) {
+    for (uint i = 0; i < n_labels; i++) {
         unsigned char val;
 
         input.read((char *)&val, sizeof(val));
