@@ -6,6 +6,16 @@
 
 namespace neat {
 
+TEST(MNIST, ReadImageHeader) {
+    const std::string file_name("../../test/unit_tests/test_data/t10k-images-idx3-ubyte");
+    MNIST::ImageHeader header(MNIST::ReadImageHeader(file_name));
+
+    ASSERT_EQ(2051, header.magic_number);
+    ASSERT_EQ(10000, header.n_images);
+    ASSERT_EQ(28, header.n_rows);
+    ASSERT_EQ(28, header.n_columns);
+}
+
 TEST(MNIST, Decimal2Binray) {
     const uint val1(255), val2(15), val3(0);
     const std::vector<uint> ref1(8, 1), ref2({0, 0, 0, 0, 1, 1, 1, 1}), ref3(8, 0);

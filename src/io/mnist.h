@@ -22,7 +22,11 @@ struct Image {
 };
 
 struct ImageHeader {
-    uint n_rows = 0, n_columns = 0, n_images = 0;
+    uint magic_number = 0, n_rows = 0, n_columns = 0, n_images = 0;
+};
+
+struct LabelHeader {
+    uint magic_number = 0, n_labels = 0;
 };
 
 ImageHeader ReadImageHeader(const std::string& file_name);
