@@ -30,6 +30,29 @@ MNIST::ImageHeader ReadImageHeader(const std::string &file_name) {
     return header;
 }
 
+LabelHeader ReadLabelHeader(const std::string &file_name) {
+    LabelHeader header;
+    std::ifstream input(file_name, std::ios::binary);
+
+    if (!input.is_open()) {
+        throw Exception("Could not open file [" + file_name + "]", __PRETTY_FUNCTION__);
+    }
+
+    input.read((char *)&header.magic_number, sizeof(header.magic_number));
+    input.read((char *)&header.n_labels, sizeof(header.n_labels));
+
+    header.magic_number = utility::swap_endian<uint32_t>(header.magic_number);
+    header.n_labels = utility::swap_endian<uint32_t>(header.n_labels);
+
+    input.close();
+
+    if (!input.good()) {
+        throw Exception("Error occurred at reading file [" + file_name + "]", __PRETTY_FUNCTION__);
+    }
+
+    return header;
+}
+
 std::vector<MNIST::Image> ReadImages(const std::string &file_name, const uint &n_images) {
     MNIST::ImageHeader header(ReadImageHeader(file_name));
     std::vector<MNIST::Image> images(n_images, Image(header.n_columns * header.n_rows));
