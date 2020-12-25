@@ -8,14 +8,14 @@ using namespace neat;
 int main(int, char**) {
     // Data set found here: http://yann.lecun.com/exdb/mnist/
 
-    MNIST::ImageHeader image_header;
-    std::vector<MNIST::Image> images;
+    mnist::ImageHeader image_header;
+    std::vector<mnist::Image> images;
     std::vector<uint> labels;
     const uint n_images(5);
     const std::string file_name_images("/home/lbasov/AI/train-images-idx3-ubyte");
     const std::string file_name_labels("/home/lbasov/AI/train-labels-idx1-ubyte");
 
-    image_header = MNIST::ReadImageHeader(file_name_images);
+    image_header = mnist::ReadImageHeader(file_name_images);
 
     std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
     std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
@@ -24,7 +24,7 @@ int main(int, char**) {
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
 
-    images = MNIST::ReadImages(file_name_images, n_images);
+    images = mnist::ReadImages(file_name_images, n_images);
 
     for (uint i = 0; i < images.front().pixels.size(); i++) {
         if (images.front().pixels.at(i) > 255) {
@@ -52,7 +52,7 @@ int main(int, char**) {
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
 
-    labels = MNIST::ReadLabels(file_name_labels, n_images);
+    labels = mnist::ReadLabels(file_name_labels, n_images);
 
     for (uint p = 0; p < n_images; p++) {
         std::cout << labels.at(p) << std::endl;
