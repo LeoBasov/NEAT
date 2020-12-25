@@ -34,6 +34,7 @@ TEST(MNIST, ReadLabels) {
     std::vector<uint> labels(MNIST::ReadLabels(file_name_labels, n_lables));
 
     ASSERT_THROW(MNIST::ReadLabels("", n_lables), Exception);
+    ASSERT_THROW(MNIST::ReadLabels(file_name_labels, 10001), Exception);
 
     ASSERT_EQ(n_lables, labels.size());
 
@@ -50,6 +51,7 @@ TEST(MNIST, ReadImages) {
     std::vector<MNIST::Image> images(MNIST::ReadImages(file_name_images, n_images));
 
     ASSERT_THROW(MNIST::ReadImages("", n_images), Exception);
+    ASSERT_THROW(MNIST::ReadImages(file_name_images, 10001), Exception);
 
     ASSERT_EQ(n_images, images.size());
 
