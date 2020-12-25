@@ -6,8 +6,8 @@
 
 namespace neat {
 
-const std::string file_name_images("../../NEAT/test/unit_tests/test_data/t10k-images-idx3-ubyte");
-const std::string file_name_labels("../../NEAT/test/unit_tests/test_data/t10k-labels-idx1-ubyte");
+const std::string file_name_images("../../test/unit_tests/test_data/t10k-images-idx3-ubyte");
+const std::string file_name_labels("../../../test/unit_tests/test_data/t10k-labels-idx1-ubyte");
 
 TEST(MNIST, ReadImageHeader) {
     MNIST::ImageHeader header(MNIST::ReadImageHeader(file_name_images));
