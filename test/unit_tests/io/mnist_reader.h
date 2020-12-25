@@ -12,6 +12,8 @@ const std::string file_name_labels("./test/unit_tests/test_data/t10k-labels-idx1
 TEST(MNIST, ReadImageHeader) {
     MNIST::ImageHeader header(MNIST::ReadImageHeader(file_name_images));
 
+    ASSERT_THROW(MNIST::ReadImageHeader(""), Exception);
+
     ASSERT_EQ(2051, header.magic_number);
     ASSERT_EQ(10000, header.n_images);
     ASSERT_EQ(28, header.n_rows);
@@ -19,8 +21,9 @@ TEST(MNIST, ReadImageHeader) {
 }
 
 TEST(MNIST, ReadLabelHeader) {
-    ;
     MNIST::LabelHeader header(MNIST::ReadLabelHeader(file_name_labels));
+
+    ASSERT_THROW(MNIST::ReadLabelHeader(""), Exception);
 
     ASSERT_EQ(2049, header.magic_number);
     ASSERT_EQ(10000, header.n_labels);
@@ -29,6 +32,8 @@ TEST(MNIST, ReadLabelHeader) {
 TEST(MNIST, ReadLabels) {
     const uint n_lables(5);
     std::vector<uint> labels(MNIST::ReadLabels(file_name_labels, n_lables));
+
+    ASSERT_THROW(MNIST::ReadLabels("", n_lables), Exception);
 
     ASSERT_EQ(n_lables, labels.size());
 
@@ -43,6 +48,8 @@ TEST(MNIST, ReadImages) {
     const uint n_images(5);
     const uint n_pixels(28 * 28);
     std::vector<MNIST::Image> images(MNIST::ReadImages(file_name_images, n_images));
+
+    ASSERT_THROW(MNIST::ReadImages("", n_images), Exception);
 
     ASSERT_EQ(n_images, images.size());
 
