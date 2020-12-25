@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "../../src/common/timer.h"
-#include "../../src/io/mnist_reader.h"
+#include "../../src/io/mnist.h"
 #include "../../src/neat_new/neat.h"
 
 using namespace neat;
@@ -116,14 +116,13 @@ std::vector<MNIST::Image> GetTrainingInput(uint n_images) {
     // Data set found here: http://yann.lecun.com/exdb/mnist/
 
     MNIST::ImageHeader image_header;
-    MNIST reader;
     std::vector<MNIST::Image> images;
     std::vector<uint> labels;
     const std::string file_name_images("/home/lbasov/AI/train-images-idx3-ubyte");
     const std::string file_name_labels("/home/lbasov/AI/train-labels-idx1-ubyte");
 
     // READ FILES
-    image_header = reader.ReadImageHeader(file_name_images);
+    image_header = MNIST::ReadImageHeader(file_name_images);
 
     std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
     std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
@@ -132,12 +131,12 @@ std::vector<MNIST::Image> GetTrainingInput(uint n_images) {
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
 
-    images = reader.ReadImages(file_name_images, n_images);
+    images = MNIST::ReadImages(file_name_images, n_images);
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
 
-    labels = reader.ReadLabels(file_name_labels, n_images);
+    labels = MNIST::ReadLabels(file_name_labels, n_images);
 
     for (uint i = 0; i < n_images; i++) {
         images.at(i).label = MNIST::Decimal2Binray(labels.at(i));
@@ -154,14 +153,13 @@ std::vector<MNIST::Image> GetTestInput(uint n_images) {
     // Data set found here: http://yann.lecun.com/exdb/mnist/
 
     MNIST::ImageHeader image_header;
-    MNIST reader;
     std::vector<MNIST::Image> images;
     std::vector<uint> labels;
     const std::string file_name_images("/home/lbasov/AI/t10k-images-idx3-ubyte");
     const std::string file_name_labels("/home/lbasov/AI/t10k-labels-idx1-ubyte");
 
     // READ FILES
-    image_header = reader.ReadImageHeader(file_name_images);
+    image_header = MNIST::ReadImageHeader(file_name_images);
 
     std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
     std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
@@ -170,12 +168,12 @@ std::vector<MNIST::Image> GetTestInput(uint n_images) {
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
 
-    images = reader.ReadImages(file_name_images, n_images);
+    images = MNIST::ReadImages(file_name_images, n_images);
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
 
-    labels = reader.ReadLabels(file_name_labels, n_images);
+    labels = MNIST::ReadLabels(file_name_labels, n_images);
 
     for (uint i = 0; i < n_images; i++) {
         images.at(i).label = MNIST::Decimal2Binray(labels.at(i));
