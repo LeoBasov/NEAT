@@ -82,15 +82,24 @@ TEST(MNIST, Decimal2Binray) {
 TEST(MNIST, Binray2Decimal) {
     const uint val1(255), val2(15), val3(0);
     const std::vector<uint> ref1(8, 1), ref2({0, 0, 0, 0, 1, 1, 1, 1}), ref3(8, 0);
-    uint result1, result2, result3;
+    const std::vector<double> ref4(8, 1.0), ref5({0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0}), ref6(8, 0.0);
+    uint result1, result2, result3, result4, result5, result6;
 
     result1 = MNIST::Binray2Decimal(ref1);
     result2 = MNIST::Binray2Decimal(ref2);
     result3 = MNIST::Binray2Decimal(ref3);
 
+    result4 = MNIST::Binray2Decimal(ref4);
+    result5 = MNIST::Binray2Decimal(ref5);
+    result6 = MNIST::Binray2Decimal(ref6);
+
     ASSERT_EQ(val1, result1);
     ASSERT_EQ(val2, result2);
     ASSERT_EQ(val3, result3);
+
+    ASSERT_EQ(val1, result4);
+    ASSERT_EQ(val2, result5);
+    ASSERT_EQ(val3, result6);
 }
 
 }  // namespace neat
