@@ -7,10 +7,10 @@
 
 using namespace neat;
 
-std::vector<MNIST::Image> GetTrainingInput(uint n_images);
-std::vector<MNIST::Image> GetTestInput(uint n_images);
+std::vector<mnist::Image> GetTrainingInput(uint n_images);
+std::vector<mnist::Image> GetTestInput(uint n_images);
 
-std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& images);
+std::vector<double> Execute(const Neat& neat, const std::vector<mnist::Image>& images);
 void PrintResultsNetwork(const Neat& neat, const uint& network_id, uint n_refs);
 uint FindBestNetwork(const std::vector<double>& fitnesses);
 void WriteNetworkToFile(const Genome& genotype, const std::string& file_name = "best.csv");
@@ -29,7 +29,7 @@ int main(int, char**) {
     double mean(0.0);
     const uint n_refs(5);
 
-    std::vector<MNIST::Image> input(GetTrainingInput(100));
+    std::vector<mnist::Image> input(GetTrainingInput(100));
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "START NEAT" << std::endl;
@@ -112,17 +112,17 @@ int main(int, char**) {
     return 0;
 }
 
-std::vector<MNIST::Image> GetTrainingInput(uint n_images) {
+std::vector<mnist::Image> GetTrainingInput(uint n_images) {
     // Data set found here: http://yann.lecun.com/exdb/mnist/
 
-    MNIST::ImageHeader image_header;
-    std::vector<MNIST::Image> images;
+    mnist::ImageHeader image_header;
+    std::vector<mnist::Image> images;
     std::vector<uint> labels;
     const std::string file_name_images("/home/lbasov/AI/train-images-idx3-ubyte");
     const std::string file_name_labels("/home/lbasov/AI/train-labels-idx1-ubyte");
 
     // READ FILES
-    image_header = MNIST::ReadImageHeader(file_name_images);
+    image_header = mnist::ReadImageHeader(file_name_images);
 
     std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
     std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
@@ -131,15 +131,15 @@ std::vector<MNIST::Image> GetTrainingInput(uint n_images) {
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
 
-    images = MNIST::ReadImages(file_name_images, n_images);
+    images = mnist::ReadImages(file_name_images, n_images);
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
 
-    labels = MNIST::ReadLabels(file_name_labels, n_images);
+    labels = mnist::ReadLabels(file_name_labels, n_images);
 
     for (uint i = 0; i < n_images; i++) {
-        images.at(i).label = MNIST::Decimal2Binray(labels.at(i));
+        images.at(i).label = mnist::Decimal2Binray(labels.at(i));
 
         for (uint p = 0; p < images.at(i).pixels.size(); p++) {
             images.at(i).pixels.at(p) /= 255.0;
@@ -149,17 +149,17 @@ std::vector<MNIST::Image> GetTrainingInput(uint n_images) {
     return images;
 }
 
-std::vector<MNIST::Image> GetTestInput(uint n_images) {
+std::vector<mnist::Image> GetTestInput(uint n_images) {
     // Data set found here: http://yann.lecun.com/exdb/mnist/
 
-    MNIST::ImageHeader image_header;
-    std::vector<MNIST::Image> images;
+    mnist::ImageHeader image_header;
+    std::vector<mnist::Image> images;
     std::vector<uint> labels;
     const std::string file_name_images("/home/lbasov/AI/t10k-images-idx3-ubyte");
     const std::string file_name_labels("/home/lbasov/AI/t10k-labels-idx1-ubyte");
 
     // READ FILES
-    image_header = MNIST::ReadImageHeader(file_name_images);
+    image_header = mnist::ReadImageHeader(file_name_images);
 
     std::cout << "N IMAGES READ: " << image_header.n_images << " EXPECTED: 60000" << std::endl;
     std::cout << "N ROWS:        " << image_header.n_rows << " EXPECTED: 28" << std::endl;
@@ -168,15 +168,15 @@ std::vector<MNIST::Image> GetTestInput(uint n_images) {
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " IMAGES" << std::endl;
 
-    images = MNIST::ReadImages(file_name_images, n_images);
+    images = mnist::ReadImages(file_name_images, n_images);
 
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "READING " + std::to_string(n_images) + " LABELS" << std::endl;
 
-    labels = MNIST::ReadLabels(file_name_labels, n_images);
+    labels = mnist::ReadLabels(file_name_labels, n_images);
 
     for (uint i = 0; i < n_images; i++) {
-        images.at(i).label = MNIST::Decimal2Binray(labels.at(i));
+        images.at(i).label = mnist::Decimal2Binray(labels.at(i));
 
         for (uint p = 0; p < images.at(i).pixels.size(); p++) {
             images.at(i).pixels.at(p) /= 255.0;
@@ -186,7 +186,7 @@ std::vector<MNIST::Image> GetTestInput(uint n_images) {
     return images;
 }
 
-std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& images) {
+std::vector<double> Execute(const Neat& neat, const std::vector<mnist::Image>& images) {
     std::vector<Network> networks(neat.GetNetworks());
     std::vector<double> fitnesses(networks.size(), 0.0);
 
@@ -215,7 +215,7 @@ std::vector<double> Execute(const Neat& neat, const std::vector<MNIST::Image>& i
 void PrintResultsNetwork(const Neat& neat, const uint& network_id, uint n_refs) {
     Network network(neat.GetNetworks().at(network_id));
     std::vector<std::vector<double>> resutls;
-    std::vector<MNIST::Image> input(GetTestInput(n_refs));
+    std::vector<mnist::Image> input(GetTestInput(n_refs));
 
     for (uint k = 0; k < n_refs; k++) {
         std::vector<double> result = network.Execute(input.at(k).pixels);
@@ -225,13 +225,13 @@ void PrintResultsNetwork(const Neat& neat, const uint& network_id, uint n_refs) 
             std::cout << input.at(k).label.at(i) << ",";
         }
 
-        std::cout << "] VALUE: " + std::to_string(MNIST::Binray2Decimal(input.at(k).label)) + " OUTPUT: [";
+        std::cout << "] VALUE: " + std::to_string(mnist::Binray2Decimal(input.at(k).label)) + " OUTPUT: [";
 
         for (uint i = 0; i < result.size(); i++) {
             std::cout << result.at(i) << ",";
         }
 
-        std::cout << "] VALUE: " + std::to_string(MNIST::Binray2Decimal(result)) << std::endl;
+        std::cout << "] VALUE: " + std::to_string(mnist::Binray2Decimal(result)) << std::endl;
     }
 
     std::cout << "------------------------------------------------------" << std::endl;

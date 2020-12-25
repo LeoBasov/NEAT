@@ -11,7 +11,7 @@
 namespace neat {
 using uint = unsigned int;
 
-namespace MNIST {
+namespace mnist {
 struct Image {
     Image() {}
     Image(const uint& n_pixels) : pixels(n_pixels) {}

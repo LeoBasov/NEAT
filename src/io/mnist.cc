@@ -1,10 +1,10 @@
 #include "mnist.h"
 
 namespace neat {
-namespace MNIST {
+namespace mnist {
 
-MNIST::ImageHeader ReadImageHeader(const std::string &file_name) {
-    MNIST::ImageHeader header;
+mnist::ImageHeader ReadImageHeader(const std::string &file_name) {
+    mnist::ImageHeader header;
     std::ifstream input(file_name, std::ios::binary);
 
     if (!input.is_open()) {
@@ -53,9 +53,9 @@ LabelHeader ReadLabelHeader(const std::string &file_name) {
     return header;
 }
 
-std::vector<MNIST::Image> ReadImages(const std::string &file_name, const uint &n_images) {
-    MNIST::ImageHeader header(ReadImageHeader(file_name));
-    std::vector<MNIST::Image> images(n_images, Image(header.n_columns * header.n_rows));
+std::vector<mnist::Image> ReadImages(const std::string &file_name, const uint &n_images) {
+    mnist::ImageHeader header(ReadImageHeader(file_name));
+    std::vector<mnist::Image> images(n_images, Image(header.n_columns * header.n_rows));
     std::ifstream input(file_name, std::ios::binary);
     int masgic_number(0);
 
