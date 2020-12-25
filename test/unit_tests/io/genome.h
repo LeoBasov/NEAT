@@ -11,6 +11,8 @@ TEST(genome, ReadGenome) {
     const std::string file_name("./test/unit_tests/test_data/genome_2_1.csv");
     Genome genome;
 
+    ASSERT_THROW(genome::ReadGenome("", n_sensort_nodes, n_output_nodes), Exception);
+
     genome = genome::ReadGenome(file_name, n_sensort_nodes, n_output_nodes);
 
     ASSERT_EQ(n_sensort_nodes, genome.n_sensor_nodes_);
