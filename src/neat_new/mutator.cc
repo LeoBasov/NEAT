@@ -37,23 +37,7 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
                                           config_.allow_recurring_connection);
 
         if (last_innov != innovation) {
-            const std::pair<bool, uint> ret_pair(InLastGenes(in, out, last_genes_, LastGene::ADD_CONNECTION));
-            LastGene last_gene;
-
-            if (ret_pair.first) {
-                genome.genes_.back() = last_genes_.at(ret_pair.second).genes.first;
-
-                std::sort(genome.genes_.begin(), genome.genes_.end());
-
-                innovation = last_innov;
-            } else {
-                last_gene.type = LastGene::ADD_CONNECTION;
-                last_gene.in = in;
-                last_gene.out = out;
-                last_gene.genes.first = genome.genes_.back();
-
-                last_genes_.push_back(last_gene);
-            }
+            AdjustAddConnectionGenes(genome, last_genes_, in, out, innovation, last_innov);
         }
     } else if (rand < config_.prob_weight_change) {
         if (random_->RandomNumber() < config_.prob_new_weight) {
