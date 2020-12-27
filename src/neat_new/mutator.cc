@@ -20,7 +20,7 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
     const double rand(random_->RandomNumber());
 
     if (rand < config_.prob_new_node) {
-        const uint gene_id(random_->RandomIntNumber(0, genome.genes_.size() - 1));
+        const uint gene_id(SelectId(genome.genes_, *random_));
         const uint last_innov(innovation);
 
         innovation = genome.AddNode(gene_id, innovation);
@@ -49,8 +49,8 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
             }
         }
     } else if (rand < config_.prob_new_connection) {
-        const uint in(genome.nodes_.at(random_->RandomIntNumber(0, genome.nodes_.size() - 1)));
-        const uint out(genome.nodes_.at(random_->RandomIntNumber(0, genome.nodes_.size() - 1)));
+        const uint in(SelectId(genome.nodes_, *random_));
+        const uint out(SelectId(genome.nodes_, *random_));
         const uint last_innov(innovation);
 
         innovation = genome.AddConnection(in, out, innovation, config_.allow_self_connection,
@@ -77,21 +77,15 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
         }
     } else if (rand < config_.prob_weight_change) {
         if (random_->RandomNumber() < config_.prob_new_weight) {
-            const double weight(config_.weight_min +
-                                (config_.weight_max - config_.weight_min) * random_->RandomNumber());
-            const uint gene_id(random_->RandomIntNumber(0, genome.genes_.size() - 1));
+            const uint gene_id(SelectId(genome.genes_, *random_));
 
-            genome.genes_.at(gene_id).weight = weight;
+            genome.genes_.at(gene_id).weight = RandomizeWeight(config_.weight_min, config_.weight_max, *random_);
         } else {
-            const uint gene_id(random_->RandomIntNumber(0, genome.genes_.size() - 1));
+            const uint gene_id(SelectId(genome.genes_, *random_));
 
             PertubateWeight(genome, *random_, gene_id, config_.perturbation_fraction);
         }
     }
-}
-
-void Mutator::PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const double& perturbation_fraq) {
-    genome.genes_.at(gene_id).weight *= (1.0 - perturbation_fraq) + 2 * (perturbation_fraq)*random.RandomNumber();
 }
 
 std::pair<bool, uint> Mutator::InLastGenes(const uint& in, const uint& out, LastGene::Type type) const {

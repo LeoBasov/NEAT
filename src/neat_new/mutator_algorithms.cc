@@ -7,5 +7,9 @@ void PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const 
     genome.genes_.at(gene_id).weight *= (1.0 - perturbation_fraq) + 2 * (perturbation_fraq)*random.RandomNumber();
 }
 
+double RandomizeWeight(const double& min, const double& max, Random& random) {
+    return min + (max - min) * random.RandomNumber();
+}
+
 }  // namespace mutator_algorithms
 }  // namespace neat

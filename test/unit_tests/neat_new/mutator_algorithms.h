@@ -127,4 +127,18 @@ TEST(mutator_algorithms, PertubateWeight) {
     ASSERT_DOUBLE_EQ(0.0, genome.genes_.at(gene_id).weight);
 }
 
+TEST(mutator_algorithms, RandomizeWeight) {
+    const double min(-3.1), max(7.3);
+    RandomFake random;
+
+    random.SetRetVal(0.0);
+    ASSERT_DOUBLE_EQ(min, RandomizeWeight(min, max, random));
+
+    random.SetRetVal(1.0);
+    ASSERT_DOUBLE_EQ(max, RandomizeWeight(min, max, random));
+
+    random.SetRetVal(0.5);
+    ASSERT_DOUBLE_EQ((min + max) * 0.5, RandomizeWeight(min, max, random));
+}
+
 }  // namespace neat

@@ -18,6 +18,7 @@ Type Select(const std::vector<Type>& vector, Random& random) {
 }
 
 void PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const double& perturbation_fraq);
+double RandomizeWeight(const double& min, const double& max, Random& random);
 
 }  // namespace mutator_algorithms
 }  // namespace neat
