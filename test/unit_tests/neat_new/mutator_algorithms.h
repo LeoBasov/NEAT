@@ -141,4 +141,31 @@ TEST(mutator_algorithms, RandomizeWeight) {
     ASSERT_DOUBLE_EQ((min + max) * 0.5, RandomizeWeight(min, max, random));
 }
 
+TEST(mutator_algorithms, InLastGenes) {
+    const uint n_sensor_nodes(1), n_output_nodes(1);
+    Genome genome(n_sensor_nodes, n_output_nodes);
+    std::vector<LastGene> last_genes;
+    LastGene last_gene;
+    std::pair<bool, uint> ret_pair;
+
+    last_gene.in = 1;
+    last_gene.out = 2;
+    last_gene.type = LastGene::ADD_NODE;
+    last_gene.genes.first = Genome::Gene(1, 3, 2);
+    last_gene.genes.first = Genome::Gene(3, 2, 3);
+
+    last_genes.push_back(last_gene);
+
+    genome.AddNode(1, 1);
+
+    ret_pair = InLastGenes(1, 2, last_genes, LastGene::ADD_NODE);
+
+    ASSERT_TRUE(ret_pair.first);
+    ASSERT_EQ(0, ret_pair.second);
+
+    ret_pair = InLastGenes(0, 2, last_genes, LastGene::ADD_NODE);
+
+    ASSERT_FALSE(ret_pair.first);
+}
+
 }  // namespace neat

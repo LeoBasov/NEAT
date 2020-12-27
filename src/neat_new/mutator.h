@@ -23,14 +23,6 @@ class Mutator {
         bool allow_recurring_connection = true;
     };
 
-    struct LastGene {
-        enum Type { ADD_NODE, ADD_CONNECTION, NONE };
-
-        Type type = NONE;
-        uint in = 0, out = 0;
-        std::pair<Genome::Gene, Genome::Gene> genes;
-    };
-
    public:
     Mutator();
     ~Mutator() = default;
@@ -40,7 +32,6 @@ class Mutator {
 
     void Mutate(std::vector<Genome>& genomes, uint& innovation);
     void Mutate(Genome& genome, uint& innovation);
-    std::pair<bool, uint> InLastGenes(const uint& in, const uint& out, LastGene::Type type) const;
 
    private:
     Config config_;

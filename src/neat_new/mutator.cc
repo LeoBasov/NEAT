@@ -9,7 +9,7 @@ void Mutator::SetConfig(const Config& config) { config_ = config; }
 void Mutator::SetrRandom(std::shared_ptr<Random> random) { random_ = random; }
 
 void Mutator::Mutate(std::vector<Genome>& genomes, uint& innovation) {
-    last_genes_.clear();
+    // last_genes_.clear();
 
     for (auto& genome : genomes) {
         Mutate(genome, innovation);
@@ -27,7 +27,7 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
 
         if (last_innov != innovation) {
             const uint in(genome.genes_.at(gene_id).in), out(genome.genes_.at(gene_id).out);
-            const std::pair<bool, uint> ret_pair(InLastGenes(in, out, LastGene::ADD_NODE));
+            const std::pair<bool, uint> ret_pair(InLastGenes(in, out, last_genes_, LastGene::ADD_NODE));
             LastGene last_gene;
 
             if (ret_pair.first) {
@@ -57,7 +57,7 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
                                           config_.allow_recurring_connection);
 
         if (last_innov != innovation) {
-            const std::pair<bool, uint> ret_pair(InLastGenes(in, out, LastGene::ADD_CONNECTION));
+            const std::pair<bool, uint> ret_pair(InLastGenes(in, out, last_genes_, LastGene::ADD_CONNECTION));
             LastGene last_gene;
 
             if (ret_pair.first) {
@@ -86,16 +86,6 @@ void Mutator::Mutate(Genome& genome, uint& innovation) {
             PertubateWeight(genome, *random_, gene_id, config_.perturbation_fraction);
         }
     }
-}
-
-std::pair<bool, uint> Mutator::InLastGenes(const uint& in, const uint& out, LastGene::Type type) const {
-    for (uint i = 0; i < last_genes_.size(); i++) {
-        if ((in == last_genes_.at(i).in) && (out == last_genes_.at(i).out) && (last_genes_.at(i).type == type)) {
-            return {true, i};
-        }
-    }
-
-    return {false, 0};
 }
 
 }  // namespace neat
