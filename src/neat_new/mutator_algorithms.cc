@@ -49,5 +49,28 @@ uint AdjustAddNodeGenes(Genome& genome, std::vector<LastGene>& last_genes, const
     }
 }
 
+uint AdjustAddConnectionGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& in, const uint& out,
+                              const uint& innovation, const uint& last_innovation) {
+    const std::pair<bool, uint> ret_pair(InLastGenes(in, out, last_genes, LastGene::ADD_CONNECTION));
+    LastGene last_gene;
+
+    if (ret_pair.first) {
+        genome.genes_.back() = last_genes.at(ret_pair.second).genes.first;
+
+        std::sort(genome.genes_.begin(), genome.genes_.end());
+
+        return last_innovation;
+    } else {
+        last_gene.type = LastGene::ADD_CONNECTION;
+        last_gene.in = in;
+        last_gene.out = out;
+        last_gene.genes.first = genome.genes_.back();
+
+        last_genes.push_back(last_gene);
+
+        return innovation;
+    }
+}
+
 }  // namespace mutator_algorithms
 }  // namespace neat

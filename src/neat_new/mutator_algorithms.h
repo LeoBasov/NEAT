@@ -31,6 +31,8 @@ std::pair<bool, uint> InLastGenes(const uint& in, const uint& out, const std::ve
                                   LastGene::Type type);
 uint AdjustAddNodeGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& gene_id, const uint& innovation,
                         const uint& last_innovation);
+uint AdjustAddConnectionGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& in, const uint& out,
+                              const uint& innovation, const uint& last_innovation);
 
 }  // namespace mutator_algorithms
 }  // namespace neat

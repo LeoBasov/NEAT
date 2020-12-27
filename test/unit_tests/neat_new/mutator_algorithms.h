@@ -172,7 +172,7 @@ TEST(mutator_algorithms, AdjustAddNodeGenes) {
     const uint n_sensor_nodes(1), n_output_nodes(1);
     Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
     std::vector<LastGene> last_genes;
-    uint innovation(2), innovation_old, innovation_ref;
+    uint innovation(1), innovation_old, innovation_ref;
     const uint gene_id(0);
 
     innovation_old = innovation;
@@ -196,7 +196,80 @@ TEST(mutator_algorithms, AdjustAddNodeGenes) {
 
     for (uint i = 0; i < genome1.genes_.size(); i++) {
         ASSERT_EQ(genome1.genes_.at(i).innov, genome2.genes_.at(i).innov);
+        ASSERT_EQ(i, genome2.genes_.at(i).innov);
+    }
+
+    for (uint i = 0; i < genome1.nodes_.size(); i++) {
         ASSERT_EQ(genome1.nodes_.at(i), genome2.nodes_.at(i));
+        ASSERT_EQ(i, genome1.nodes_.at(i));
+    }
+}
+
+TEST(mutator_algorithms, AdjustAddConnectionGenes) {
+    const uint n_sensor_nodes(1), n_output_nodes(1);
+    Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
+    std::vector<LastGene> last_genes;
+    uint innovation(1), innovation_old, innovation_ref;
+    const uint in(1), out(3), gene_id(0);
+
+    // Add Nodes
+    innovation_old = innovation;
+    innovation = genome1.AddNode(gene_id, innovation);
+    innovation_ref = innovation;
+    innovation = AdjustAddNodeGenes(genome1, last_genes, gene_id, innovation, innovation_old);
+
+    ASSERT_EQ(1, last_genes.size());
+    ASSERT_EQ(innovation_ref, innovation);
+
+    innovation_old = innovation;
+    innovation = genome2.AddNode(gene_id, innovation);
+    innovation_ref = innovation;
+    innovation = AdjustAddNodeGenes(genome2, last_genes, gene_id, innovation, innovation_old);
+
+    ASSERT_EQ(1, last_genes.size());
+    ASSERT_EQ(innovation_old, innovation);
+
+    ASSERT_EQ(genome1.genes_.size(), genome2.genes_.size());
+    ASSERT_EQ(genome1.nodes_.size(), genome2.nodes_.size());
+
+    for (uint i = 0; i < genome1.genes_.size(); i++) {
+        ASSERT_EQ(genome1.genes_.at(i).innov, genome2.genes_.at(i).innov);
+        ASSERT_EQ(i, genome2.genes_.at(i).innov);
+    }
+
+    for (uint i = 0; i < genome1.nodes_.size(); i++) {
+        ASSERT_EQ(genome1.nodes_.at(i), genome2.nodes_.at(i));
+        ASSERT_EQ(i, genome1.nodes_.at(i));
+    }
+
+    // Add connection
+    innovation_old = innovation;
+    innovation = genome1.AddConnection(in, out, innovation);
+    innovation_ref = innovation;
+    innovation = AdjustAddConnectionGenes(genome1, last_genes, in, out, innovation, innovation_old);
+
+    ASSERT_EQ(2, last_genes.size());
+    ASSERT_EQ(innovation_ref, innovation);
+
+    innovation_old = innovation;
+    innovation = genome2.AddConnection(in, out, innovation);
+    innovation_ref = innovation;
+    innovation = AdjustAddConnectionGenes(genome2, last_genes, in, out, innovation, innovation_old);
+
+    ASSERT_EQ(2, last_genes.size());
+    ASSERT_EQ(innovation_old, innovation);
+
+    ASSERT_EQ(genome1.genes_.size(), genome2.genes_.size());
+    ASSERT_EQ(genome1.nodes_.size(), genome2.nodes_.size());
+
+    for (uint i = 0; i < genome1.genes_.size(); i++) {
+        ASSERT_EQ(genome1.genes_.at(i).innov, genome2.genes_.at(i).innov);
+        ASSERT_EQ(i, genome2.genes_.at(i).innov);
+    }
+
+    for (uint i = 0; i < genome1.nodes_.size(); i++) {
+        ASSERT_EQ(genome1.nodes_.at(i), genome2.nodes_.at(i));
+        ASSERT_EQ(i, genome1.nodes_.at(i));
     }
 }
 
