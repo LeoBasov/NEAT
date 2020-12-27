@@ -22,8 +22,8 @@ std::pair<bool, uint> InLastGenes(const uint& in, const uint& out, const std::ve
     return {false, 0};
 }
 
-uint AdjustLastGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& gene_id, const uint& innovation,
-                     const uint& last_innovation) {
+uint AdjustAddNodeGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& gene_id, const uint& innovation,
+                        const uint& last_innovation) {
     const uint in(genome.genes_.at(gene_id).in), out(genome.genes_.at(gene_id).out);
     const std::pair<bool, uint> ret_pair(InLastGenes(in, out, last_genes, LastGene::ADD_NODE));
     LastGene last_gene;

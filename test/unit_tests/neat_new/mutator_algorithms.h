@@ -168,7 +168,7 @@ TEST(mutator_algorithms, InLastGenes) {
     ASSERT_FALSE(ret_pair.first);
 }
 
-TEST(mutator_algorithms, AdjustLastGenes) {
+TEST(mutator_algorithms, AdjustAddNodeGenes) {
     const uint n_sensor_nodes(1), n_output_nodes(1);
     Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
     std::vector<LastGene> last_genes;
@@ -178,7 +178,7 @@ TEST(mutator_algorithms, AdjustLastGenes) {
     innovation_old = innovation;
     innovation = genome1.AddNode(gene_id, innovation);
     innovation_ref = innovation;
-    innovation = AdjustLastGenes(genome1, last_genes, gene_id, innovation, innovation_old);
+    innovation = AdjustAddNodeGenes(genome1, last_genes, gene_id, innovation, innovation_old);
 
     ASSERT_EQ(1, last_genes.size());
     ASSERT_EQ(innovation_ref, innovation);
@@ -186,7 +186,7 @@ TEST(mutator_algorithms, AdjustLastGenes) {
     innovation_old = innovation;
     innovation = genome2.AddNode(gene_id, innovation);
     innovation_ref = innovation;
-    innovation = AdjustLastGenes(genome2, last_genes, gene_id, innovation, innovation_old);
+    innovation = AdjustAddNodeGenes(genome2, last_genes, gene_id, innovation, innovation_old);
 
     ASSERT_EQ(1, last_genes.size());
     ASSERT_EQ(innovation_old, innovation);

@@ -29,8 +29,8 @@ void PertubateWeight(Genome& genome, Random& random, const uint& gene_id, const 
 double RandomizeWeight(const double& min, const double& max, Random& random);
 std::pair<bool, uint> InLastGenes(const uint& in, const uint& out, const std::vector<LastGene>& last_genes,
                                   LastGene::Type type);
-uint AdjustLastGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& gene_id, const uint& innovation,
-                     const uint& last_innovation);
+uint AdjustAddNodeGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& gene_id, const uint& innovation,
+                        const uint& last_innovation);
 
 }  // namespace mutator_algorithms
 }  // namespace neat
