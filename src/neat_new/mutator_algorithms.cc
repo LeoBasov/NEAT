@@ -22,5 +22,32 @@ std::pair<bool, uint> InLastGenes(const uint& in, const uint& out, const std::ve
     return {false, 0};
 }
 
+uint AdjustLastGenes(Genome& genome, std::vector<LastGene>& last_genes, const uint& gene_id, const uint& innovation,
+                     const uint& last_innovation) {
+    const uint in(genome.genes_.at(gene_id).in), out(genome.genes_.at(gene_id).out);
+    const std::pair<bool, uint> ret_pair(InLastGenes(in, out, last_genes, LastGene::ADD_NODE));
+    LastGene last_gene;
+
+    if (ret_pair.first) {
+        genome.genes_.at(genome.genes_.size() - 2) = last_genes.at(ret_pair.second).genes.first;
+        genome.genes_.at(genome.genes_.size() - 1) = last_genes.at(ret_pair.second).genes.second;
+
+        std::sort(genome.genes_.begin(), genome.genes_.end());
+        genome.AdjustNodes(genome.n_sensor_nodes_, genome.n_output_nodes_);
+
+        return last_innovation;
+    } else {
+        last_gene.type = LastGene::ADD_NODE;
+        last_gene.in = in;
+        last_gene.out = out;
+        last_gene.genes.first = genome.genes_.at(genome.genes_.size() - 2);
+        last_gene.genes.second = genome.genes_.at(genome.genes_.size() - 1);
+
+        last_genes.push_back(last_gene);
+
+        return innovation;
+    }
+}
+
 }  // namespace mutator_algorithms
 }  // namespace neat

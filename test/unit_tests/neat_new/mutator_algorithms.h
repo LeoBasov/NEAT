@@ -168,4 +168,36 @@ TEST(mutator_algorithms, InLastGenes) {
     ASSERT_FALSE(ret_pair.first);
 }
 
+TEST(mutator_algorithms, AdjustLastGenes) {
+    const uint n_sensor_nodes(1), n_output_nodes(1);
+    Genome genome1(n_sensor_nodes, n_output_nodes), genome2(n_sensor_nodes, n_output_nodes);
+    std::vector<LastGene> last_genes;
+    uint innovation(2), innovation_old, innovation_ref;
+    const uint gene_id(0);
+
+    innovation_old = innovation;
+    innovation = genome1.AddNode(gene_id, innovation);
+    innovation_ref = innovation;
+    innovation = AdjustLastGenes(genome1, last_genes, gene_id, innovation, innovation_old);
+
+    ASSERT_EQ(1, last_genes.size());
+    ASSERT_EQ(innovation_ref, innovation);
+
+    innovation_old = innovation;
+    innovation = genome2.AddNode(gene_id, innovation);
+    innovation_ref = innovation;
+    innovation = AdjustLastGenes(genome2, last_genes, gene_id, innovation, innovation_old);
+
+    ASSERT_EQ(1, last_genes.size());
+    ASSERT_EQ(innovation_old, innovation);
+
+    ASSERT_EQ(genome1.genes_.size(), genome2.genes_.size());
+    ASSERT_EQ(genome1.nodes_.size(), genome2.nodes_.size());
+
+    for (uint i = 0; i < genome1.genes_.size(); i++) {
+        ASSERT_EQ(genome1.genes_.at(i).innov, genome2.genes_.at(i).innov);
+        ASSERT_EQ(genome1.nodes_.at(i), genome2.nodes_.at(i));
+    }
+}
+
 }  // namespace neat
