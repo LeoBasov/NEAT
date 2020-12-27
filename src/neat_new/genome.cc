@@ -62,6 +62,7 @@ uint Genome::AddConnection(const uint in, const uint out, uint innov, const bool
 
     for (size_t i = 0; i < genes_.size(); i++) {
         if (genes_.at(i).in == in && genes_.at(i).out == out) {
+            genes_.at(i).enabled = true;
             return innov;
         } else if (!allow_recurring_connection && (genes_.at(i).in == out && genes_.at(i).out == in)) {
             return innov;
