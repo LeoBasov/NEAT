@@ -104,5 +104,27 @@ void WriteGenomeRaw(const std::string& file_name, const Genome& genome) {
     }
 }
 
+void WriteGenome(const std::string& file_name, const Genome& genome) {
+    std::ofstream stream(file_name);
+    const std::map<size_t, size_t> permutation_map(genome.GetNodePermuationMap());
+
+    if (!stream.is_open()) {
+        throw Exception("Could not open file [" + file_name + "]", __PRETTY_FUNCTION__);
+    }
+
+    for (auto gene : genome.genes_) {
+        if (gene.enabled) {
+            stream << permutation_map.at(gene.in) << "," << permutation_map.at(gene.out) << "," << gene.weight
+                   << std::endl;
+        }
+    }
+
+    stream.close();
+
+    if (!stream.good()) {
+        throw Exception("Error occurred when writing file [" + file_name + "]", __PRETTY_FUNCTION__);
+    }
+}
+
 }  // namespace genome
 }  // namespace neat

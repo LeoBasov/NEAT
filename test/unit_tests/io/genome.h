@@ -133,4 +133,46 @@ TEST(genome, WriteGenomeRaw) {
     ASSERT_TRUE(genome.genes_.at(4).enabled);
 }
 
+TEST(genome, WriteGenome) {
+    const uint n_sensort_nodes(1), n_output_nodes(1), n_hidden_nodes(1), n_genes(4);
+    const std::string file_name("genome_2_1.csv");
+    Genome genome(n_sensort_nodes, n_output_nodes), genome_read;
+
+    genome.genes_.push_back(Genome::Gene(0, 155, 20));
+    genome.genes_.push_back(Genome::Gene(155, 2, 21));
+    genome.AdjustNodes(n_sensort_nodes, n_output_nodes);
+
+    genome::WriteGenome(file_name, genome);
+    genome_read = genome::ReadGenome(file_name, n_sensort_nodes, n_output_nodes);
+
+    ASSERT_EQ(n_sensort_nodes, genome_read.n_sensor_nodes_);
+    ASSERT_EQ(n_output_nodes, genome_read.n_output_nodes_);
+    ASSERT_EQ(n_hidden_nodes, genome_read.n_hidden_nodes_);
+    ASSERT_EQ(n_genes, genome_read.genes_.size());
+
+    ASSERT_EQ(0, genome_read.genes_.at(0).in);
+    ASSERT_EQ(2, genome_read.genes_.at(0).out);
+    ASSERT_EQ(0, genome_read.genes_.at(0).innov);
+    ASSERT_DOUBLE_EQ(1.0, genome_read.genes_.at(0).weight);
+    ASSERT_TRUE(genome_read.genes_.at(0).enabled);
+
+    ASSERT_EQ(1, genome_read.genes_.at(1).in);
+    ASSERT_EQ(2, genome_read.genes_.at(1).out);
+    ASSERT_EQ(1, genome_read.genes_.at(1).innov);
+    ASSERT_DOUBLE_EQ(1.0, genome_read.genes_.at(1).weight);
+    ASSERT_TRUE(genome_read.genes_.at(1).enabled);
+
+    ASSERT_EQ(0, genome_read.genes_.at(2).in);
+    ASSERT_EQ(3, genome_read.genes_.at(2).out);
+    ASSERT_EQ(2, genome_read.genes_.at(2).innov);
+    ASSERT_DOUBLE_EQ(1.0, genome_read.genes_.at(2).weight);
+    ASSERT_TRUE(genome_read.genes_.at(2).enabled);
+
+    ASSERT_EQ(3, genome_read.genes_.at(3).in);
+    ASSERT_EQ(2, genome_read.genes_.at(3).out);
+    ASSERT_EQ(3, genome_read.genes_.at(3).innov);
+    ASSERT_DOUBLE_EQ(1.0, genome_read.genes_.at(3).weight);
+    ASSERT_TRUE(genome_read.genes_.at(3).enabled);
+}
+
 }  // namespace neat
