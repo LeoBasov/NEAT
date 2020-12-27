@@ -9,6 +9,38 @@ namespace neat {
 
 using namespace mutator_algorithms;
 
+TEST(mutator_algorithms, SelectId) {
+    std::vector<uint> values;
+    std::vector<bool> found(4, false);
+    Random random;
+
+    values.push_back(5);
+    values.push_back(6);
+    values.push_back(7);
+    values.push_back(8);
+
+    for (uint i = 0; i < 100; i++) {
+        size_t id = SelectId(values, random);
+        uint val = values.at(id);
+
+        ASSERT_TRUE(val <= 8);
+        ASSERT_TRUE(val >= 5);
+
+        for (uint i = 0; i < values.size(); i++) {
+            if (val == values.at(i)) {
+                found.at(i) = true;
+            }
+        }
+    }
+
+    bool found_val(true);
+    for (auto f : found) {
+        found_val = found_val && f;
+    }
+
+    ASSERT_TRUE(found_val);
+}
+
 TEST(mutator_algorithms, Select) {
     std::vector<uint> values;
     std::vector<bool> found(4, false);
