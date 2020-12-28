@@ -29,8 +29,15 @@ uint AdjustAddNodeGenes(Genome& genome, std::vector<LastGene>& last_genes, const
     LastGene last_gene;
 
     if (ret_pair.first) {
-        genome.genes_.at(genome.genes_.size() - 2) = last_genes.at(ret_pair.second).genes.first;
-        genome.genes_.at(genome.genes_.size() - 1) = last_genes.at(ret_pair.second).genes.second;
+        if ((genome.genes_.at(genome.genes_.size() - 2).in == last_genes.at(ret_pair.second).genes.first.in) &&
+            (genome.genes_.at(genome.genes_.size() - 2).out == last_genes.at(ret_pair.second).genes.first.out)) {
+            genome.genes_.at(genome.genes_.size() - 2).innov = last_genes.at(ret_pair.second).genes.first.innov;
+        }
+
+        if ((genome.genes_.at(genome.genes_.size() - 1).in == last_genes.at(ret_pair.second).genes.second.in) &&
+            (genome.genes_.at(genome.genes_.size() - 1).out == last_genes.at(ret_pair.second).genes.second.out)) {
+            genome.genes_.at(genome.genes_.size() - 1).innov = last_genes.at(ret_pair.second).genes.second.innov;
+        }
 
         std::sort(genome.genes_.begin(), genome.genes_.end());
         genome.AdjustNodes(genome.n_sensor_nodes_, genome.n_output_nodes_);
@@ -55,7 +62,7 @@ uint AdjustAddConnectionGenes(Genome& genome, std::vector<LastGene>& last_genes,
     LastGene last_gene;
 
     if (ret_pair.first) {
-        genome.genes_.back() = last_genes.at(ret_pair.second).genes.first;
+        genome.genes_.back().innov = last_genes.at(ret_pair.second).genes.first.innov;
 
         std::sort(genome.genes_.begin(), genome.genes_.end());
 
