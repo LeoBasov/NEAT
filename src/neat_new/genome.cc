@@ -37,14 +37,16 @@ void Genome::Initialize(const uint n_sensor_nodes, const uint n_output_nodes) {
 }
 
 uint Genome::AddNode(const uint gene_id, uint innov) {
-    n_hidden_nodes_++;
+    if (genes_.at(gene_id).enabled) {
+        n_hidden_nodes_++;
 
-    nodes_.push_back(nodes_.back() + 1);
+        nodes_.push_back(nodes_.back() + 1);
 
-    genes_.at(gene_id).enabled = false;
+        genes_.at(gene_id).enabled = false;
 
-    genes_.push_back(Gene(genes_.at(gene_id).in, nodes_.back(), ++innov));
-    genes_.push_back(Gene(nodes_.back(), genes_.at(gene_id).out, ++innov, genes_.at(gene_id).weight));
+        genes_.push_back(Gene(genes_.at(gene_id).in, nodes_.back(), ++innov));
+        genes_.push_back(Gene(nodes_.back(), genes_.at(gene_id).out, ++innov, genes_.at(gene_id).weight));
+    }
 
     return innov;
 }
